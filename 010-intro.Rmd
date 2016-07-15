@@ -1,23 +1,32 @@
-# Introduction {#intro}
+# Preface {-}
 
-Was I able to write this one, too?
+This is the third edition of *Statistical Modeling: A Fresh Approach*. The use of the phrase "fresh approach" in the title is a promise that there is genuinely fresh in the addition. 
 
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
+In the first edition (2009), the *Fresh Approach* included
 
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
+* the use of linear modeling with multiple explanatory variabes as the introduction to statistics
+* integration of technical computing as an essential conceptual tool
+* using geometry as a way to make the profound concepts of  linear modeling accessible. (The traditional use of linear algebra rules out any student without a strong mathematics background, and even then obscures as much as it illuminates.)
+* taking causality seriously even in observational data.
 
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
-```
+The second edition (2011) was a sort of freshening up. The primary change was the integration of the fledgling `mosaic` package for R. Much of `mosaic` emerged from the first edition, but it was dramatically extended and improved by collaboration with Randall Pruim of Calvin College and Nicholas Horton of Amherst College with support from the National Science Foundation (NSF DUE-0920350).
 
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
+Many of the ideas in the first and second editions of *Fresh Approach* are now moving into the mainstream of statistical pedagogy. It's especially gratifying that the central statement of goals for introductory statistics --- the American Statistical Association's GAISE report --- has added two new emphases: multivariable thinking and using computing to explore statistical concepts. The `mosaic` package has been downloaded hundreds of thousands of times.
 
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(iris, 20), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
-```
+The pace of technical change since 2011 has been remarkable.
 
-You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015]. ddd aaa
+* Advances in computing
+    - The R community has expanded tremendously.
+    - The infrastructure behind R has become much more powerful and sophisticated. Much of this has been due to the open-source software provided by RStudio.
+    - R itself has become dramatically more speedy and is able to take on industrial-sized problems.
+    - R has been integrated into publishing. Systems such as R/markdown, Shiny, Bookdown, DataCamp, git, and so on draw on internet technologies such as HTML5 and Javascript to make it practical to bring computing into books in an interactive way. They also support broad collaboration among authors and other contributors.
+    - Domain specific systems in R such as `dplyr` and `ggplot2` have joined `mosaic` in providing the power of programming without the syntactical complexity of all-purpose languages.
+
+* Changes in statistics
+    - much increased interest in machine-learning technologies.
+    - the emergence of data science
+    - the wide availability of massive datasets
+
+These innovations in computing and statistical emphasis call for a new pedagogy. On a conceptual level, machine-learning ideas such as cross-validation provide the means to sidestep much of the mathematical intricacies involved in interpreting linear models as well as the ability to move beyond the linear model into other model architectures which can be better suited to the process. For instance, recursive partitioning models make it relatively easy to interpret complex interactions among explanatory variable and provide a ready means to explore complex datasets.
+
+

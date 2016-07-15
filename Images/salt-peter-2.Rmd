@@ -1,0 +1,18 @@
+# Saltpeter Logistics
+
+by Abigail Adams
+
+```{r include=FALSE}
+library(DataComputing)
+```
+
+This report compares 
+production of saltpeter 
+with the "French method" 
+to the "Swiss method."
+
+```{r}
+Saltpeter <- 
+ read.file("saltpeter.csv")
+Saltpeter %>% head()
+```
