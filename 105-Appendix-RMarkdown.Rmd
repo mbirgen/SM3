@@ -12,7 +12,7 @@ An important concept in data-driven reporting is "reproducibility." \index{repro
 
 In R, reproducible reporting is provided by the `.Rmd` file format and related software.  An `.Rmd` file integrates computer commands into the narrative so that, for instance, graphics are produced by the commands rather than being inserted from another source.
 
-\newthought{You create and modify reproducible reports} within RStudio's text \vocabDefinition{editor}{A program for constructing pure-text documents, such as R instructions and Rmd files}.  They  contain ordinary text and punctuation: no formatting, color, images, etc.  Instead, you use the `.Rmd` file to describe, using ordinary characters, both what you want the eventual format to look like and what R commands you want the computer to carry out in generating the report.
+`r tufte::newthought("You create and modify reproducible reports")` within RStudio's text editor.  The `.Rmd` file you create contains only ordinary text and punctuation: no formatting, color, images, etc.  Instead, the ordinary-text contents of the `.Rmd` describe both what you want the eventual format to look like and what R commands you want the computer to carry out in generating the report.
 
 Figure \@ref(fig:rmd-compile) shows a simple `.Rmd` document, something you might write in the RStudio editor.   The figure also shows the `.html` file that is the result of compiling the `.Rmd`.\index{compile!Rmd to HTML}\index{HTML!compiled from Rmd}\index{Rmd!compile to HTML}
 
@@ -37,7 +37,7 @@ It's a good strategy to compile your `.Rmd` frequently.  Start with a small, sim
 
 It's impossible to avoid errors; even professionals make them. Instead, adopt a process that let's you identify errors quickly so that you can fix them before moving on. The shorter the write/compile cycle, the easier it will be to know when you have erred.
 
-\marginnote{Interactive commands such as \texttt{file.choose()} or \texttt{scatterGraphHelper()} cannot be used in an an \texttt{.Rmd} file; there's no opportunity for interaction in the compilation process.  Instead, use the interactive command in the console, get the result, and paste that result into your \texttt{.Rmd} file.}  \index{Rmd!no interactive functions}\index{interactive functions!not in \texttt{.Rmd}}
+`r tufte::margin_note("Interactive commands such as")` `file.choose()` or `scatterGraphHelper()` cannot be used in an an `.Rmd` file; there's no opportunity for interaction in the compilation process.  Instead, use the interactive command in the console, get the result, and paste that result into your `.Rmd` file.  \index{Rmd!no interactive functions}\index{interactive functions!not in \texttt{.Rmd}}
 
 ## Command "Chunks"
 
@@ -55,13 +55,16 @@ Each of these delimiters goes on its own line.^[Both the opening and closing del
 \index{argument!chunk in Rmd}\index{chunk!argument}\index{Rmd!chunk}
 Often, the first chunk in your document will be an instruction to load one or more libraries.  Since this will be in just about every `.Rmd` document, it can be called the \vocabDefinition{boilerplate}{A standardized piece of text intended for re-use in many documents.} chunk. It looks like this:
 A boilerplate chunk goes at the start of the document. It loads the libraries that the following commands will use.
-\VerbatimInput{Images/chunk-example-2.txt}
+```{r echo = FALSE, comment = ''}
+# cat(ISMmd::verbatim_input("Images/chunk-example-2.txt"))
+```
+
 The `include=FALSE` chunk argument helps to prettify the document: it is an instruction not to show the contents of the chunk in the output file. \index{include@\texttt{include=FALSE} argument in Rmd}
 
 
 Start with a short and simple document, like this:
 ```{r echo = FALSE, comment = ""}
-cat(paste0(readLines("Images/salt-peter-1.Rmd"), collapse = "\n"))
+cat(ISMmd::verbatim_input("Images/salt-peter-1.Rmd"))
 ```
 
 OR IN ANOTHER FORMAT
@@ -97,8 +100,11 @@ Compile to HTML & Compile to HTML & Compile to HTML\\
 \captionof{figure}{\label{fig:edit-cycle} Three steps in the write/compile cycle. At each step, the \texttt{.Rmd} file (shown in \texttt{monospace font}) is compiled into the \texttt{.html} format shown underneath.}
 
 
-\newthought{Distributing the \texttt{.Rmd} file is helpful} when communicating with a technically savvy audience.  A nice strategy for getting the benefits of both the easily-readable `.html` format and the original `.Rmd` file is to include the `.Rmd` file *inside* the `.html`, much as you might attach a file to an email message. The `DataComputing` package provides a way to do this easily\marginnote{The document template \texttt{Data Computing simple} includes the source document by default.} by including the following chunk in the `.Rmd` file.\index{HTML!include Rmd file}\index{Rmd!include in HTML file}\index{compiler!Rmd to HTML}\index{includeSourceDocument@\texttt{includeSourceDocuments}}
+`r tufte::newthought("Distributing the .Rmd file is helpful")` when communicating with a technically savvy audience.  A nice strategy for getting the benefits of both the easily-readable `.html` format and the original `.Rmd` file is to include the `.Rmd` file *inside* the `.html`, much as you might attach a file to an email message. The `DataComputing` package provides a way to do this easily`r tufte::margin_note("The document template 'Data Computing simple' includes the source document by default.")` by including the following chunk in the `.Rmd` file. \index{HTML!include Rmd file}\index{Rmd!include in HTML file}\index{compiler!Rmd to HTML}\index{includeSourceDocument@\texttt{includeSourceDocuments}}
 
-\VerbatimInput{Images/includeSourceDocuments.Rmd}
+```{r echo = FALSE, comment = ''}
+cat(ISMmd::verbatim_input("Images/includeSourceDocuments.Rmd"))
+```
 
-\noindent{}This chunk will embed the source file into your `.html`. The originating `.Rmd` file can be extracted by clicking on a link that is contained within the `.html` file.
+
+This chunk will embed the source file into your `.html`. The originating `.Rmd` file can be extracted by clicking on a link that is contained within the `.html` file.
