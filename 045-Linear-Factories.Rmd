@@ -44,6 +44,13 @@ Examples to save for later:
 1. Linear combinations
 2. Why linear?
     * Approximates any function
+        - greenhouse area is product of width and depth. For small changes, it's linear.
     * Turns the tasks into arithmetic
     * Provides a fantastic metaphor about which we are highly skilled in reasoning: space and subspaces.
+3. Nonlinear examples
+    * polaroid filters. Two crossed filters block light. A diagonal filter in the middle allows the light to be transmitted.
+    * sounds are linear, perceptions are not:
+        perceiving two steady notes as separate and constant until the frequency becomes close enough that they sound like a beat
+    * distinguishing conversations in a cocktail party. We don't confuse the sentences spoken simultaneously by two people as one sentence. 
+    * stretched springs and deformation. Bending until breaking.
 
