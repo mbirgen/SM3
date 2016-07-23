@@ -1,0 +1,49 @@
+# The Paradigm of the Factory
+
+Factories take inputs and combine them to produce outputs.
+
+Examples of factories:
+
+
+* The cabinet shop
+    - making shelves from plywood, varnish, ...
+* Nutrition
+    - constraint: only so much you can eat
+* The Economy (leading up to differential equations)
+
+Examples to save for later:
+
+* Chemical reactions
+* Energy
+    - constraint: need to satisfy demand
+
+## Looking at factories from two sides
+
+1. Synthesis - how much output will we get?
+    - can be more than one output: e.g. cabinets, pollution, 
+    - many inputs: rent, wood, hinges, varnish
+2. Analysis - how does the factory work?
+    We see the factory consuming such and such inputs and producing such and such an output. From this, can we figure out how the factory works.
+
+    
+## Three Tasks about Factories 
+
+1. Learning: We measure explanatory variables 
+2. Optimization - given a factory, what inputs should we get to produce the best outputs.
+    - outputs
+    - constraints
+
+## Representing a factory mathematically
+
+1. Functions
+2. Constraints
+
+
+## The linear factory
+
+1. Linear combinations
+2. Why linear?
+    * Approximates any function
+    * Turns the tasks into arithmetic
+    * Provides a fantastic metaphor about which we are highly skilled in reasoning: space and subspaces.
+

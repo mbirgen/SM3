@@ -1,0 +1,4 @@
+```{r echo=FALSE, results="asis"}
+cat("Source Documents: ")
+DataComputing::includeSourceDocuments()
+```
