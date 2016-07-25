@@ -149,8 +149,8 @@ major types of computers, e.g., Windows, Macintosh, and
 Unix/Linux. The RStudio software lets you work with a complete R
 system using an ordinary web browser or on your own computer.  
 
-\authNote{You can get information about how to install R on your
-computer at \url{www.r-project.org}.}
+DRAFT: NOTE ON SIDE: You can get information about how to install R on your
+computer at <www.r-project.org>.
 
 In making your own choice, the most important thing is this: *choose something*!    Readers who are familiar with SPSS, SAS, or STATA can
 use the information in each chapter's computational technique section
@@ -191,10 +191,11 @@ by logging in to the web service.  In either case, you will see a
 R.  It will look something like Figure \@ref("fig:console-picture").
 
 
-\begin{figure}
-\centerline{\includegraphics[width=3in]{console-picture-2011.png}}
-\caption{\label{fig:console-picture} \sf The R command console.}
-\end{figure}
+```{r console-picture, echo = FALSE, fig.cap = "The R command console."}
+knitr::include_graphics("Images/console-picture-2011.png")
+```
+[DRAFT: Look how out of date this is! No notion of RStudio.  Do note that in the knitr chunk, the chunk label ("console-picture") becomes part of the label for the picture, which can be put in with `@ref(console-picture)` as in Figure @ref(console-picture).]
+
 
 The R console gives you great power to carry out statistical and other
 mathematical and scientific operations.  To use this power, you need
@@ -248,27 +249,32 @@ running when you start R.)  You enter your commands as a dialog
 between you and the interpreter.  To start, the interpreter prints a
 prompt, after which you type your command:
 
+![](Images/tikz-1-1.png)
 
-\noindent\begin{tikzpicture}
-\node (prompt) at (0,0) [ellipse,fill=red!20] {\verb+>+};
+[NOTE: There is a bit of tikz in the original. Probably best to pull these from the original PDF file, as I've done above.]
+
+```tikz
+\begin{tikzpicture}
+\node (prompt) at (0,0) [fill=red!20] {\verb+>+};
 \node (promptlabel) at (-3,0) {\small\sc Prompt};
 \draw [->] (promptlabel.east) -- (prompt.west);
 \node (statement) at (1.5,0) [rectangle,fill=black!20] {\verb+sqrt(25)+};
 \node (commandlabel) at (4,0) {\small\sc Command};
 \draw [->] (commandlabel.west) -- (statement.east);
 \end{tikzpicture}
+```
 
-When you press ``Enter,'' the interpreter reads your command and performs
+When you press "Enter," the interpreter reads your command and performs
 the computation.  For commands such as this one, the interpreter
 will print the output value from the computation:
 
-\noindent\begin{tikzpicture}
-\node (prompt) at (0,0) [ellipse,fill=red!20] {\verb+>+};
-%\node (promptlabel) at (-3,0) {\small\sc Prompt};
-%\draw [->] (promptlabel.east) -- (prompt.west);
+![](Images/tikz-1-2.png)
+
+
+```tikz
+\begin{tikzpicture}
+\node (prompt) at (0,0) [fill=red!20] {\verb+>+};
 \node (statement) at (1.5,0) [rectangle,fill=black!20] {\verb+sqrt(25)+};
-%\node (commandlabel) at (4,0) {\small\sc Command};
-%\draw [->] (commandlabel.west) -- (statement.east);
 \node (output)  at (1,-.75)  {\verb+[1]   5+};
 \node (outputlabel) at (4,-.75) {\small\sc Output Value};
 \node (outputmarker) at (-2.25, -.75) {\small \sc Output Marker};
@@ -278,6 +284,7 @@ will print the output value from the computation:
 \node (nextlabel) at (-2.5,-1.5) {\small\sc Next Prompt};
 \draw [->] (nextlabel.east) -- (prompt2.west);
 \end{tikzpicture}
+```
 
 The dialog continues as the interpreter prints another prompt and
 waits for your further command.
