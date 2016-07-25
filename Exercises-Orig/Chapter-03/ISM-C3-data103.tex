@@ -1,0 +1,126 @@
+%% Author: Daniel Kaplan
+%% Subject: Computation (data manipulation)
+
+
+
+
+\providecommand{\HCode}[1]{#1} % dummy, just in case it's PDFlatex
+\HCode{<link rel="stylesheet" href="fixSweave.css" type="text/css"
+  media="screen" />}
+\HCode{<link rel="stylesheet" href="http://dl.dropbox.com/u/5098197/Math135/RGuide/fixSweave.css" type="text/css"
+ media="screen" />}
+
+
+Here are some useful operators for taking a quick look at data frames:
+
+\bigskip
+\centerline{\begin{tabular}{lp{3in}}
+\code{names} & Lists the names of the components.\\
+\code{ncol} & Tells how many components there are.\\
+\code{nrow} & Tells how many lines of data there are.\\
+\code{head} & Prints the first several lines of the data frame.\\
+\end{tabular}}
+\bigskip
+
+\noindent Here are some examples of these commands applied to the \code{CO2}
+data frame:
+\begin{Schunk}
+\begin{Sinput}
+  CO2 = fetchData("CO2")
+\end{Sinput}
+\begin{Soutput}
+Called from: fetchData("CO2")
+\end{Soutput}
+\begin{Sinput}
+  names(CO2)
+\end{Sinput}
+\begin{Soutput}
+[1] "Plant"     "Type"      "Treatment" "conc"      "uptake"   
+\end{Soutput}
+\begin{Sinput}
+  ncol(CO2)
+\end{Sinput}
+\begin{Soutput}
+[1] 5
+\end{Soutput}
+\begin{Sinput}
+  nrow(CO2)
+\end{Sinput}
+\begin{Soutput}
+[1] 84
+\end{Soutput}
+\begin{Sinput}
+  head(CO2)
+\end{Sinput}
+\begin{Soutput}
+  Plant   Type  Treatment conc uptake
+1   Qn1 Quebec nonchilled   95   16.0
+2   Qn1 Quebec nonchilled  175   30.4
+3   Qn1 Quebec nonchilled  250   34.8
+4   Qn1 Quebec nonchilled  350   37.2
+5   Qn1 Quebec nonchilled  500   35.3
+6   Qn1 Quebec nonchilled  675   39.2
+\end{Soutput}
+\end{Schunk}
+
+\begin{itemize}
+
+\item The data frame \code{iris} records measurements on flowers. You can read in with 
+\begin{Schunk}
+\begin{Sinput}
+  iris = fetchData("iris")
+\end{Sinput}
+\begin{Soutput}
+Called from: fetchData("iris")
+\end{Soutput}
+\end{Schunk}
+creating an object named \code{iris}.
+
+Use the above operators to answer the following questions.
+
+\begin{enumerate}
+\item Which of the following is the name of a column in \code{iris}?\\
+
+\SelectSetHoriz{Species}{flower,Color,Species,Length}
+
+\item How many rows are there in \code{iris}?\\
+\SelectSetHoriz{150}{1,50,100,150,200}
+
+\item How many columns are there in \code{iris}?\\
+\SelectSetHoriz{5}{2,3,4,5,6,7,8,10}
+
+\item What is the \code{Sepal.Length} in the third row?\\
+\SelectSetHoriz{4.7}{1.2,3.6,4.2,4.7,5.9}
+
+\end{enumerate}
+
+\item The data frame \code{mtcars} has data on cars from the 1970s.  
+You can read it in with 
+\begin{Schunk}
+\begin{Sinput}
+  cars = fetchData("mtcars")
+\end{Sinput}
+\begin{Soutput}
+Called from: fetchData("mtcars")
+\end{Soutput}
+\end{Schunk}
+creating an object named \code{cars}.
+
+Use the above operators to answer the following questions.
+\begin{enumerate}
+\item Which of the following is the name of a column in \code{cars}?
+
+\SelectSetHoriz{carb}{carb,color,size,weight,wheels}
+
+\item How many rows are there in \code{cars}?\\
+\SelectSetHoriz{32}{30,31,32,33,34,35}
+
+\item How many columns are there in \code{cars}?\\
+\SelectSetHoriz{11}{7,8,9,10,11}
+
+\item What is the \code{wt} in the second row?\\
+\SelectSetHoriz{2.875}{2.125,2.225,2.620,2.875,3.215}
+\end{enumerate}
+\end{itemize}
+
+

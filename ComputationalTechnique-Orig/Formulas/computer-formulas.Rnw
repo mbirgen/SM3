@@ -1,0 +1,165 @@
+\SweaveOpts{keep.source=TRUE,pdf=FALSE,eps=TRUE,prefix.string=Figures/formulas,width=3,height=2.5}
+
+<<setup,echo=F>>=
+source('../../../setup.R')
+require(xtable)
+@ 
+ 
+The \code{lm} operator finds model coefficients. 
+\index{P}{lm@\texttt{lm}}
+\index{P}{Modeling!lm@\texttt{lm}}
+\index{C}{coefficients!computing best fitting}
+To illustrate,
+here's a pair of statements that read in a data frame and fit a model
+to it:
+<<>>=
+swim = fetchData("swim100m.csv")
+mod = lm(time ~ year + sex, data=swim) 
+@ 
+The first argument to \code{lm} is a model design, the second is the data frame.
+
+\datasetSwimming
+
+The object  created by \code{lm} --- here given the name \code{mod} --- contains a variety of
+information about the model.
+To access the coefficients themselves, use the \code{coef}
+\index{P}{coef@\texttt{coef}}
+\index{P}{Modeling!coef@\texttt{coef}}
+operator applied to the model:
+<<>>=
+coef(mod)
+@ 
+
+As shorthand to display the coefficients, just type the
+name of the object that is storing the model:
+<<>>=
+mod
+@ 
+
+A more detailed report can be gotten with the \code{summary}
+operator. 
+\index{P}{summary@\texttt{summary}!for \texttt{lm}}
+\index{P}{Modeling@regression report with \texttt{summary}}
+\index{P}{Regression report with \texttt{summary}}
+\index{C}{regression report!computing}
+ This gives additional statistical information
+that will be used in later chapters:
+<<results=hide>>=
+summary(mod)
+@ 
+<<echo=false,results=tex>>=
+print(xtable(summary(mod)), floating=FALSE)
+@ 
+
+\index{C}{model value!calculating}
+
+From time to time in the exercises, you will be asked to calculate
+model values ``by hand.''  This is accomplished by multiplying
+the coefficients by the appropriate values and adding them up.  For
+example, the model value for a male swimmer in 2010 would be:
+<<>>=
+555.7 - 0.2515*2010 - 9.798
+@ 
+Notice that the ``value'' used to multiply the intercept is always 1,
+and the ``value'' used for a categorical level is either 0 or 1
+depending on whether there is a match with the level.  In this example,
+since the swimmer in question was male, the value of \indicatorVar{sex}{M} is 1.
+If the swimmer had been female, the value for
+\indicatorVar{sex}{M} would have been 0.
+
+When a model includes interaction terms, the interaction coefficients
+need to be multiplied by all the values involved in the interaction.
+For example, here is a model with an interaction between \VN{year} and
+\VN{sex}:
+\index{C}{interaction term!computing model values}
+<<>>=
+mod2 = lm(time ~ year*sex, data=swim)
+coef(mod2)
+697.3 - 0.3240*2010 - 302.5 + 0.1499*2010
+@ 
+The \code{year:sexM} coefficient is being multiplied by the year
+(2010) and the value of \indicatorVar{sex}{M}, which is 1 for this
+male swimmer.
+
+\subsubsection*{Other Useful Operators}
+
+\begin{description}
+
+\index{P}{cross@\texttt{cross}*}
+\index{P}{Data!cross@\texttt{cross}*}
+\index{C}{crossing categorical variables}
+\index{C}{categorical variable!crossing}
+\item[\function{cross}] will combine two categorical variables into a single
+  variable.  For example, in the Current Population Survey data, the
+  variable \VN{sex} has levels F and M, while the variable \VN{race}
+  has levels W and NW.  Crossing the two variables combines them; the
+  new variable has four levels: F.NW, M.NW, F.W, M.W:
+<<results=hide>>=
+cps = fetchData("cps.csv")
+cross(cps$sex, cps$race)
+@ 
+<<echo=false,results=verbatim>>=
+brief.output( cross(cps$sex,cps$race), nstart=22 )
+@ 
+
+\index{P}{as.factor@\texttt{as.factor}}
+\index{P}{Data!as.factor@\texttt{as.factor}}
+\index{C}{categorical variable!from quantitative}
+\index{C}{quantitative variable!to categorical}
+\item[\function{as.factor}] will convert a quantitative variable to a categorical
+  variable.  This is useful when a quantity like \VN{month} has been
+  coded as a number, say 1 for January and 2 for February, etc.
+  but you do not want models to treat it as such.
+
+  To illustrate, consider two different models of the usage
+  temperature versus month:
+<<>>=
+utils = fetchData("utilities.csv")
+mod1 = lm(temp ~ month, data=utils)
+mod2 = lm(temp ~ as.factor(month), data=utils)
+@ 
+
+\datasetUtilities
+Here are the graphs of those models:
+
+<<util-mod1,fig=true,include=true>>=
+xyplot(temp + fitted(mod1) ~ month, data=utils)
+@ 
+
+<<util-mod2,fig=true,include=true>>=
+xyplot( temp + fitted(mod2) ~ month, data=utils )
+@ 
+
+
+
+\begin{comment}
+utils = read.csv("/users/kaplan/kaplanfiles/sbook/datasets/utilities.csv")
+mod1 = lm( temp ~ month, data=utils)
+xyplot( temp ~ month, data=utils, main="Model 1")
+trellis.focus()
+x = seq(1,12)
+y = 39.04 + 1.63*x
+llines(x,y,col='red',lwd=3)
+trellis.unfocus()
+\end{comment}
+
+\begin{comment}
+mod2 = lm( temp ~ as.factor(month)-1, data=utils)
+x = 1:12
+y = as.numeric( coefficients(mod2))
+xyplot( temp ~ month, data=utils, main="Model 2")
+trellis.focus()
+llines(  x,y, lwd=3, col='red')
+trellis.unfocus()
+\end{comment}
+
+In the first model, month is treated quantitatively, so the model term
+\VN{month} produces a straight-line relationship that does not
+correspond well to the data.
+
+In the second model, month is treated categorically, allowing a more
+complicated model relationship.
+
+% \item[abbreviate] shortens the names of factors
+
+\end{description}

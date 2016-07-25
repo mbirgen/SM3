@@ -1,0 +1,217 @@
+
+
+ 
+Fitting logistic models uses many of the same ideas as in linear
+models.
+
+\subsection{Fitting Logistic Models}
+
+\index{P}{glm@\texttt{glm}}
+\index{P}{Modeling!glm@\texttt{glm}}
+\index{C}{logistic regression!fitting}
+The \code{glm} operator fits logistic models.  (It also fits other
+kinds of models, but that's another story.)  \code{glm} takes model
+design and data arguments that are identical to their counterparts in
+\code{lm}.  Here's an example using the smoking/mortality data: \datasetWhickham
+\begin{Schunk}
+\begin{Sinput}
+> whickham = fetchData("whickham.csv")
+> mod = glm( outcome ~ age + smoker, data=whickham, 
+     family="binomial")
+\end{Sinput}
+\end{Schunk}
+The last argument, \texttt{family="binomial"}, simply specifies to
+\function{glm} that the logistic transformation should be used.
+\function{glm} is short for Generalized Linear Modeling, a broad label
+that covers logistic regression as well as other types of models
+involving links and transformations.
+
+\index{P}{summary@\texttt{summary}!for logistic regression}
+\index{P}{Modeling!summary@\texttt{summary}!for logistic regression}
+\index{P}{Hypothesis Testing!summary@\texttt{summary}!for logistic regression}
+The regression report is produced with the \code{summary} operator,
+which recognizes that the model was fit logistically and does the
+right thing:
+\begin{Schunk}
+\begin{Sinput}
+> summary(mod)
+\end{Sinput}
+\end{Schunk}
+
+% latex table generated in R 2.13.0 by xtable 1.5-6 package
+% Sun Aug 21 20:42:21 2011
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & z value & Pr($>$$|$z$|$) \\ 
+  \hline
+(Intercept) & -7.5992 & 0.4412 & -17.22 & 0.0000 \\ 
+  age & 0.1237 & 0.0072 & 17.23 & 0.0000 \\ 
+  smokerYes & 0.2047 & 0.1684 & 1.22 & 0.2242 \\ 
+   \hline
+\end{tabular}
+
+Keep in mind that the coefficients refer to the intermediate model
+values $Y$.  The probability $P$ will be $e^Y / (1 + e^Y )$.
+
+
+\subsection{Fitted Model Values}
+
+\index{P}{predict@\texttt{predict}!in logistic regression}
+\index{P}{fitted@\texttt{fitted}!in logistic regression}
+\index{P}{Modeling!predict@\texttt{predict}!in logistic regression}
+\index{P}{Modeling!fitted@\texttt{fitted}!in logistic regression}
+\index{C}{link value!in logistic regression}
+\index{C}{probability values!in logistic regression}
+
+Logistic regression involves two different kinds of fitted values:
+the intermediate ``link'' value $Y$ and the probability $P$.  The
+\code{fitted} operator returns the probabilities:
+\begin{Schunk}
+\begin{Sinput}
+> probs = fitted(mod) 
+\end{Sinput}
+\end{Schunk}
+There is one fitted probability value for each case.
+
+The link values can be gotten via the \code{predict} operator
+\begin{Schunk}
+\begin{Sinput}
+> predict(mod, type="link")
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+     1      2      3      4      5      6      7      8 
+-4.550 -5.168  1.387  0.688  0.317 -2.695 -1.829  1.801 
+     9     10     11     12     13     14 
+-4.136 -4.260 -4.136 -3.189 -5.126  1.511 
+... for 1314 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+
+Notice that the link values are not necessarily between zero and one.
+
+The \code{predict} operator can also be used to calculate the
+probability values.
+\begin{Schunk}
+\begin{Sinput}
+> predict(mod, type="response")
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+      1       2       3       4       5       6       7 
+0.01046 0.00566 0.80011 0.66542 0.57847 0.06330 0.13838 
+      8       9      10      11      12      13      14 
+0.85823 0.01573 0.01393 0.01573 0.03957 0.00591 0.81916 
+... for 1314 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+ 
+\noindent This is particularly useful when you want to use \code{predict} to
+find the model values for inputs other than that original data frame
+used for fitting.
+
+\subsection{Which Level is ``Yes''?}
+
+In fitting a logistic model, it's crucial that the response variable
+be categorical, with two levels.  It happens that in the
+\code{whickham} data, the \VN{outcome} variable fits the bill: the
+levels are \code{Alive} and \code{Dead}.
+
+The \code{glm} software will automatically recode the response
+variable as 0/1.  The question is, which level gets mapped to 1?  In
+some sense, it makes no difference since there are only two levels.
+But if you're talking about the probability of dying, it's nice not
+to mistake that for the probability of staying alive.  So make sure
+that you know which level in the response variable corresponds to 1:
+it's the second level.  
+
+Here is an easy way to make sure which level has been coded as ``Yes''.
+First, fit the all-cases-the-same model, \model{\VN{outcome}}{1}.  The
+fitted model value $P$ from this model will be the proportion of cases for
+which the outcome was ``Yes.''
+\begin{Schunk}
+\begin{Sinput}
+> mod2 = glm( outcome ~ 1, data=whickham, family="binomial")
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Sinput}
+> fitted(mod2)
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+    1     2     3     4     5 
+0.281 0.281 0.281 0.281 0.281 
+... for 1314 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+So, 28\% of the cases were ``Yes.''  But which of the two levels is ``Yes?''
+Find out just by looking at the proportion of each level:
+\begin{Schunk}
+\begin{Sinput}
+> props(outcome, data=whickham)
+\end{Sinput}
+\begin{Soutput}
+Alive  Dead 
+0.719 0.281 
+\end{Soutput}
+\end{Schunk}
+
+If you want to dictate which of the two levels is going to be encoded
+as 1, you can use a comparison operation to do so:
+\begin{Schunk}
+\begin{Sinput}
+> mod3 = glm( outcome=="Alive" ~ 1, data=whickham, 
+    family="binomial")
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Soutput}
+    1     2     3     4     5 
+0.719 0.719 0.719 0.719 0.719 
+... for 1314 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+
+In this model, ``Yes'' means \code{Alive}.
+
+\subsection{Analysis of Deviance}
+
+The same basic logic used in analysis of variance applies to logistic
+regression, although the quantity being broken down into parts is not
+the sum of squares of the residuals but, rather, the \newword{deviance}.
+
+The \code{anova} software will take apart a logistic model, term by
+term, using the order specified in the model.
+\index{P}{anova@\texttt{anova}!in logistic regression}
+\begin{Schunk}
+\begin{Sinput}
+> anova(mod, test="Chisq")
+\end{Sinput}
+\end{Schunk}
+
+% latex table generated in R 2.13.0 by xtable 1.5-6 package
+% Sun Aug 21 20:42:21 2011
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Deviance & Resid. Df & Resid. Dev & P($>$$|$Chi$|$) \\ 
+  \hline
+NULL &  &  & 1313 & 1560.32 &  \\ 
+  age & 1 & 613.81 & 1312 & 946.51 & 0.0000 \\ 
+  smoker & 1 & 1.49 & 1311 & 945.02 & 0.2228 \\ 
+   \hline
+\end{tabular}
+
+\noindent Notice the second argument, \code{test="Chisq"}, which instructs
+\code{anova} to calculate a p-value for each term.  This involves a
+slightly different test than the F test used in linear-model \ANOVA.
+
+The format of the \ANOVA\ table for logistic regression is somewhat
+different from that used in linear models, but the concepts of degrees
+of freedom and partitioning still apply.  The basic idea is to ask
+whether the reduction in deviance accomplished with the model terms is
+greater than what would be expected if random terms were used instead.

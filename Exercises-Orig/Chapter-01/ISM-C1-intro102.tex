@@ -1,0 +1,18 @@
+%% Author: Daniel Kaplan
+%% Subject R
+
+Try the following command:
+\begin{verbatim}
+> seq(1,5,by=.5,length=2)
+\end{verbatim}
+Why do you think the computer responded the way it did?
+\TextEntry
+
+\begin{AnswerText}
+The command specifies {\bf both} of the arguments \texttt{by} and
+\texttt{length}.  These arguments are inconsistent with one another:
+they would result in different sequences.
+The person who wrote the \texttt{seq} software was polite enough to
+warn you of such situations so that you can fix them.
+\end{AnswerText}
+

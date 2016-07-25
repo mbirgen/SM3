@@ -1,0 +1,457 @@
+ 
+
+
+One of the most surprising outcomes of the revolution in computing
+technology has been the discovery of diverse uses for randomness 
+in the analysis of data and in science generally.  Most young people
+have little trouble with the idea of a computer generating random data;
+they see it in computer games and simulations.  Older people,
+raised with the idea that computers do mathematical operations and
+that such operations are completely deterministic, sometimes find 
+computer-generated randomness suspect.  Indeed, conventional algebraic
+notation ($+$, $-$, $\sqrt{}$, $\cos$, and so on) has no
+notation for ``generate at random.''
+
+\index{C}{resampling}
+\index{P}{resample@\texttt{resample}*}
+\index{P}{Resampling!resample@\texttt{resample}*}
+\index{C}{coin flip!simulation}
+\index{P}{Simulations!coin flip}
+One of the simplest operators for generating random events is
+\code{resample}.  This takes two arguments: the first is a set of
+items to choose from at random, the second is how many events
+to generate.  Each item is equally likely to be
+choosen.  For example, here is a simulation of a coin flip:
+\begin{Schunk}
+\begin{Sinput}
+> coin = c("H","T")
+> resample(coin, 5)
+\end{Sinput}
+\begin{Soutput}
+[1] "H" "T" "T" "T" "H"
+\end{Soutput}
+\begin{Sinput}
+> resample(coin, 5)
+\end{Sinput}
+\begin{Soutput}
+[1] "H" "H" "H" "T" "T"
+\end{Soutput}
+\end{Schunk}
+The first command creates an object holding the possible outcome of
+each event, called \code{coin}.  The next command generated five
+events, each event being a random choice of the outcomes in
+\code{coin}.
+
+Another example is rolling dice.  First, construct a set of the
+possible outcomes: the numbers 1, 2, 3, 4, 5, 6.
+\begin{Schunk}
+\begin{Sinput}
+> die = seq(1,6)
+> die
+\end{Sinput}
+\begin{Soutput}
+[1] 1 2 3 4 5 6
+\end{Soutput}
+\end{Schunk}
+Then generate random events.  Here is a roll of two dice.
+\begin{Schunk}
+\begin{Sinput}
+> resample(die,2)
+\end{Sinput}
+\begin{Soutput}
+[1] 4 5
+\end{Soutput}
+\end{Schunk}
+
+The \function{resample} function is also useful for selecting cases at
+random from a data frame.  This use will be the basis for statistical
+methods introduced in later chapters. 
+
+
+\subsection{Random Draws from Probability Models}
+
+Although \function{resample} is useful for random sampling, it can work
+only with finite sets of possible outcomes such as H/T or 1/2/3/4/5/6
+or the cases in a data frame.  By default in \function{resample}, the 
+underlying probability model is
+\newword{equiprobability} --- each possible outcome is equally likely.
+You can specify another probability model by using the \code{prob=} argument
+to \function{resample}. For instance, to flip coins that are very likely to come up heads:
+\begin{Schunk}
+\begin{Sinput}
+> resample( coin, 10, prob=c(.9,.1))
+\end{Sinput}
+\begin{Soutput}
+ [1] "H" "H" "H" "H" "H" "H" "H" "H" "H" "T"
+\end{Soutput}
+\end{Schunk}
+
+R provides other operators that allow
+draws to be made from outcome sets that are infinite.
+
+\index{C}{probability model!sampling from}
+
+For example, the \function{rnorm} function makes random draws from a
+normal probability distribution.  The required argument tells how many
+draws to make.  Optional, named arguments let you specify the mean and
+standard deviation of the particular normal distribution that you
+want.  To illustrate, here is a set of 15 random numbers from a normal
+distribution with mean 1000 and standard deviation 75:
+\begin{Schunk}
+\begin{Sinput}
+> samps = rnorm(15, mean=1000, sd=75)
+> samps
+\end{Sinput}
+\begin{Soutput}
+ [1]  977  941 1000  996  934 1029  995 1079  969  935 1017
+[12]  992 1023 1022 1046
+\end{Soutput}
+\end{Schunk}
+In this example, the output was assigned to an object \code{samps}
+to facilitate some additional computations to the
+values.  For instance, here is the mean and standard deviation of the
+sample:
+\begin{Schunk}
+\begin{Sinput}
+> mean(samps)
+\end{Sinput}
+\begin{Soutput}
+mean 
+ 997 
+\end{Soutput}
+\begin{Sinput}
+> sd(samps)
+\end{Sinput}
+\begin{Soutput}
+  sd 
+41.5 
+\end{Soutput}
+\end{Schunk}
+Don't be surprised that the mean and standard deviation of the sample
+don't match exactly the parameters that were set with the arguments
+\code{mean=1000, sd=75}.  The sample was drawn at random and so the
+sample statistics are going to vary from one sample to the next.  Part
+of the statistical methodology to be studied in later chapters has to
+do with determining how close the statistics calculated from a sample
+are likely to be to the parameters of the underlying population.
+
+Often you will generate very large samples.  In these situations you
+usually don't want to display all the samples, just do calculations
+with them.  The practical limits of ``large'' depend on the computer
+you are using and how much time you are willing to spend on a
+calculation.   For an operator like \code{rnorm} and the others to be
+introduced in this chapter, it's feasible to generate samples of size
+10,000 or 100,000 on an ordinary laptop computer.  
+\begin{Schunk}
+\begin{Sinput}
+> samps = rnorm(100000, mean=1000, sd=75)
+> mean( samps )
+\end{Sinput}
+\begin{Soutput}
+mean 
+1000 
+\end{Soutput}
+\begin{Sinput}
+> sd( samps )
+\end{Sinput}
+\begin{Soutput}
+  sd 
+75.3 
+\end{Soutput}
+\end{Schunk}
+Notice that the sample mean and standard deviation are quite close to
+the population parameters in this large sample.  (Remember not to put commas in as punctuation in large numbers: it's \code{100000} not 100,000.)
+
+The simulations that you will do in later chapters
+will be much more elaborate than the simple draws here.  Even with 
+today's computers, you will want to use only a few hundred trials.
+
+\subsection{Standard Probability Models}
+
+R provides a large set of operators like \code{rnorm} for different
+probability models.  All of these operators work in the same way:
+\begin{itemize}
+\item Each has a required first argument that gives the number of
+draws to make.
+
+\item Each has an optional set of parameters that specify the
+particular probability distribution you want.
+\end{itemize}
+
+All the operators start with the letter \code{r} --- standing for
+``random'' --- followed by the name of the probability model:
+
+\bigskip
+\centerline{\begin{tabular}{llp{2.3in}l}
+Family & R name & Parameters & \\\hline
+Normal & \texttt{rnorm} & \texttt{mean},\texttt{sd} & continuous\\
+Uniform & \texttt{runif} & \texttt{min},\texttt{max} & continuous\\
+Binomial & \texttt{rbinom}& \texttt{size},\texttt{prob} & discrete\\
+Poisson & \texttt{rpois}& Average rate (written \texttt{lambda})& discrete \\
+Exponential & \texttt{rexp}& Same rate as in poisson but the parameter
+is called \texttt{rate}.& continuous \\
+Lognormal & \texttt{rlnorm}& Mean and sd of the natural
+logarithm. \texttt{meanlog}, \texttt{sdlog}& continuous \\
+$\chi^2$ & \texttt{rchisq} & Degrees of freedom (\texttt{df})&continuous \\
+t & \texttt{rt} & Degrees of freedom (\texttt{df})&continuous\\
+F & \texttt{rf} & Degrees of freedom in the numerator and in the
+denominator (\texttt{df1}, \texttt{df2})&continuous\\
+\end{tabular}}
+\bigskip
+\index{P}{rnorm@\texttt{rnorm}}
+\index{P}{runif@\texttt{runif}}
+\index{P}{rpois@\texttt{rpois}}
+\index{P}{rexp@\texttt{rexp}}
+\index{P}{rlnorm@\texttt{rlnorm}}
+\index{P}{rchisq@\texttt{rchisq}}
+\index{P}{rf@\texttt{rf}}
+\index{P}{rt@\texttt{rt}}
+\index{P}{rbinom@\texttt{rbinom}}
+\index{P}{Probability!random generators}
+
+
+To use these operators, you first must choose a particular probability
+model based on the setting that applies in your situation.  This
+setting will usually indicate what the population parameters should
+be.  Some examples:
+\begin{itemize}
+
+\item You are in charge of a hiring committee 
+that is  going to interview three candidates selected from a
+population of job applicants that is 63\% female.  How many of the
+interviewees will be female?  Modeling this as random selection from
+the applicant pool, a binomial model is appropriate.  The \code{size}
+of each trial is 3, the probability of being female is 63\%:
+\begin{Schunk}
+\begin{Sinput}
+> samps = rbinom(40, size=3, prob=0.63)
+> samps
+\end{Sinput}
+\begin{Soutput}
+ [1] 1 3 2 2 1 2 3 1 1 1 1 2 2 2 2 1 2 1 2 2 2 1 3 1 2 1 2 1
+[29] 2 2 1 3 1 3 2 2 2 2 2 2
+\end{Soutput}
+\end{Schunk}
+There are 40 trials here, since the first argument was set to 40.
+Remember, each of the trials is a simulation of one hiring event.  In
+the first simulated event, two of the interviewees were female; in the
+third only one was female.  Typically, you will be summarizing all the
+simulations, for example to see how likely each possible outcome is.
+\begin{Schunk}
+\begin{Sinput}
+> table(samps)
+\end{Sinput}
+\begin{Soutput}
+samps
+ 1  2  3 
+14 21  5 
+\end{Soutput}
+\end{Schunk}
+
+\item You want to simulate the number of customers who come into a
+store over the course of an hour.  The average rate is 15 per hour.
+To simulate a situation where customers arrive randomly, the poisson
+model is appropriate:
+\begin{Schunk}
+\begin{Sinput}
+> rpois(25, lambda=15)
+\end{Sinput}
+\begin{Soutput}
+ [1] 18 15 13 15 14 15 19 10 17 25 13 13  8 19 14 13  8 19
+[19] 13 23 12 16 13 11 19
+\end{Soutput}
+\end{Schunk}
+
+\item You want to generate a simulation of the interval between
+earthquakes as in Example \ref{example:earthquake-intervals}.  To
+simulate the random intervals with a typical rate of 0.03 earthquakes
+per year, you would use
+\begin{Schunk}
+\begin{Sinput}
+> rexp( 15, rate=0.03 )
+\end{Sinput}
+\begin{Soutput}
+ [1]  16.48  13.43  18.74  44.05 129.50  66.52  39.94   5.31
+ [9]  14.65  21.42  72.14  45.95  21.64  14.64  26.51
+\end{Soutput}
+\end{Schunk}
+
+Notice the huge variation in the intervals, from less than half a year
+to almost 90 years between earthquakes.
+
+\end{itemize}
+
+\subsection{Coverage Intervals}
+
+\index{C}{coverage interval!computing}
+
+You will often need to compute coverage intervals in order to describe 
+the range of likely outcomes from a random process.  R provides a
+series of operators for this purpose; a separate operator for each
+named probability model.  The operators all begin with \code{q},
+standing for \newword{quantiles}.  In all cases, the first argument is
+the set of quantiles you want to calculate for the particular
+probability model.  The optional named arguments are the parameters.
+
+\index{C}{coverage interval!level}
+Remember
+that to find a 95\% coverage interval you need the 0.025 and 0.975
+quantiles.  For a 99\% interval, you need the 0.005 and 0.995
+quantiles.
+
+To illustrate, here are 95\% coverage intervals for a few
+probability models. 
+\begin{itemize}
+\item A normal distribution with mean 0 and standard deviation 1:
+\begin{Schunk}
+\begin{Sinput}
+> qnorm( c(0.025, 0.975), mean=0, sd=1)
+\end{Sinput}
+\begin{Soutput}
+[1] -1.96  1.96
+\end{Soutput}
+\end{Schunk}
+> 
+
+\item The hiring committee situation modelled by a binomial
+distribution with \code{size=3} and \code{prob=0.63}:
+\begin{Schunk}
+\begin{Sinput}
+> qbinom( c(0.025, 0.975), size=3, prob=0.63)
+\end{Sinput}
+\begin{Soutput}
+[1] 0 3
+\end{Soutput}
+\end{Schunk}
+
+Perhaps you are surprised to see that the coverage interval includes
+all the possible outcomes.  That's because the number of cases in each
+trial ($n=3$) is quite small. 
+
+\item The number of customers entering a store during an hour 
+as modelled by a poisson
+distribution with an average rate of 15 per hour.
+\begin{Schunk}
+\begin{Sinput}
+> qpois( c(0.025, 0.975), lambda=15)
+\end{Sinput}
+\begin{Soutput}
+[1]  8 23
+\end{Soutput}
+\end{Schunk}
+
+\item The interval between earthquakes modelled by an exponential
+distribution with a typical rate of 0.03 earthquakes per year:
+\begin{Schunk}
+\begin{Sinput}
+> qexp( c(.025, .975), rate=0.03)
+\end{Sinput}
+\begin{Soutput}
+[1]   0.844 122.963
+\end{Soutput}
+\end{Schunk}
+\end{itemize}
+
+\index{P}{quantiles!q-functions}
+\index{P}{Probability!q operators}
+\index{C}{quantiles!computing}
+
+You can also use the \code{q} operators to find the value that would
+be at a particular percentile.  For example, the exponential model with \code{rate=0.03} 
+gives the 25th percentile of
+the interval between earthquakes as:
+\begin{Schunk}
+\begin{Sinput}
+> qexp( .25, rate=0.03)
+\end{Sinput}
+\begin{Soutput}
+[1] 9.59
+\end{Soutput}
+\end{Schunk}
+A quarter of the time, the interval between earthquakes will be 9.59
+years or less.
+
+It's entirely feasible to calculate percentiles and 
+coverage intervals by combining
+the random-number generators with \code{quantile}.  For example, here
+is the 95\% coverage interval from a normal distribution with mean 0
+and standard deviation 1:
+\begin{Schunk}
+\begin{Sinput}
+> samps = rnorm(10000, mean=0, sd=1)
+> qdata( c(.025, .975), samps )
+\end{Sinput}
+\begin{Soutput}
+ 2.5% 97.5% 
+-1.99  1.95 
+\end{Soutput}
+\end{Schunk}
+The disadvantage of this approach is that it is a simulation and the
+results will vary randomly.  By making the sample size large enough
+--- here it is $n=10000$ --- you can reduce the random variation. 
+Using the \code{q} operators uses mathematical analysis to give 
+you what is effectively an
+infinite sample size.  For this reason, it's advisable to use the
+\code{q} operators when you can.  However, for many of the techniques to
+be introduced in later chapters you will have to generate a random
+sample and then apply \code{quantile} to approximate the coverage intervals.
+
+\subsection{Percentiles}
+
+\index{P}{percentile!p-functions}
+\index{C}{percentile!computing}
+\index{P}{Probability!p operators}
+\index{P}{Probability!q operators}
+
+A percentile computation applies to situations where you have a
+measured value and you want to know where that value ranks relative to
+the entire set of possible outcomes.  You have already seen
+percentiles computed from samples; they also apply to probability models.
+
+It's easy to confuse percentiles with quantiles because they are so
+closely related.
+Mathematically, the percentile operators are the inverse of the
+quantile operators. 
+To help you remember which is which, it's helpful to distinguish them
+based on the type of argument that you give to the operator:
+\begin{description}
+\item[Percentile] The input 
+argument is a measured value, something that could be the
+output of a single draw from the probability distribution. The output
+is always a number between 0 and 1 --- a percentile. 
+
+\item[Quantile] The input is a percentile, a number between 0 and 1.
+The output is on the scale of the measured variable.
+\end{description}
+
+
+Example:  You have just gotten your score, 670, on a professional school
+admissions test.  According to the information published by the
+testing company, the scores are normally distributed with a mean of
+600 and a standard deviation of 100.  So, your ranking on the test, as
+indicated by a percentile, is:
+\begin{Schunk}
+\begin{Sinput}
+> pnorm(670, mean=600, sd=100)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.758
+\end{Soutput}
+\end{Schunk}
+Your score is at about the 75th percentile.  
+
+Example: Unfortunately, the professional school that you want to go to
+accepts only students with scores in the top 15 percent.  Your score,
+at 75.8\%, isn't good enough.  So, you will study some more and take
+practice tests until your score is good enough.
+How well will you need to score to reach the 85th percentile?
+\begin{Schunk}
+\begin{Sinput}
+> qnorm(0.85, mean=600, sd=100)
+\end{Sinput}
+\begin{Soutput}
+[1] 704
+\end{Soutput}
+\end{Schunk}
+
+

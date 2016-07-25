@@ -1,0 +1,23 @@
+%% Author: Daniel Kaplan
+%% Subject: R (basics)
+
+The following statement gives a result that some people are surprised by
+\begin{verbatim}
+> 10e3 == 1000
+[1] FALSE
+\end{verbatim}
+Explain why the result was FALSE rather than TRUE.
+
+\begin{MultipleChoice}
+\wrong{10e3 is 100, not 1000}
+\correct{10e3 is 10000, not 1000}
+\wrong{10e3 is not a valid number}
+\wrong{It should be true; there's a bug in the software.}
+\end{MultipleChoice}
+
+\begin{AnswerText}
+The computer returns \texttt{FALSE} because the quantities being
+compared with \texttt{==} are not equal. \texttt{10e3} is ten-thousand
+in scientific notation.  It's \texttt{1e3} that is one-thousand.
+\end{AnswerText}
+

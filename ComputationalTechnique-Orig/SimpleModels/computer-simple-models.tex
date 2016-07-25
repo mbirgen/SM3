@@ -1,0 +1,262 @@
+
+
+
+Calculating means and other simple statistics is a matter of using the
+right function in R.  The \pkg{mosaic} package --- which you should
+load in to R as shown in Section \ref{sec:loading-mosaic} --- makes it
+straightforward to calculate either a ``grand'' statistic or a
+``group-wise'' statistic.   To illustrate:
+
+\noindent Load the \pkg{mosaic} package, needed only once per session:
+\begin{Schunk}
+\begin{Sinput}
+> require(mosaic) 
+\end{Sinput}
+\end{Schunk}
+
+\noindent Read in data you are interested in analyzing, for instance
+the Cherry-Blossom 2008 data described earlier: \datasetCherryBlossomEight
+\begin{Schunk}
+\begin{Sinput}
+> runners = fetchData("Cherry-Blossom-2008.csv")
+> names( runners )
+\end{Sinput}
+\begin{Soutput}
+[1] "position" "division" "total"    "name"     "age"     
+[6] "place"    "net"      "gun"      "sex"     
+\end{Soutput}
+\end{Schunk}
+
+\noindent Calculate a grand mean on the ``gun'' time --- the time from
+the start of the race, signalled by a gun, and when each runner
+crossed the finish line:
+\begin{Schunk}
+\begin{Sinput}
+> mean( gun, data=runners )
+\end{Sinput}
+\begin{Soutput}
+[1] 93.7
+\end{Soutput}
+\end{Schunk}
+\noindent Or other ``grand'' statistics.
+
+\begin{Schunk}
+\begin{Sinput}
+> median( gun, data=runners )
+\end{Sinput}
+\begin{Soutput}
+[1] 93.7
+\end{Soutput}
+\begin{Sinput}
+> sd( gun, data=runners )
+\end{Sinput}
+\begin{Soutput}
+[1] 15
+\end{Soutput}
+\end{Schunk}
+
+To tell R that you want to break the statistics down by groups, use
+the \verb+~+ notation, pronounced ``\newword{tilde}.''  You will be
+using this notation frequently in building models.  It means, ``model
+by'' or ``broken down by'' or ``versus.''
+\begin{Schunk}
+\begin{Sinput}
+> mean( gun ~ sex, data=runners )
+\end{Sinput}
+\begin{Soutput}
+  sex    S    N Missing
+1   F 98.8 6397       0
+2   M 88.3 5905       0
+\end{Soutput}
+\end{Schunk}
+
+Other statistics work the same way, for instance,
+\begin{Schunk}
+\begin{Sinput}
+> sd( gun ~ sex, data=runners )
+\end{Sinput}
+\begin{Soutput}
+  sex    S    N Missing
+1   F 13.3 6397       0
+2   M 14.7 5905       0
+\end{Soutput}
+\end{Schunk}
+
+Another example ... wage broken down by sector of the economy, using
+data :
+\begin{Schunk}
+\begin{Sinput}
+> cps = fetchData("cps.csv")
+> mean( wage ~ sector, data=cps )
+\end{Sinput}
+\begin{Soutput}
+    sector     S   N Missing
+1 clerical  7.42  97       0
+2    const  9.50  20       0
+3    manag 12.70  55       0
+4    manuf  8.04  68       0
+5    other  8.50  68       0
+6     prof 11.95 105       0
+7    sales  7.59  38       0
+8  service  6.54  83       0
+\end{Soutput}
+\end{Schunk}
+
+In the Whickham smoking data example, the outcome for each person was
+not a number but a category: Alive or Dead at the time of the
+follow-up.  \datasetWhickham
+\begin{Schunk}
+\begin{Sinput}
+> w = fetchData("whickham.csv")
+> names(w)
+\end{Sinput}
+\begin{Soutput}
+[1] "outcome" "smoker"  "age"    
+\end{Soutput}
+\begin{Sinput}
+> levels(w$outcome)
+\end{Sinput}
+\begin{Soutput}
+[1] "Alive" "Dead" 
+\end{Soutput}
+\end{Schunk}
+
+To find the proportion of people who were alive at the end of the
+20-year follow-up period, you can use a computational trick.  Convert
+the \VN{outcome} variable to \texttt{TRUE} or \texttt{FALSE} to
+indicate whether an individual is alive, then take the mean of the
+true/false values.  R, like many computer languages, treats
+\texttt{TRUE} as 1 and \texttt{FALSE} as 0 for the purposes of doing arithmetic.
+\begin{Schunk}
+\begin{Sinput}
+> mean( outcome=="Alive", data=w )
+\end{Sinput}
+\begin{Soutput}
+[1] 0.719
+\end{Soutput}
+\end{Schunk}
+
+Here's the breakdown according to smoking status:
+\begin{Schunk}
+\begin{Sinput}
+> mean( outcome=="Alive" ~ smoker, data=w )
+\end{Sinput}
+\begin{Soutput}
+  smoker     S   N Missing
+1     No 0.686 732       0
+2    Yes 0.761 582       0
+\end{Soutput}
+\end{Schunk}
+
+A more meaningful question is whether smokers are different from
+non-smokers when holding other variables constant, such as age.  To
+address this question, you need to add age into the model.
+
+It might be natural to consider
+each age --- 35, 36, 37, and so on --- as a separate group, but you
+won't get very many members of each group.  And, likely, the data for
+35 year-olds has quite a lot to say about 36 year-olds, so it doesn't
+make sense to treat them as completely separate groups.
+
+You can use the \function{cut} function to divide up a quantitative
+variable into groups.  You get to specify the breaks between groups.
+\begin{Schunk}
+\begin{Sinput}
+> w$ageGroups = cut(w$age, breaks=c(0,30,40,53,64,75,100) )
+> mean( outcome=="Alive" ~ ageGroups, data=w )
+\end{Sinput}
+\begin{Soutput}
+  ageGroups     S   N Missing
+1    (0,30] 0.979 288       0
+2   (30,40] 0.948 252       0
+3   (40,53] 0.832 280       0
+4   (53,64] 0.625 251       0
+5   (64,75] 0.201 169       0
+6  (75,100] 0.000  74       0
+\end{Soutput}
+\begin{Sinput}
+> mean( outcome=="Alive" ~ smoker + ageGroups, data=w )
+\end{Sinput}
+\begin{Soutput}
+   smoker ageGroups     S   N Missing
+1      No    (0,30] 0.982 165       0
+2     Yes    (0,30] 0.976 123       0
+3      No   (30,40] 0.955 134       0
+4     Yes   (30,40] 0.941 118       0
+5      No   (40,53] 0.876 113       0
+6     Yes   (40,53] 0.802 167       0
+7      No   (53,64] 0.669 127       0
+8     Yes   (53,64] 0.581 124       0
+9      No   (64,75] 0.214 131       0
+10    Yes   (64,75] 0.158  38       0
+11     No  (75,100] 0.000  62       0
+12    Yes  (75,100] 0.000  12       0
+\end{Soutput}
+\end{Schunk}
+
+With modeling techniques, to be introduced in later chapters, you can use
+quantitative variables without the need to divide them into groups.
+
+\subsection{Model Values and Residuals}
+
+
+A group-wise model tells you a model value for each group, but often
+you will need these in a case-by-case format: the model value for each
+case in a data set.  The \function{fitted} function carries out
+this simple calculation, taking each case in turn, figuring out which
+group it belongs to, and then returning the set of model values for
+all the cases.  It requires two arguments: the group-wise model and
+the data on which the model was based.  For example:
+
+\index{P}{fitted}
+\index{P}{fetchData}
+
+\begin{Schunk}
+\begin{Sinput}
+> kids = fetchData("kidsfeet.csv")
+> mod = mean( width ~ sex, data=kids )
+> fitted( mod, kids )
+\end{Sinput}
+\begin{Soutput}
+ [1] 9.19 9.19 9.19 9.19 9.19 9.19 9.19 8.78 8.78 9.19 9.19
+[12] 9.19 9.19 9.19 8.78 8.78 8.78 8.78 8.78 8.78 9.19 9.19
+[23] 8.78 8.78 8.78 9.19 8.78 9.19 9.19 9.19 8.78 8.78 8.78
+[34] 9.19 9.19 8.78 8.78 8.78 8.78
+\end{Soutput}
+\end{Schunk}
+
+The residuals are found by subtracting the case-by-case model value
+from the actual values for each case.  
+\begin{Schunk}
+\begin{Sinput}
+> res = kids$width - fitted(mod, kids)
+\end{Sinput}
+\end{Schunk}
+Take care to use the same quantitative variable (\VN{width} in this case) from the
+data as was used in constructing the model.
+
+The \function{var} function will calculate the variance:
+\begin{Schunk}
+\begin{Sinput}
+> var( kids$width )  # overall variation
+\end{Sinput}
+\begin{Soutput}
+ var 
+0.26 
+\end{Soutput}
+\begin{Sinput}
+> var( fitted(mod, kids) ) # variation in model values
+\end{Sinput}
+\begin{Soutput}
+   var 
+0.0422 
+\end{Soutput}
+\begin{Sinput}
+> var( kids$width - fitted(mod, kids) ) # residual variation
+\end{Sinput}
+\begin{Soutput}
+  var 
+0.217 
+\end{Soutput}
+\end{Schunk}
+

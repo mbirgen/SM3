@@ -1,0 +1,51 @@
+%% Author: Daniel Kaplan
+%% Subject: Group Means
+%% Title: Practice with Means
+
+Create a spreadsheet with the three variables \VN{distance}, \VN{team}, and \VN{position}, in the following way:
+
+\medskip
+
+\centerline{\begin{tabular}{rll}
+\VN{distance} & \VN{team} & \VN{position}\\\hline
+5 & Eagles & center\\
+12 & Eagles & forward\\
+11 & Eagles & end\\
+2 & Doves & center\\
+18 & Doves & end\\
+12 & Penguins & forward\\
+15 & Penguins & end\\
+19 & Eagles & back\\
+5 & Penguins & center\\
+12 & Penguins & back\\
+\end{tabular}}
+
+\medskip
+
+\begin{enumerate}[(a)]
+\item After entering the data, you can calculate the mean \VN{distance} in various ways.
+\begin{itemize}
+\item What is the grand mean distance?\\
+\SelectSetHoriz{11.1}{4,9.25,10,11,11.1,11.75,12,14.67,15.5}
+\item What is the group mean distance for the three teams?
+\begin{itemize}
+\item Eagles \SelectSetHoriz{11.75}{4,9.25,10,11,11.1,11.75,12,14.67,15.5}
+\item Doves \SelectSetHoriz{10}{4,9.25,10,11,11.1,11.75,12,14.67,15.5}
+\item Penguins \SelectSetHoriz{11}{4,9.25,10,11,11.1,11.75,12,14.67,15.5}
+\end{itemize}
+\item What is the group mean distance for the following positions?
+\begin{itemize}
+\item back \SelectSetHoriz{15.5}{4,9.25,10,11,11.1,11.75,12,14.67,15.5}
+\item center \SelectSetHoriz{4}{4,9.25,10,11,11.1,11.75,12,14.67,15.5}
+\item end \SelectSetHoriz{14.67}{4,9.25,10,11,11.1,11.75,12,14.67,15.5}
+\end{itemize}
+\end{itemize}
+
+\item Now, just for the sake of developing an understanding of group means, you are going to change the \VN{dist} data.  Make up values for \VN{dist} so that the mean \VN{dist} for Eagles is 14, for Penguins is 13, and for Doves is 15.
+
+Cut and paste the output from R showing the means for these groups and then the means taken group-wise according to \VN{position}.  \TextEntry
+
+\item Now arrange things so that the means are as stated in (b) but {\bf every} case has a residual of either $1$ or $-1$.
+
+\end{enumerate}
+

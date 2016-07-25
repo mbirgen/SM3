@@ -1,0 +1,42 @@
+<!--  Author: Daniel Kaplan -->
+<!--  Subject: Computing (basic data manipulation) -->
+
+Read in the file `kidsfeet.csv`.  For each of the following, hand
+in the R statements to find what is asked for.  Provide both the
+command you give and the output of the command.
+
+
+
+#. The names of the variables.YOUR ANSWER HERE.itemname=names]
+
+#. The mean of the foot `width` variable.YOUR ANSWER HERE.itemname=width]
+
+#.  Which of the cases are girls.YOUR ANSWER HERE.itemname=girls]
+
+#.  The mean foot `width` for the subset of data for the
+  girls.YOUR ANSWER HERE.itemname=girlfeet]
+
+
+
+
+Of no particular statistical value, but to review the use of logical
+operators: 
+
+
+
+
+#. The mean foot `width` for the subset of data for people
+whose bigger foot is left and dominant hand is also left.YOUR ANSWER HERE.
+
+
+And, for some extra practice in using logical operators:
+
+
+
+#. The mean foot `width` for the subset of data for people
+who are either male or whose bigger foot matches the dominant hand. 
+YOUR ANSWER HERE.
+#. The mean foot `width` for the subset of data for people
+whose bigger foot does NOT match the dominant hand.YOUR ANSWER HERE.
+
+

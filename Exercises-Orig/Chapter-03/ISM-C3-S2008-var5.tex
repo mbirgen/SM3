@@ -1,0 +1,52 @@
+%% Author: Daniel Kaplan
+%% Subject: Data manipulation (taking subsets)
+
+
+To exercise your ability to extract subsets of data, 
+take each of the following subsets of the swimming records in 
+\datasetSwimming
+ and calculate
+the mean and minimum swimming time for the subset.  (Answers have been
+rounded to one decimal place.)
+\begin{itemize}
+\item All records between 1920 and 1940 (including 1920 and 1940).
+
+Mean: \SelectSetHoriz{64.7}{54.6,60.2,64.7,69.6,71.3}
+
+Min: \SelectSetHoriz{56.4}{56.4,60.2,64.7,69.6,71.3}
+
+\item Female records in the 1970s and 1980s
+
+Mean: \SelectSetHoriz{56.2}{54.1,54.7,56.2,60.2,64.7,69.6,71.3}
+
+Min: \SelectSetHoriz{54.7}{54.1,54.7,56.2,60.2,64.7,69.6,71.3}
+
+
+\item All records that are {\bf slower} than 60 seconds.  (Hint: Think
+  what ``slower'' means in terms of the swimming times.)
+
+Mean: \SelectSetHoriz{69.6}{56.2,60.2,64.7,69.6,71.3,73.2,75.8}
+
+Min: \SelectSetHoriz{60.2}{56.2,60.2,61.5,64.7,69.6,71.3}
+\end{itemize}
+
+\begin{AnswerText}
+\begin{verbatim}
+> s = subset( swim, year >=1920 & year <=1940)
+> mean(s$time)
+[1] 64.675
+> min(s$time)
+[1] 56.4
+> s = subset( swim, sex == 'F' & year >=1970 & year < 1990)
+> mean(s$time)
+[1] 56.22571
+> min(s$time)
+[1] 54.73
+> s = subset( swim, time > 60)
+> mean(s$time)
+[1] 69.61667
+> min(s$time)
+[1] 60.2
+\end{verbatim}
+\end{AnswerText}
+

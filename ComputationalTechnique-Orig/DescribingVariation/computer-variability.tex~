@@ -1,0 +1,275 @@
+To illustrate computer techniques for describing variability, I will
+use the data that Galton collected on the heights of adult children
+and their parents.\cite{hanley-2004} These are in a modern,
+case/variable format in the file
+\texttt{galton.csv}. \datasetGalton
+
+\begin{verbatim}
+> galton = read.csv("galton.csv")
+\end{verbatim}
+
+
+\sectionone{Simple Statistical Calculations}
+
+Simple numerical descriptions are easy to compute.  Here are the mean,
+median, standard deviation and variance of the children's heights (in
+inches).
+\begin{verbatim}
+> mean( galton$height )
+[1] 66.76069
+> median( galton$height )
+[1] 66.5
+> sd( galton$height )
+[1] 3.582918
+> var( galton$height )
+[1] 12.83730
+\end{verbatim}
+Notice that the variance (\code{var})
+is just the square of the standard deviation (\code{sd}); having both
+operators is just a convenience.
+
+Computing percentiles is done with the \code{quantile} operator.  The
+first argument is the data on which you want to compute the
+percentile, the second specifies which percentiles you want.  The
+\code{quantile} operator is arranged so that the percentile is given
+as a decimal, so use 0.50 to indicate that you want the 50-th
+percentile.  Examples:  
+
+\begin{itemize}
+\item The 25th percentile:
+\begin{verbatim}
+> quantile( galton$height, 0.25 )
+25% 
+ 64 
+\end{verbatim}
+
+\item The 25th and 75th percentile in a single command --- in other
+  words, the 50 percent coverage interval:
+\begin{verbatim}
+> quantile( galton$height, c(0.25, 0.75) )
+ 25%  75% 
+64.0 69.7 
+\end{verbatim}
+
+\item The 2.5th and 97.5th percentile --- in other words, the 95
+  percent coverage interval:
+\begin{verbatim}
+> quantile( galton$height, c(0.025, 0.975) )
+ 2.5% 97.5% 
+   60    73 
+\end{verbatim}
+\end{itemize}
+
+The interquartile range is the width of the 50 percent coverage
+interval:
+\begin{verbatim}
+> IQR(galton$height)
+[1] 5.7
+\end{verbatim}
+
+Some other useful operators are \code{min}, \code{max}, and
+\code{range}.  
+
+For convenience, the \code{summary} operator gives a quick description
+of a quantitative variable:
+\begin{verbatim}
+> summary(galton$height)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  56.00   64.00   66.50   66.76   69.70   79.00 
+\end{verbatim}
+
+
+
+In exercises in later chapters, you will need to compute the sum of
+squares of quantitative variables and of residuals.  This is done by
+connecting simple computations: squaring then summing.
+\begin{verbatim}
+> sum( galton$height^2 )
+[1] 4013892
+\end{verbatim}
+
+In all of these examples, the operator has been applied directly to a
+variable in a data frame.  Of course, any of these operators can be applied to
+any vector.  For example, here is the standard deviation of the
+numbers $1, 2, 3, \cdots, 100$:
+\begin{verbatim}
+> mean( seq(1,100))
+[1] 50.5
+\end{verbatim}
+
+\sectionone{Residuals and Sums of Squares}
+
+
+The residual from the mean can be computed like this:
+\begin{verbatim}
+> resids = galton$height - mean(galton$height)
+\end{verbatim}
+Remember that each case has its own residual.  There are 898 cases in
+the Galton data, so there are 898 residuals.
+\begin{verbatim}
+> resids
+[1]     6.43931   2.43931   2.23931   2.23931
+[5]     6.73931   5.73931  -1.26069  -1.26069
+        ... and so on ...
+[893]   1.93931   1.73931   0.93931  -2.76069
+[897]  -3.26069  -3.76069
+\end{verbatim}
+The sum of squares is 
+\begin{verbatim}
+> sum(resids^2)
+[1] 11515
+\end{verbatim}
+
+\sectionone{Simple Statistical Graphics}
+
+There are several basic types of statistical graphics to display
+the distribution of a variable: histograms, density plots, and
+boxplots.  These are easily mastered by example.
+
+\bigskip
+[[[[[[[[NOTE to editor: need to have \code{library(lattice)} and the various
+parameter settings in the start-up file.]]]]]]
+\bigskip
+
+\sectiontwo{Histograms}
+
+Constructing a histogram involves dividing the range of a variable up
+into bins and counting how many cases fall into each bin.  This is
+done in an almost entirely automatic way:
+\begin{verbatim}
+> histogram( galton$height )
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{hist1.pdf}
+
+When constructing a histogram, R makes an automatic but sensible
+choice of the number of bins.  If you like, you can control this
+yourself.  For instance:
+\begin{verbatim}
+> histogram( galton$height, breaks=25 )
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{hist2.pdf}
+
+The  horizontal axis of the histogram is always in the units of the variable.
+For the histograms above, the  horizontal axis is in ``inches'' because that
+is the unit of the \verb+galton$height+ variable.  
+
+The vertical axis is conventionally drawn in one of three ways:
+controlled by an optional argument named \code{type}.
+\begin{description}
+\item[Absolute Frequency or Counts]  A simple count of the number of cases that
+  falls into each bin.  This mode is set by setting
+  \code{type="count"} as in \verb+histogram(galton$height, type="count")+.
+\item[Relative Frequency] The vertical axis is scaled so that the 
+height of the bar give the proportion of cases that fall into the
+bin.  This is the default.
+\item[Density] The vertical axis 
+{\em area} of the bar gives the relative proportion of cases that fall
+into the bin.  Set \code{type="density"} as in \verb+histogram(galton$height,type="density")+ .
+\end{description}
+In a density plot, areas can be interpreted as probabilities and the
+area under the entire histogram is equal to 1.
+
+Other useful optional arguments set the labels for the axes and the
+graph as a whole and color the bars.  For example,
+\begin{verbatim}
+> histogram(galton$height, type="density",
+    xlab="Height (inches)", 
+    main="Distribution of Heights",
+    col="blue")
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{hist3.pdf}
+
+The above command is so long that it has been broken into several
+lines for display purposes.  R ignores the line breaks, holding off on
+executing the command until it sees the final closing parentheses.
+Notice the use of quotation marks to delimit the labels and names like
+\code{"blue"}.
+
+\sectiontwo{Density Plots}
+
+A \newword{density plot} avoids the need to create bins and plots out
+the distribution as a continuous curve.  Making a density plot
+involves two operators.  The \newword{density} operator performs the
+basic computation which is then displayed using either the \code{plot}
+or the \code{lines} operator.  For example:
+\begin{verbatim}
+> densityplot( galton$height ) 
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{density1.pdf}
+
+If you want to suppress the rug-like plotting of points at the bottom
+of the graph, use \verb+densityplot(galton$height,plot.points=FALSE)+.
+
+\sectiontwo{Box-and-Whisker Plots}
+
+\begin{comment}
+# Setting parameters for box plots]
+foo = trellis.par.get("box.umbrella")
+foo$lwd=3
+foo$lty=1
+foo$col='black'
+foo = trellis.par.set("box.umbrella",foo)
+foo = trellis.par.get("box.rectangle")
+foo$lwd=3
+foo$col='black'
+foo = trellis.par.set("box.rectangle",foo)
+# for axis text, etc.
+foo = trellis.par.get("axis.text")
+foo$cex=1.2
+foo = trellis.par.set("axis.text",foo)
+foo = trellis.par.get("par.xlab.text")
+foo$cex=1.2
+foo$col='black'
+foo = trellis.par.set("par.xlab.text",foo)
+foo = trellis.par.set("par.ylab.text",foo)
+\end{comment}
+
+Box-and-whisker plots are made with the \code{bwplot} command:
+\begin{verbatim}
+> bwplot( galton$height )
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{box1.pdf}
+
+The median is represented by the heavy dot in the middle.  Outliers,
+if any, are marked by dots outside the whiskers.
+
+
+The real power of the box-and-whisker plot is for comparing
+distributions.  This will be raised again more systematically in later
+chapters, but just to illustrate, here is how to compare the heights
+of males and females:
+\begin{verbatim}
+> bwplot( height ~ sex, data=galton )
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{box2.pdf}
+
+\begin{comment}
+\sectiontwo{Comparing Densities [Optional]}
+\texfile{comparing-densities}
+\end{comment}
+
+\sectionone{Displays of Categorical Variables}
+
+For categorical variables, it makes no sense to compute descriptive
+statistics such as the mean, standard deviation, or variance.
+Instead, look at the number of cases at each level of the variable.
+\begin{verbatim}
+> table( galton$sex )
+  F   M 
+433 465 
+\end{verbatim}
+By processing such a table with the \code{prop.table} operator, you
+can calculate the proportion of cases at each level.
+\begin{verbatim}
+> prop.table( table( galton$sex ))
+     F      M 
+0.4822 0.5178 
+\end{verbatim}
+
+The \code{barchart} operator will produce graphics from such tables.
+\begin{verbatim}
+> barchart( table(galton$sex) )
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{bar1.pdf}
+
+

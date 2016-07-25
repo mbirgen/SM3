@@ -1,0 +1,108 @@
+%% Author: Daniel Kaplan
+%% Subject: Data frames (cases versus variables)
+
+Here is a data set from an experiment about how reaction times change after drinking alcohol.\cite{bulmer-portable}  The measurements give how long it took 
+for a person to catch a dropped ruler.  One measurement was made before drinking any alcohol.  Successive measurements were made after one standard drink, two standard drinks, and so on.  Measurements are in seconds.
+
+\bigskip
+\centerline{\begin{tabular}{rrrr}
+Before & After 1 & After 2 & After 3\\\hline
+0.68 & 0.73 & 0.80 & 1.38\\
+0.54 & 0.64 & 0.92 & 1.44\\
+0.71 & 0.66 & 0.83 & 1.46\\
+0.82 & 0.92 & 0.97 & 1.51\\
+0.58 & 0.68 & 0.70 & 1.49\\
+0.80 & 0.87 & 0.92 & 1.54\\
+ &\multicolumn{3}{c}{and so on ...}\\
+\end{tabular}}
+\bigskip
+
+\begin{enumerate}[(a)]
+\item What are the rows in the above data set?
+\begin{MultipleChoice}
+\wrong{Individual measurements of reaction time.}
+\correct{An individual person.}
+\wrong{The number of drinks.}
+\end{MultipleChoice}
+
+
+\item How many variables are there?
+\begin{MultipleChoice}
+\wrong{One --- the reaction times.}
+\wrong{Two --- the reaction times with and without alcohol.}
+\correct{Four --- the reaction times at four different levels of alcohol.}
+\end{MultipleChoice}
+
+
+\begin{AnswerText}
+  Each row of the table reports four measurements on one person.  So
+  the cases are people and the variables are the reaction times at the
+  four different levels of alcohol consumption.
+\end{AnswerText}
+
+\end{enumerate}
+
+The format used for these data has several limitations:
+\begin{itemize} 
+\item It leaves no room for multiple measurements of an individual at
+  one level of alcohol, for example, two or three baseline
+  measurements, or two or three measurements after one standard drink.
+\item It provides no flexibility for different levels of alcohol, for example 1.5 standard drinks, or for taking into account how long the measurement was made after the drink.
+\end{itemize}
+Another format, which would be better, is this:
+
+\bigskip
+\begin{tabular}{rrr}
+SubjectID & ReactionTime & Drinks\\
+S1 & 0.68 & 0 \\
+S1 & 0.73 & 1 \\
+S1 & 0.80 & 2 \\
+S1 & 1.38 & 3 \\
+S2 & 0.54 & 0 \\
+S2 & 0.64 & 1 \\
+S2 & 0.92 & 2 \\
+\multicolumn{3}{c}{and so on ...}\\
+\end{tabular}
+\bigskip
+
+\noindent What are the cases in the reformatted data frame?\\
+\begin{MultipleChoice}
+\correct{Individual measurements of reaction time.}
+\wrong{An individual person.}
+\wrong{The number of drinks.}
+\end{MultipleChoice}
+
+\bigskip 
+
+\noindent How many variables are there?\\
+\begin{MultipleChoice}
+\wrong{The same as in the original version.  It's the same data!}
+\correct{Three --- the subject, the reaction time, the alcohol level.}
+\wrong{Four --- the reaction times at four different levels of alcohol.}
+\end{MultipleChoice}
+
+\begin{AnswerText}
+The variables are the columns of the data frame: subject, reaction
+time, alcohol level.  The cases are the individual measurements of
+reaction time.  So, a given research subject shows up in more than one
+case. 
+\end{AnswerText}
+
+The lack of flexibility in the original data format indicates a more
+profound problem.  The response to alcohol is not just a matter of
+quantity, but of timing.  Drinks spread out over time have less effect
+than drinks consumed rapidly, and the physiological response to a
+drink changes over time as the alcohol is first absorbed into the
+blood and then gradually removed by the liver.  Nothing in this data
+set indicates how long after the drinks the measurements were taken.
+The small change in reaction time after a single drink might reflect that
+there was little time for the alcohol to be absorbed before the
+measurement was taken; the large change after three drinks might
+actually be the response to the first drink finally kicking in.
+Perhaps it would have been better to make a measurement of the blook
+alcohol level at each reaction-time trial.
+
+It's important to think carefully about how to measure your variables
+effectively, and what you should measure in order to capture the
+effects you are interested in.
+

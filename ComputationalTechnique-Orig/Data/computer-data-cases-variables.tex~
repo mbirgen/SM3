@@ -1,0 +1,718 @@
+\sectionone{Reading and Writing Data}
+
+Data used in statistical modeling is often stored as tables.  Often
+these tables are created using spreadsheet software.  Most people
+presume that the same software used to create a table of data should
+be used to display and analyze it.  This is part of the reason for the
+popularity of spreadsheet programs such as Excel.
+
+For statistical modeling, it's helpful to take another approach that
+strictly separates the processes of data collection and of data
+analysis: use one program to create data files and another program to
+analyze the data stored in those files.  
+By doing this, one guarantees that the original data are
+not modified accidentally in the process of analyzing them.  This also
+makes it possible to perform many different analyses of the data;
+modelers often create and compare many different models of the same
+data.
+
+The spreadsheet programs that can create data files use a variety of
+different formats.  Many of these formats are proprietary and include
+various features that make it difficult for any other software to read
+the file.  A good, simple, general purpose format supported by
+spreadsheet software and by statistical software is called the
+\newword{comma separated value} or \newword{CSV} format.  
+
+The next sections describe how to read data from a CSV file into R and
+how to use a spreadsheet program to create new data.
+
+\sectiontwo{Reading CSV Files into R}
+\label{sec:read-csv}
+
+The first step in analyzing data in R is to \newword{read in the data}
+from a file.  For data stored as a CSV file, 
+this is a simple, automatic process.  All you need to do
+is tell R where the data file is located.  There are two principal
+sorts of locations:
+\begin{description}
+\item[On your computer] This is a good choice for data that you create
+  yourself, or if you always use your own computer and you need to do
+  your work when your computer is not connected to the Internet.
+
+  It's a good idea to create a directory to hold the CSV data files
+  that you will need to use.  Then copy the data files you will need
+  onto your computer either by downloading them at some time when the
+  computer is connected to the Internet, or by using some portable
+  memory medium such as a flash drive or a CD/DVD disk.  Information
+  on the location of the data files is given at the web site
+  \url{www.macalester.edu/~kaplan/ISM}
+
+
+\item[On the Internet] This is a good choice if you use shared
+  computers (such as laboratory or classroom computers).  The data
+  files used in this book will be identified with a URL link that will
+  work in any browser. 
+\end{description}
+
+Whether a data file is located on your computer or on the Internet, the
+process of reading it into R is the same.  For CSV files, the standard 
+operator to use is \code{read.csv}.  This takes as an argument the name and
+location of the file.  The output of \code{read.csv} is a data frame
+--- you will want to store this in an object. 
+
+The basic use of \code{read.csv} is simple.  For instance:
+\begin{verbatim}
+> swim = read.csv("swim100m.csv")
+\end{verbatim}
+This will read in the contents of the file \code{swim100m.csv}, and
+create a data frame named \code{swim}.
+ 
+Whether the above statement will work depends on where the file is
+located.  Most likely, it will generate an error message unless you
+have put the file in a place that R knows about.
+\begin{verbatim}
+> swim = read.csv("swim100m.csv")
+Error 
+  cannot open file 'swim100m.csv': 
+  No such file or directory
+\end{verbatim}  
+Unfortunately, much of the content of error messages is hard to interpret.  
+It's good to get in the habit of scanning such messages, when they appear, to 
+look for some part of it that makes sense.  Here, ``no such file or
+directory'' is a good hint that R can't file your data file.
+ 
+When you create a data file or download one to your computer, you put
+it in a ``directory'' (sometimes called a ``folder'').  For example,
+files that you download using a web browser are often placed into a
+directory called the {\em desktop} or {\em downloads}.  To help
+organize their files, people often create new directories for each
+project, storing the files related to that project in the new
+directory.
+
+However you choose to organize things, you need to tell R where to
+look for the files you create or download.  On the Windows version of
+R, you can do this by using the {\sc FILE/Change Working Directory}
+menu in R.  On Macintosh, this is done using the {\sc MISC/Change
+  Working Directory} menu item.  Either way, the result is to bring up
+a standard file-system navigator window that lets you select the
+appropriate directory.
+
+You might find it easier to use the \code{ISMdata} operator that's
+included in the extensions to R found in the \code{ISM.Rdata} file.
+(See Section \ref{label:R-customizations} on page
+\pageref{label:R-customizations}.)  The \code{ISMdata} operator lets
+you use a file navigator to locate the data file that you want to
+load:
+\begin{verbatim}
+> swim = ISMdata()
+\end{verbatim}
+Since there was no character string file name given as an argument, 
+\code{ISMdata} brings up a file navigator to let you select the file
+interactively:
+
+\bigskip
+\centerline{\graphicsfile[width=2.5in]{select-file.png}}
+
+\centerline{\parbox{2.5in}{\sc Selecting a file interactively.}}
+\bigskip
+
+Selecting and opening the desired file will cause it to be read into R
+as a data frame.  Make sure to choose the correct CSV file.  If you
+choose some other sort of file by accident, \code{read.csv} will
+struggle to read it in, displaying various junk on your screen.
+
+Although the statement above will
+cause the resulting data frame to be called \code{swim}, if you choose
+a different file (e.g., \code{kidsfeet.csv}) the data from that file
+will be read in, even though they have nothing to do with swimming.
+
+The \code{ISMdata} program knows about the data files used with this
+book.  For those files, you can preceed the name of the file with
+\code{web::} and \code{ISMdata} will look for the data on the book's
+web site.  For example:
+\begin{verbatim}
+> galton = ISMdata("web::galton.csv")
+\end{verbatim}
+
+If your computer isn't regularly connected to the Internet, you
+can still use \code{ISMdata} for many of the files usd with the
+book. Instead of reading them from the web, you read them from a
+``library'' included in the \code{ISM.Rdata} file that you use to
+start up R:
+\begin{verbatim}
+> galton = ISMdata("lib::galton.csv")
+\end{verbatim}
+
+
+\sectiontwo{Recording Data in Spreadsheets}
+
+The main tool for recording data is spreadsheet software.  There
+are many different spreadsheet software packages available.  Probably
+the most famous is a commercial product, Excel, but there are many
+others such as Lotus 1-2-3. There are also free spreadsheet programs
+such as Gnumeric.  Any of them is suitable.
+
+Spreadsheet software has many capabilities for making graphs and
+charts, formatting and printing data, and doing statistical analysis.
+But your use for it will be very limited: entering data into tables and
+exporting that data into a standard file format that can be read by
+R and other programs.  Do data entry using the spreadsheet;
+do analysis using R.
+
+At the same time as you plan and then enter data in the spreadsheet, you should
+record documentation in a text file --- any word processor will do.
+This documentation --- the \newword{codebook} --- is described in
+Section \ref{sec:define-codebook}.
+
+\sectiontwo{Coding The Variables}
+
+Once you have decided what variables to record, you need to decide how
+to \newword{code} them, that is, how to represent the measurement.  
+Sometimes the coding is obvious, but always it is worthwhile thinking
+about things before jumping in.  
+
+Try to use mnemonic, common-sense codes whenever possible.  For
+instance, M and F are sensible codes to record the sex of a subject.
+If there is an official code that is readily available, use that: 
+Postal codes (e.g., IL, NY, MN), zip codes, airport codes, and so on. 
+If there is a clear name --- e.g., languages, species name if you are
+studying living things, or a political party if you are studying
+elections --- you can use the name itself as the code.
+Make sure that you spell names consistently.  In R, \code{English}
+and \code{english} and \code{engish} are all different names.
+
+The airfare project, involves five variables: distance, price,
+airline, origin, and destination.
+
+It seems obvious to record the distance and price as numbers.  Of
+course it would be silly to record some distances in miles and others
+in kilometers, or some prices in \$US and others in euros.  You need
+to standardize.
+
+For the origin and destination, the obvious thing might be to record
+the city name, e.g., Chicago or New York.  But this leads to
+ambiguities when there is more than one airport serving a city.  A
+better choice is the
+official airport code, a unique three-letter designation assigned to
+each airport.  If, later on, you decide that the city name is more
+meaningful, you can always translate from airport code to city name.
+
+For airlines, you can just use the name of the airline.  You could also
+use an abbreviation, for instance NWA for Northwest Airlines.  Since
+there might be many airfares for each airline, it's
+important to make sure that whatever representation you use, it is used
+consistently; you don't want to mix the use of ``NWA,'' ``Northwest,''
+``Northwest Airlines,'' etc.  Even though all of these are the same to
+a human reader, then computer would treat them as distinct entities.
+
+\sectiontwo{Naming the Variables}
+
+You need to pick a name for each variable --- each column of the table
+--- so that you can refer to that variable during your later analysis of
+the data.  No two variables in one table should have the same name.
+It's convenient if the name is easy to type and reminds us what the
+variable is about.  It simplies the analysis phase --- done in R ---
+if the variable name is a valid object name in R.  That is, there
+shouldn't be punctuation or spaces in the name.  Stick to groups of letters and
+numbers for the names.
+
+I'll illustrate with data as might be collected to study airline
+prices and the way they relate to the distance travelled, the origin
+and destination of the flight, etc.
+I'll use the obvious names: \VN{dist},
+\VN{price}, \VN{dest}, \VN{origin}, \VN{airline}.  You could
+have used ``destination'' rather than ``dest,'' and ``distance''
+rather than ``dist.''  This is a matter of personal preference.
+
+\sectiontwo{Making the Table}
+
+\begin{figure}
+
+\centerline{\graphicsfile[width=3in]{airfares-spreadsheet.png}}
+
+\caption{\sf Filling in a table with the airfare data. Variable names are
+  in the top row.}\label{fig:table-start}
+\end{figure}
+
+The steps are simple:
+
+\begin{enumerate}
+
+\item Enter the variable names on the top row, one name in each
+  column.  Don't leave any blank columns. 
+
+\item Enter the data for each case as one row. 
+
+\item Save the spreadsheet.
+
+\end{enumerate}
+
+Text, such as the name of the airline, should be entered straight;
+there's no need for quotation marks even when there are spaces.  Avoid
+including any commas in your data.
+
+There is no typographical formatting: no cells with color backgrounds,
+no bold-face or italics fonts.
+
+Sometimes as you enter data, you discover that you need to record some
+notes, perhaps to indicate some data that are entered provisionally. A
+convenient way to do this is to add a column, perhaps with a heading
+of ``comments.''  You can then enter the notes as free-form text (but
+don't use commas.)  But
+if you find yourself entering notes for every case, such as the name
+of the person who collected the data for that case, perhaps you want
+to treat the information as another variable and code it appropriately.
+
+\sectionthree{Ordinal Data}
+
+Some data, even if they are not numerical, have a natural ordering.
+For example, surveys often ask about the educational level of
+respondants, recording answers such as ``not HS grad,'' ``HS grad,''
+``some college,'' ``college grad,'', ``graduate school.''  It's
+reasonable to say that a ``HS grad'' has a level of education between
+``not HS grad'' and ``some college.''  This information about ordering
+can be valuable when analyzing data.  
+
+When coding data with a natural order, make sure to indicate the order
+in the codebook.  It might be tempting to code the data as numbers,
+for instance coding ``not HS grad'' as 1, ``HS grad'' as 2, and so on.
+Avoid this temptation.  It will be hard for you to remember the
+code and you will therefore make mistakes.  Instead of recording the ordinal
+data with numerical codes, record it as short text labels and write
+down the information about the order in the documentation file.  During the
+analysis process you can apply the information about the ordering.
+
+\sectionthree{Missing Data}
+
+It often happens that data for a variable for one or more cases is
+missing.  This might happen because the measurement could not be made
+or because a typographical or other error was made
+when originally recording the data and the true measurement cannot be
+recovered.  
+
+\index{C}{missing data!coding for}
+\index{C}{NA!code for missing data}
+
+
+Such missing data should be explicitly identified as
+such.  An effective way of doing this is to enter \code{NA} as the
+value for the missing data in the spreadsheet.  If \code{NA} happens
+to be an actual code for non-missing data, then select another code
+for missing data, such as \code{missing}. Never use a missing data
+code in one variable that is a valid level in another variable: doing
+so makes it hard to read the data into R in a valid format.
+
+Don't confuse the idea of data that is missing with data that take a
+form different from your expectations.  If you are doing a survey, 
+a person who answers, ``I don't know,'' or ``I won't tell you,'' is
+actually providing information to you.  Perhaps you want to code such
+data with \code{DK} or \code{REFUSE}.  Save the \code{NA} designation
+for data that are genuinely missing, such as when the survey subject
+gives you an answer but you forgot it before writing it down.
+
+When you read in a table to R, by default R will treat automatically
+the \code{NA} code as standing for missing data.  
+\index{P}{na.strings!missing data}
+\index{P}{read.csv!handling missing data}
+Section \ref{sec:missing-file} describes what to do if you use a code
+other than \code{NA} for missing data.
+
+\sectiontwo{Saving the Spreadsheet}
+
+\begin{figure}
+
+\centerline{\graphicsfile[width=3.5in]{airfares-spreadsheet-save.png}}
+
+\caption{\sf On a Windows computer, using the FILE/SAVE AS command to save
+  the spreadsheet as a CSV file.} \label{fig:save-as-menu}
+\end{figure}
+
+Once your data are entered into a spreadsheet table, save the table as
+a file.  Usually the spreadsheet software will have a default file
+type that reflects the commercial imperatives of the software company
+to build and retain market share by creating incompatibilities with
+other software.  Such proprietary formats are not used in this
+course.  Instead, you should override the default file format, saving
+then data in a simple format that is compatible with a wide range of
+software packages.
+
+\index{C}{spreadsheet!CSV format}
+For this course you will use the ``comma-separated values'' (\newword{CSV}) file
+format.  In this format each row of the table is written to a plain
+text file as a single line.  The entries in different columns are
+separated by commas.  The name of a CSV file is typically made to end
+with the \code{.csv} file-name extension, for example, \code{airfares.csv}.
+
+An advantage of the CSV format is that it can be
+read by a wide variety of software, including R.  CSV is pure text ---
+no formatting.  And while many spreadsheet programs allow you to have
+multiple ``sheets'' of data, a CSV file will store only one sheet.
+This is no limitation at all, since one can use multiple files to save
+multiple tables.
+
+The process of saving an EXCEL spreadsheet as a CSV-formatted file  is
+shown in Figure \ref{fig:save-as-menu}.
+When you save a spreadsheet into CSV format, you may be warned by the
+software that you can save only one sheet and that formatting
+information --- such as fonts and background colors --- will be lost.
+The messages might look like these:
+
+\bigskip
+
+\centerline{\graphicsfile[width=3.5in]{airfares-spreadsheet-save2.png}}
+\centerline{\graphicsfile[width=3.5in]{airfares-spreadsheet-save3.png}}
+\bigskip
+
+
+\sectiontwo{The Codebook}
+
+\label{sec:define-codebook}
+
+In addition to the spreadsheet file containing the table, it's important to
+create another file with a codebook for the table.
+
+A \newword{codebook} is simply the documentation of the conventions we
+have used in storing and coding your data.  It often contains a short
+description of each variable.  The point of having a codebook is to be
+able to remind ourselves and communicate with others what the
+variables mean and how they are stored.  Many scientists are used to
+recording information in a lab notebook.  It may be that much of the
+codebook consists of excerpts from the lab notebook.
+
+The codebook can be an ordinary computer file --- a text file or a
+word-processor document --- that is stored along with the table in a
+separate file.  Here's
+what a simple codebook for the airfare table might look like:
+\begin{quotation}
+Codebook for airfares.csv file\\
+\\
+dist -- the geographic, direct distance from the origin city to the
+destination, measured in miles.
+
+price -- the price of the round-trip ticket, measured in dollars
+
+orig -- the official airport code for the originating airport.  These
+are documented at http://www.world-airport-codes.com
+
+dest -- the official airport code for the destination airport
+
+airline -- the name of the airline.
+
+\end{quotation}
+
+\sectiontwo{Debugging Your Data}
+
+You will make mistakes collecting data and entering those data into a
+spreadsheet.  The people from whom you get data will also make
+mistakes.  Before you can properly analyze your the data stored in
+your table, you need to make sure that it reflects accurately the data
+you intended to record.  Many of the tools for debugging your data are the same
+statistical tools you will use to analyze data; think of spotting bugs
+in the data as doing a mini-statistical analysis.  Here are
+some basic ways to avoid ``mechanical'' errors such as transcription mistakes.
+
+Three basic problems cover most of the difficulties students have had
+importing newly created spreadsheet files.
+\begin{enumerate}
+\item Can't import the file at all, perhaps because the file is
+  missing or isn't where it's supposed to be, or perhaps because it is
+  formatted in a substantially different way than is required.
+
+\item For categorical variables, there are mistakes in the levels of the
+variable, perhaps due to miscoding or typographical errors.
+
+\item For quantitative variables, the values aren't properly treated
+  numerically when read in to R.  
+\end{enumerate}
+
+
+\sectiontwo{Missing File or Bad Formatting}
+
+\label{sec:missing-file}
+
+The \code{read.csv} \Roperator{read.csv} and \code{ISMdata} \Roperator{ISMdata}
+programs 
+used for importing
+the data from a
+CSV file into R were described in section \ref{sec:read-csv}.  Once you
+have saved your spreadsheet into a CSV file, open up the R program and
+import the data, for instance with
+\begin{verbatim}
+> a = ISMread()
+\end{verbatim}
+Then use the interactive file navigator to select the
+\code{mydata.csv} file.
+
+Keep in mind that the object holding the data in R is called, in this
+example, \code{a}, not \code{mydata.csv} or \code{mydata}.  The
+data have been imported from a file called \code{mydata.csv} into an R
+object called \code{a}.
+
+If you are using anything other than NA to represent missing
+data, or if you are (unadvisedly) using NA as a code for something
+other than missing data, you can use the \code{na.strings} 
+argument to \code{read.csv} or \code{ISMdata}.  For instance, if you were using the codes
+\code{na} and \code{missing} to stand for missing data (in different
+variables perhaps) and using \code{NA} as the code for, say,
+``National Airlines,'' then your file-importing statement would be:
+\begin{verbatim}
+> a = ISMdata(na.strings=c("na", "missing"))
+\end{verbatim}
+
+Once you have imported the data, look at the names of the variables:
+\begin{verbatim}
+> names(a)
+\end{verbatim}
+
+If the names are what you intended, the file has likely been imported
+in a reasonable way.  If not, check whether you entered the names
+correctly as the first row of the spreadsheet and check whether there are
+spaces or other punctuation in the names entered in the spreadsheet.
+(If the names are not in a permitted format, R will try to modify them
+into something that is allowed.)
+
+If you fix the problem in your spreadsheet, remember to re-save the
+spreadsheet in the CSV format, overwriting the old CSV file.
+
+The most common problems that beginners encounter are these:
+\begin{itemize}
+\item You saved the data in some other format than CSV.  Software such
+  as Excel pushes you to save data in their proprietary format, XLS.
+  Unless you specify CSV, you will get something else even if the name
+  you give the file ends in \code{.csv}.
+
+\item Your spreadsheet data is so far from being a simple rectangular
+  format that \code{read.csv} couldn't figure out what to do with it.
+
+\end{itemize}
+
+\sectiontwo{Bogus Categorical Levels}
+
+Sometimes when coding a categorical variable, or recording the data, we
+make mistakes.  For instance, you might decide to use \code{F} and
+\code{M} to record the sex of a survey subject, but accidentally use
+\code{f} in some of the cases, or mistype \code{g} instead of
+\code{F}.
+
+Such problems with completely bogus levels of a variable are usually easily
+spotted.  Once having imported the table to R, look at the levels of
+the factors. \Roperator{levels}  For instance, suppose you are working
+with a data frame \code{a} with 
+variable named \code{sex}.  You find out that the levels of \code{sex}
+are:
+\begin{verbatim}
+> levels(a$sex)
+[1] "F" "M" "f" "g" "o" 
+\end{verbatim}
+Common sense, or comparing the output to the codebook, reveals the
+problem.
+
+To fix the problem, you need to go back to the spreadsheet program and
+edit the file.  Make sure to save it again after editing and to
+re-import it to R.
+
+Editing of data is not something to be undertaken lightly.  Fixing
+typographical mistakes is one thing, but constructing new data is
+another.  In the above, it reasonable to infer that \code{F} was
+intended for \code{f}, and even for \code{g} (since g is so close to f
+on the keyboard).  The intention behind \code{o} is not so clear.
+Perhaps the best thing to do is replace \code{o} with \code{NA} and to
+record in your notebook the change you made so that you revise the
+change if that becomes appropriate.
+
+
+\sectiontwo{Non-numeric Numbers}
+\label{sec:non-numeric-numbers}
+
+When reading in a column of numbers from a CSV file, the
+\code{read.csv} and \code{ISMdata} programs 
+will sensibly produce a variable in numerical
+format.  Sometimes things go wrong.  This happens particularly if one
+of the entries in that column is in character format: not a number.
+This might have been a typographical error, or perhaps a missing data
+marker not identified as such via the \code{na.strings} named
+argument.  Or, if you mistakenly included some non-numeric character in your 
+number in the table (e.g., writing $98,6$ instead of
+$98.6$)\footnote{Some Europeans will maintain that $98,6$ is the
+correct way to write the number.  But R doesn't think so!}, the whole
+column can be mis-interpreted as a factor.
+
+You can spot such a problem with the \code{mode} operator
+\Roperator{mode}.  For example, if your data frame, \code{a}, has a variable
+named  \code{count} which is numerical, test whether it has been read in
+properly with a statement such as 
+\begin{verbatim}
+> mode(a$count)
+[1] "numeric"
+\end{verbatim}
+If the output is not \code{"numeric"}, look through the corresponding
+column in the spreadsheet for the non-numeric data entered.  
+
+Again, if you edit the spreadsheet, be sure to save it again and to
+re-import it to R.
+
+\sectiontwo{Exporting Data from R}
+
+[You can skip this section until you need it.]
+Occasionally you may find that you have created a table in R and want
+to save it to a format that can be read by others.  For example, you
+may have read in several tables and combined them using the database
+operations covered in Chapter \ref{chap:databases}.  Or, you may
+have created a new variable as part of your analysis, and other
+researchers may want to use your new variable.
+
+\index{C}{exporting data}
+\index{C}{data!exporting}
+\index{C}{CSV!creating a file}
+
+Exporting an R table to a CSV file is easy.  Follow these steps:
+
+\begin{enumerate}
+\item Change directories to whereever you want to place the CSV file
+  that is to be created.
+
+\item Decide on a name for the CSV file.  In this example, use
+  \code{newtable.csv}.
+
+\item Use the \code{write.table} \Roperator{write.table} operator.  To
+  illustrate, the following statement saves the table stored in a data
+  frame named \code{a}.
+\begin{verbatim}
+> write.table(a, "newtable.csv", sep=",")
+\end{verbatim}
+The \code{sep} named argument determines what character is to be used
+as a delimiter between cells in the table.  Use a
+comma in order to create a comma separated file.  Note that the comma
+is in quotes; it is a character string, even if a very short one.  The
+name of the target file is also in quotes, but the data frame is not
+because we are interested in writing to the file the values stored in
+the data frame, not the name of the data frame.
+
+\end{enumerate}
+
+\sectionone{Simple Operations with Data Frames} 
+
+I'll illustrate using data on world-record swimming times:
+\begin{verbatim}
+swim = ISMdata("lib::swim100m.csv")
+\end{verbatim}
+This data set has three variables:
+\begin{verbatim}
+> names(swim)
+[1] "year" "time" "sex"
+\end{verbatim}
+
+\VN{Year} refers to the calendar year in which the record was set;
+\VN{time} is the record time itself, in seconds; \VN{sex} records
+whether the record is for men or women.
+\begin{verbatim} 
+> head(swim)
+  year time sex
+1 1905 65.8   M
+2 1908 65.6   M
+3 1910 62.8   M
+and so on
+\end{verbatim}
+
+\sectiontwo{Numerical Operations}
+
+There are two basic kinds of variables: quantitative and categorical.
+R treats these variables differently, as it should since operations
+that make perfect sense for a quantitative variable (such as the
+\code{sum} or the \code{mean} or \code{median}) make little sense for
+categorical variables.  For instance, it makes sense to compute
+\begin{verbatim}
+> max(swim$year)
+[1] 2004
+\end{verbatim} 
+But not
+\begin{verbatim}
+> max(swim$sex)
+Error in Summary.factor
+  max not meaningful for factors
+\end{verbatim}
+The word \newword{factor} is how R refers to categorical variables.
+Once you know that, the second line of the error message makes more sense.
+
+\sectiontwo{Adding a New Variable}
+
+Sometimes you will compute a new quantity from the variables and you
+want to treat this as a new variable.  You can do this by assignment
+to the data frame, using the \verb+$+ and giving a new name for the
+variable.  As a trivial example, here is how to convert the swim time from
+seconds to minutes:
+\begin{verbatim}
+swim$minutes = swim$time / 60
+\end{verbatim}
+One this has been done, the new variable appears just like the old
+ones:
+\begin{verbatim}
+> names(swim)
+[1] "year"    "time"    "sex"     "minutes"
+\end{verbatim}
+You could also, if you want, redefine an existing variable, for
+instance:
+\begin{verbatim}
+swim$time = swim$time / 60
+\end{verbatim}
+Such assignment operations DO NOT CHANGE the original file from which
+the data were read, only the data frame in the current session of R.
+
+\sectiontwo{Extracting Subsets of Data}
+
+Selecting a subset of cases is done with the \code{subset} operator.
+  For instance, here's how to
+create a data frame with just the women's records:
+\begin{verbatim}
+> women = subset( swim, sex=='F' )
+\end{verbatim}
+The \code{subset} operator takes two arguments: the first is a 
+data frame from which to extract the
+subset.  The second is a logical (\code{TRUE}/\code{FALSE}) criterion for each
+case, saying whether to include it. 
+
+Notice that in this example, the name \code{sex} was used, rather than
+the full \verb+swim$sex+.  The \code{subset} operator allows the
+shorthand since the first argument sets a context for evaluating any
+names in the second argument.  Other operators also allow this sort of
+shorthand.  
+
+The \code{subset} operator
+creates a new data frame which you can assign to a name; it does not
+modify the original data frame.  You can have as many data frames as
+you want in an R session, so there is little reason to modify the
+original.  But if you want to, you can do it by re-assignment:
+\begin{verbatim}
+> swim = subset( swim, sex=='F' )
+\end{verbatim}
+After this command, the male records are no longer in \code{swim}.  If
+you want them back, you have to re-read the original data file.
+
+\sectionone{Sampling}
+
+Suppose you have a sampling frame with 1000 cases, arranged as a
+spreadsheet with one row for each case.  You want to select a random
+set of 20 of these.  The \code{resample}\Roperator{write.table} operator lets you pick random
+members of a set.\footnote{Note to editor: Read in resample from
+  math155.r.}  
+In this case, the set could be the indices from 1 to 1000:
+\begin{verbatim}
+> resample(seq(1,1000),20,replace=FALSE)
+ [1] 755 974 606 984 244 517 826 200 651 114
+[11] 867 727 387 868 152 146 369 558 327 534
+\end{verbatim}
+
+Alternatively, \code{resample} can pick random cases from a data frame
+\begin{verbatim}
+> resample(swim, 5, replace=FALSE)
+   year  time sex 
+55 1976 55.65   F 
+39 1924 72.20   F 
+12 1944 55.90   M 
+18 1964 52.90   M 
+46 1936 64.60   F 
+\end{verbatim}
+The \code{replace=FALSE} argument means that there should be no
+repeats in the sample; never sample the same case twice.
+
+

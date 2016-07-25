@@ -1,0 +1,176 @@
+% Use xpnorm() in the computation section.
+
+\SweaveOpts{keep.source=TRUE,pdf=TRUE,eps=TRUE,prefix.string=Figures/formulas,width=3,height=3}
+
+<<setup,echo=F>>=
+source('../../../setup.R')
+require(xtable)
+@ 
+
+
+The computational techniques described here relate to finding p-values and 
+illustrating how power can be estimated. 
+
+\sectionone{Computing p-values}
+
+\index{C}{p value!computing}
+\index{C}{p value!two-tailed}
+The p-value always involves the position of an observed value of the
+test statistic within a sampling distribution.  Once you have the observed
+value, finding the
+p-value involves three steps:
+\begin{enumerate}
+\item Finding the sampling distribution under the null hypothesis.
+\item Finding the percentile of the observed value of the test
+  statistic within the sampling distribution.
+\item Translating the percentile to a p-value.
+\end{enumerate}
+
+Later chapters will deal with ways to find the sampling distribution
+of model coefficients and other test statistics (such as $R^2$).  Here
+I'll assume that you already know the form of the sampling
+distribution either as a probability model or as a sample of values
+from the distribution.
+
+To illustrate, consider the example of the start-to-end difference in
+the stock price.  
+
+<<>>=
+djia = read.csv("djia-july2011.csv")
+djia$Date = as.Date(djia$Date)
+djia = subset(djia, Date > as.Date( "1986-07-07") ) # last 25 years
+yrng = range(djia$Adj.Close)
+p = qplot(Date, Adj.Close, data=djia, geom="line",xlab="Year", ylab="DJIA Price")
+p = p + geom_rect( aes(NULL,NULL, xmin=as.Date("1997-12-05"), xmax=as.Date("2007-11-04"),  ymin=yrng[1],ymax=yrng[2]),alpha=I(.1))
+print(p)
+@ 
+
+
+Under the null hypothesis that there is no
+systematic trend in prices, the sampling distribution described in the
+chapter is that the price difference will have a mean of zero and a
+standard deviation of 5335 dollars.  The observed value of the test
+statistic was \$5074.80.
+
+Since the sampling distribution in this case is a normal distribution, the
+percentile of the observed value in the sampling distribution can be
+found using the \code{pnorm} operator:
+<<>>=
+pnorm( 5074.80, mean=0, sd=5335)
+@ 
+
+This is not yet a p-value.  The value 0.8293 says that the sampling
+distribution will generate a value that is less than the observed
+value (5074.80) on 82.9 percent of trials.  Thus, there is a $=100 -
+82.9 = 17.1$ percent chance that a randomly generated value would be
+greater than the observed value.  The p-value is the chance that the
+randomly generated value would be {\em more extreme} than the observed
+value.  ``More extreme'' might mean ``bigger than'' or ``less than,''
+depending on the context.  In order to judge, it helps to have a picture of the 
+situation.  There happens to be one in figure \ref{fig:p-value}.
+
+In this case, a value {\em bigger} than 5074.80 will be more extreme, so the
+p-value is 17.1 percent.  This is a one-tailed p-value, since it
+considers only one way to be more extreme.  The two-tailed p-value
+includes the possibility that the test statistic might have been
+extreme but on the other side of the sampling distribution.  The
+two-tailed p-value is, for the nicely symmetric normal distribution,
+twice the one-tailed value: $2 \times 17.1 = 34.2$ percent, or
+$0.342$.
+
+It can be helpful to sketch your own pictures of sampling distributions in order
+to judge which tails of the distribution should be included.   Here are the
+commands for making a simple plot to compare the sampling density to the 
+observed value of the test statistic.  In the example, the sampling 
+density will be poisson with rate parameter \code{lambda=100} and the observed 
+value will be 110.
+\begin{verbatim}
+samps = rpois( 10000, lambda=100 )
+densityplot( samps, panel=hypothesis.test.panel,
+  observed=110,
+  plot.points=FALSE,lwd=3 )
+\end{verbatim}
+% See hypothesis-testing-figures.Rnw
+\index{P}{densityplot@\texttt{densityplot}}
+\index{P}{hypothesis.test.panel@\texttt{hypothesis.test.panel}*}
+\index{P}{Hypothesis Testing!hypothesis.test.panel@\texttt{hypothesis.test.panel}*}
+\index{C}{null hypothesis!plotting distr.}
+
+\begin{comment}
+\begin{verbatim}
+trellis.focus()
+# 110 was the observed value, so plot that
+panel.rug( 110, end=.8, lwd=3, col="red")
+trellis.unfocus()
+\end{verbatim}
+\end{comment}
+
+\centerline{\graphicsfile[width=2.5in]{Figures/hypothesis-rug.pdf}}
+
+From the graph, you can see that, in this case, ``more extreme than''
+means ``greater than. ''  In making your own plots, you would need to change the first line (\code{samps = ...}) to match your own sampling distribution and
+the \code{observed=} value to match your own observation of the test
+statistic in the actual data.
+
+In later chapters, you'll see situations where you have only a sample
+from the sampling distribution.  Translating this into a percentile
+can be done with \code{table} and \code{prop.table}.  To illustrate,
+I'll use simulation to generate a sample from the stock market 
+price-change distribution.
+
+Recall that the null hypothesis model of the stock market was a simple
+random walk in prices with no systematic trend.  The standard
+deviation of price changes on each day was estimated from the data to
+be \$106.70.  Over a period of $N=2500$ days the random walk can be
+simulated as the sum of 2500 normal random numbers with a mean of zero
+(no trend) and a standard deviation of \$106.70.  Here's one trial:
+\begin{verbatim}
+> sum( rnorm( 2500, mean=0, sd=106.70))
+[1] -3996
+\end{verbatim}
+The simulated market went down by \$3996 over the 2500 days.  
+
+To draw a sizeable sample from this random process, use the
+\code{do} operator.
+<<>>=
+samps = do(500)*sum(rnorm(2500,mean=0,sd=106.70)) 
+@ 
+This command produces a sample of size $n=500$ from the random process
+--- as if there were 500 different copies of the world in which the
+null hypothesis was active.  
+
+Now to the main point.  Given a sample like this from the null
+hypothesis, the probability of the process generating a value that's
+smaller than the observed test statistic can be found like this:
+<<>>=
+pdata( 5074.80, samps)
+@ 
+\index{P}{pdata@\texttt{pdata}*}
+
+
+This is more or less the same as what was found using the theoretically
+derived distribution and \code{pnorm}.  
+
+Power calculations involve finding rejection thresholds.  To do this,
+you need to find the quantile at the appropriate level of the sampling
+distribution.  For a 5\% significance level, the appropriate quantile levels
+for a two-tailed test are $0.025$ and $0.975$.  To find these from the 
+sampling distribution, use the appropriate probability model or the
+samples:
+<<>>=
+qnorm( c(.025, .975), mean=0, sd=5335)
+qdata( c(.025, .975), samps )
+@ 
+\index{P}{qdata@\texttt{qdata}*}
+As always, the approach based on a sample from the distribution is
+subject to random fluctuations due to the small size of the sample.
+These are particularly acute when looking at quantiles near the
+extremes of the distributions.  When the sampling distribution is
+normally shaped, as it often is, a better estimate can be had by taking
+the standard deviation, multiplying it out to reach the 95\% coverage
+interval:
+<<>>=
+sd(samps)*2
+@ 
+
+

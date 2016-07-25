@@ -1,0 +1,901 @@
+This appendix will contain more details on R, things that the reader doesn't need to read on the first pass through.
+
+<<echo=false>>=
+source('../../../setup.R')
+@ 
+
+\label{chap:more-about-r}
+
+\subsection{Setting R Up}
+
+REVISE THIS
+
+\label{sec:setting-r-up}
+You can skip this section if you want to jump ahead to read about how R works. 
+
+\index{C}{R software!installation}
+
+Better, though, if you try out the commands as they are shown, using
+the R software on your own computer. 
+
+To do this, you will need to start the R software.  If R is not
+already installed on your computer (this is likely if you are using
+your own computer and have never used R before), the first step is to
+install it. 
+
+If you are used to installing software, you will find R follows the
+usual pattern.  
+\begin{enumerate}
+\item Use a web browser to go to \url{www.r-project.org}. Select
+the Download/CRAN link on the left of the page. This will bring you to
+a list of download sites.
+
+\item  Choose one in your own region of the
+world.  This will bring up a page with a choice of Linux, Mac OS X, or
+Windows.  Choose whichever is appropriate for your computer.
+
+\item  For Windows: choose the link for the ``base'' distribution, and
+  then download the link that looks like ``R-2.9.0-win32.exe.''  The
+  name may be slighly different, depending on what new versions have
+  been released.  Run this program, accepting the defaults.
+
+  For Macintosh, follow the link that looks like ``R-2.9.0.dmg'' and
+  follow the instructions.  Again, the name may be slightly different,
+  depending on what new versions have been released.
+
+  If you are using Linux, you probably don't need any instructions on
+  how to install software.
+\end{enumerate}  
+
+\subsubsection{Defining your own operators}
+
+Occasionally, you may need to define your own operators.  This is
+convenient if you need to repeat an operation many times or if you
+need to define a mathematical function.
+\index{P}{function@\texttt{function}}
+\index{P}{R Syntax!function@\texttt{function}}
+
+It's important to keep in mind the difference between an operator and
+a command.  A command is an instruction to perform a particular
+computation on a particular input argument or set of input arguments.
+The input arguments always have to be values, though of course you can
+refer to the value by giving the name of an object that has already
+been assigned a value.
+
+In contrast, in defining an operator, you can treat the arguments
+abstractly; just a name without a value having been assigned.  To
+illustrate, here is a command that creates the mathematical
+function $f(x) = 3 x^2 + 2$ and stores it in an operator named \code{f}:
+<<>>=
+f = function(x) { 3*x^2 + 2 }
+@ 
+One you have defined the function, you can invoke it in the standard
+way.  For example:
+<<>>=
+f(3)
+f(10)
+@ 
+
+\index{C}{syntax!function definition}
+There are some novel features to the syntax used to define a new
+operator.  First, the arguments to \code{function} aren't treated as
+values but as pure names.  Second, the contents of the 
+curly braces \verb+{+ and \verb+}+ ---  the
+function contents --- are the commands that will be 
+evaluated when the function is invoked.
+
+It doesn't matter what names you use in the function contents so long
+as they match the names used in the arguments to \code{function}.  For
+example, here is another operator, called \code{g}, that will perform
+exactly the same computation as \code{f} when invoked:
+<<>>=
+g = function(marge) { 3*marge^2 + 2 }
+@ 
+
+\index{C}{invoking an operator}
+When you invoke an operator, the interpreter carries out several
+steps.  Consider the invocation
+<<>>=
+g(7)
+@ 
+In carrying out this command, the interpreter will:
+\begin{enumerate}
+\item Temporarily define or redefine an object \code{marge} that has
+  the value 7.
+\item Execute the function contents.
+\item Return the value of these contents as the return value of the
+  command.
+\item Discard the definition or redefinition in (1).
+\end{enumerate}
+
+Operators can have more than one argument.  For instance, here is an
+operator \code{hypotenuse} that computes the length of the hypotenuse
+of a right triangle given the lengths of the legs
+<<>>=
+hypotenuse = function(a,b) { sqrt( a^2 + b^2 ) }
+@ 
+
+When programmers create new operators that they expect to use on many
+different occasions, they put the commands
+to define the operators into a text file called a 
+\newword{source file}.  
+This file can be read into R using a special operator, called
+\code{source} that causes the commands to be executed, thereby
+defining the new operators.
+\index{P}{source@\texttt{source}}
+\index{P}{R System!source@\texttt{source}}
+
+\subsubsection{Saving and Documenting Your Work}
+
+\index{P}{Saving your work in R}
+\index{P}{R System!saving your work}
+
+Up to now, the commands used as examples have been simple one-line
+statements.  As you work further, you will build more elaborate
+computations by combining simpler ones.  It will become important to
+be able to document what you have done, providing a record so that
+others can confirm your results and so that you and others can modify
+your work as needed.
+
+One way in which a record is created of your interaction with the
+computer is the dialog in the interpreter console itself.  In some
+ways this is analogous to a document created by a word processor: for
+example, you can copy the contents and paste it into another document.
+
+But the idea of dialog-as-document is flawed.  For example, in a
+word-processor, when you correct a mistake the old version is erased.
+But in the R dialog, to fix a mistake you give a new command --- the
+old, mistaken command is still there in the dialog.
+
+
+You should keep in mind that there are several different components,
+some of which are more appropriate than others for your documentation.
+
+\begin{description}
+\item[Your Commands]  The commands that you execute are what defines
+  the computation being performed.  These commands themselves are a
+  valuable form of documentation. 
+
+\item[The objects you create] These objects, and the values that are
+  stored in them, reflect the \newword{state} of the computation.  If
+  you want to pick up on your work where you left off, you can save
+  these objects.  This is called ``saving the \newword{workspace}.''
+
+\item[Side effects]  This refers to the output printed by the
+  interpreter and plots.  Sometimes you will want to include this in your
+  documentation, but usually just select elements.\index{C}{side effects}
+\end{description}
+
+\subsection{Using Customizations to R}
+
+\label{sec:R-customizations}
+
+\index{C}{ISM.Rdata}
+\index{P}{ISM.Rdata}
+\index{P}{R System!ISM.Rdata workspace}
+
+One of the features that makes R so powerful is that new commands can easily be
+added to the system.  This makes it possible, for instance, to
+customize the software to make routine tasks easier.  Such
+customizations have been written specifically for the people following
+this book.  Most of them are contained in the \texttt{mosaic}
+package. 
+
+To use the commands in \texttt{mosaic}, you need to instruct R to
+``load'' the package.  This can be done with the following command:
+<<>>=
+require(mosaic)
+@ 
+
+
+
+If you get an error message, it is likely because the package has not
+yet been installed on your system.  Installation is a one-time process
+described in Appendix \ref{appendix:installing-R}.
+
+
+\subsubsection{Logical Data and Logical Operators}
+
+\index{C}{logical!operators|(}
+\index{C}{data!selecting subsets}
+Many computations involve selections of subsets of data that meet some
+criterion.  For example, in studying the health of newborn babies, you
+might want to focus only on those below a certain birthweight or
+perhaps those babies whose mother smoked during pregnancy.  The
+question of whether the case satisfies the criterion boils down to a
+yes-or-no answer.
+
+Logic is the study of valid inference; it is intimately tied up with
+the idea of truth versus falsehood.  In computer languages,
+\newworddef{logical data}{logical!data type} refers to a type of data that can represent
+whether something is true or false.  To illustrate, consider the
+simple sequence 1 to 7
+<<>>=
+x = seq(1,7)
+@ 
+Now a simple question about the values in \code{x}: Are any of them
+greater than $\pi$?  Here's how you can ask that question:
+<<>>=
+x > pi
+@ 
+
+A computer command like \code{x > pi} is not the same as an
+algebraic statement like $x > \pi$.  The algebraic statement describes
+the relationship between $x$ and $\pi$, namely that $x$ is greater than
+$\pi$.  The computer command asks a question: Is the value of
+\code{x} greater than the value of \code{pi}?  Asking this question
+invokes a computation; the returned value is the answer to the
+question, either \code{TRUE} or \code{FALSE}.  
+
+Here are some of the operators for asking such questions:
+
+\index{C}{comparison operators}
+\index{C}{logical!comparison operator}
+\index{P}{.@\texttt{==}}
+\index{C}{character string!comparison}
+\index{P}{R Syntax!.@\texttt{==}}
+
+\bigskip
+\centerline{\begin{tabular}{ll}
+\code{x < y} & Is \code{x} less than \code{y}?\\
+\code{x <= y} & Is \code{x} less than or equal to \code{y}?\\
+\code{x > y} & Is \code{x} greater than \code{y}?\\
+\code{x >= y} & Is \code{x} greater than  or equal to \code{y}?\\
+\code{x == y} & Is \code{x} equal to \code{y}?\\
+\code{x != y} & Is \code{x} unequal to \code{y}?\\
+\end{tabular}}
+\bigskip
+Notice the double equal signs in \code{x == y}.  A single equal sign
+would be the assignment operator.
+
+\index{P}{comparison!operators}
+
+Mostly, these comparison operators apply to numbers.  The \code{==}
+and \code{!=} operators also apply to character strings.  To
+illustrate, I'll define two objects \code{v} and \code{w}:
+<<>>=
+v = "hello"
+w = seq(1,15,by=3)
+w
+w < 12
+w > 7
+w != 4
+v == "goodbye"
+v != "hi"
+v == "hello"
+v == "Hello"
+@ 
+The \code{FALSE} in the last line results from taking into account the
+difference between upper-case and lower-case letters.
+
+\index{P}{R Syntax!true@\texttt{TRUE} \& \texttt{FALSE}}
+\index{P}{false@\texttt{FALSE}}
+\index{P}{true@\texttt{TRUE}}
+\index{P}{numerical comparison}
+
+
+Sometimes you need to combine more than one logical result.  For
+example, to ask, ``Is \code{w} between 7 and 12?'' involves combining
+two separate questions: ``Is \code{w} greater than 7 AND
+is it less than 12?''  In the computer language, this question would
+be stated thus:
+<<>>=
+w > 7 & w < 12
+@ 
+
+There are also logical operators for ``or'' and ``not''.  For
+instance, you might ask whether \code{w} is less than 5 OR greater
+then 9:
+<<>>=
+w < 5 | w > 9
+@ 
+The ``not'' operator just flips \code{TRUE} and \code{FALSE}:
+<<>>=
+!(w < 5 | w > 9)
+@ 
+As this example illustrates, you can group logical operations in just
+the same way as arithmetic operations. 
+
+
+\index{C}{logical!operators|)}
+
+\subsubsection{Missing Data}
+
+\index{C}{missing data}
+\index{C}{data!missing}
+\index{C}{NA, missing data}
+\index{P}{NA@\texttt{NA}, missing data}
+\index{P}{Data!missing (\texttt{NA})}
+When recording data from an experiment or an observational study, it
+sometimes happens that a particular measurement can't be made or is
+lost or is otherwise unavailable.  In R, such \newword{missing data}
+can be recorded with the special code \code{NA}.  As you might expect,
+arithmetic and other operations on missing data can't be sensibly
+performed: giving NA as an input produces NA as an output.
+<<>>=
+7 == NA
+NA == 'Hello'
+NA == NA
+@ 
+
+
+In order to test whether there is missing data, a special operator
+\code{is.na} can be used:
+<<>>=
+is.na(NA)
+@ 
+\index{P}{is.na@\texttt{is.na}}
+\index{P}{Data!isna@\texttt{is.na}}
+\index{P}{missing data!is.na@\texttt{is.na}}
+
+\subsubsection{Collections}
+
+\index{P}{collections!c@\texttt{c}}
+\index{P}{c@\texttt{c}}
+\index{P}{Data!small collections with \texttt{c}}
+R can work with collections of numbers and
+character strings.  Some operators work on each item in the
+collection, while others combine the items together in some way.  To
+illustrate, I'll define three small collections, \code{x}, \code{y},
+and \code{fruits}:
+<<>>=
+x = seq(1,7)
+x
+y = c(7,8,9)
+y
+fruits = c("apple","berry","cherry")
+fruits
+@ 
+The \code{c} operator used in defining \code{y} and \code{fruits} is
+useful for creating a small collection ``by hand.''  Often, however,
+collections will be created by reading in data from a file or using
+some other operator.  I'll introduce these as needed for specific tasks.
+
+\index{C}{arithmetic!on collections}
+\index{P}{arithmetic!on collections}
+\index{P}{comparison!on collections}
+
+Arithmetic and comparison operators often work item-by-item on the
+collection.  For example:
+<<>>=
+x + 100
+sqrt(y)
+fruits == "cherry"
+@ 
+If the operator involves two collections, they have to be the same
+size, or R will reuse the smaller collection to match the size of the
+larger one:
+<<>>=
+x == y
+@ 
+<<echo=false,results=verbatim>>=
+warnings()
+@ 
+The warning message is displayed when some aspect of the computation
+is deemed suspect or odd.  Pay attention to such messages since they
+may signal that the computation the interpreter carried out is not the
+one you intended.  
+
+It's usually obvious what sorts of operators will combine the items
+of the collection rather than working on them item by item.  Here are
+some examples:
+<<>>=
+x
+y
+mean(x)
+median(y)
+min(x)
+max(x)
+sum(x)
+any( fruits == "cherry")
+all( fruits == "cherry")
+@ 
+
+\index{P}{sum@\texttt{sum}}
+
+
+The \code{length} operator tells how many items there are in the
+collection: \index{P}{length}
+<<>>=
+length(x)
+length(y)
+length(fruits)
+@ 
+
+When there are too many items in a collection to display conveniently
+in one line, the R interpreter will break up the display over multiple
+lines.  
+<<>>=
+seq(3,19)
+@ 
+At the start of each line, the number in brackets tells the
+index of the item that starts that line.  In the above, for instance,
+the item 3 is displayed following a \code{[1]} because 3 is the first
+item in the collection.  Similarly, the \code{[10]} indicates that the
+item 12 is the tenth item in the collection.  The brackets are just
+for display purposes; they are not part of the collection itself.
+
+\section{Stuff about Characters}
+
+ Sometimes, you will want to convert
+non-text items to text in order to display them in graphs.  There is a
+special operator, \code{as.character} for doing this:
+<<>>=
+as.character(3)
+@ 
+The quotes in the output show that it is character type rather then
+numeric type.  This isn't terribly important to the human reader, but
+the computer regards \code{"3"} as a different thing than \code{3}.
+For instance, you can do arithmetic on numbers but not on characters.
+\index{P}{conversion!numeric to character}
+\index{P}{R Syntax!character text}
+<<>>=
+3 + 2
+@ 
+<<eval=false,echo=true>>=
+as.character(3) + 2
+@ 
+<<eval=true,echo=false,results=verbatim>>=
+tryout = try(as.character(3) + 2)
+cat(tryout)
+@ 
+\index{C}{character string!object type)}
+\index{C}{data!character)}
+
+
+
+
+
+\subsubsection{Extracting Subsets of Data}
+
+\index{P}{subset@\texttt{subset}}
+\index{P}{Data!subset@\texttt{subset}}
+\index{C}{subsets of data frames}
+\index{C}{data frame!taking subsets}
+
+Selecting a subset of cases is done with the \code{subset} operator.
+  For instance, here's how to
+create a data frame with just the women's records:
+\begin{verbatim}
+> women = subset( swim, sex=='F' )
+\end{verbatim}
+The \code{subset} operator takes two arguments: the first is a 
+data frame from which to extract the
+subset.  The second is a logical (\code{TRUE}/\code{FALSE}) criterion for each
+case, saying whether to include it. 
+
+Notice that in this example, the name \code{sex} was used, rather than
+the full \verb+swim$sex+.  The \code{subset} operator allows the
+shorthand since the first argument sets a context for evaluating any
+names in the second argument.  Other operators also allow this sort of
+shorthand.  
+
+The \code{subset} operator
+creates a new data frame which you can assign to a name; it does not
+modify the original data frame.  You can have as many data frames as
+you want in an R session, so there is little reason to modify the
+original.  But if you want to, you can do it by re-assignment:
+\begin{verbatim}
+> swim = subset( swim, sex=='F' )
+\end{verbatim}
+After this command, the male records are no longer in \code{swim}.  If
+you want them back, you have to re-read the original data file.
+
+\subsection{Outliers}
+
+<<echo=false,results=hide>>=
+galton=fetchData("galton.csv")
+@ 
+The \code{outlier}
+\index{P}{Data!outlier@\texttt{outlier}*}
+\index{P}{outlier@\texttt{outlier}*} 
+operator uses the same rule of thumb as in \code{bwplot} to identify which cases are outliers. It returns a logical variable, \code{TRUE} or \code{FALSE} for each case.
+
+<<>>=
+outlier(galton$height)
+@ 
+
+\index{C}{variable!removing outliers}
+\index{C}{outlier!removing}
+
+The direct output of \code{outlier} is rarely what you want.  Typically you will want to use \code{outlier} to help in counting how many outliers there are or to look at the outlier cases themselves, or to extract cases that are not outliers:
+<<>>=
+table( outlier( galton$height ) ) 
+subset( galton, outlier(galton$height) )
+cleaned = subset( galton, !outlier(galton$height) )
+@ 
+
+There was just one outlier (according to the rule of thumb). 
+The object named \code{cleaned} contains those cases that were not outliers with respect to \VN{height}.  Other cases might be outliers with respect to \VN{mother} or \VN{father} --- the \code{outlier} program looks at only one variable.
+  (The \code{!} is the logical operator meaning ``not,'', so \code{!outlier(galton$height)} refers to the  cases that are not outliers with respect to \VN{height}.)  That  it's easy to remove outliers does not mean that you should do so without careful thought.
+
+In exercises in later chapters, you will need to compute the sum of
+squares of quantitative variables and of residuals.  This is done by
+connecting simple computations: squaring then summing.
+<<>>=
+sum( galton$height^2 )
+@ 
+
+
+\authNote{Should I point out that sum is one of those functions that
+  doesn't work with data=?, or should I write it so that it does?}
+
+In all of these examples, the operator has been applied directly to a
+variable in a data frame.  Of course, any of these operators can be applied to
+any set of numbers.  For example, here is the mean of the
+numbers $1, 2, 3, \cdots, 100$ created by \code{seq}:
+<<>>=
+mean( seq(1,100) )
+@ 
+
+\subsection{Residuals and Sums of Squares}
+
+\authNote{Is it premature to be putting this here?  How can I do it in
+  a way that works with data=?.  Perhaps, resids( height, data=galton,
+  model=mean )?}
+
+\index{C}{sum of squares!computing}
+\index{P}{sum of squares}
+\index{P}{Geometry!sum of squares}
+
+The residual from the mean can be computed like this:
+<<>>=
+resids = galton$height - mean(galton$height)
+@ 
+Remember that each case has its own residual.  There are 898 cases in
+the Galton data, so there are 898 residuals.
+<<>>=
+resids
+@ 
+The sum of squares is 
+<<>>=
+sum(resids^2)
+@ 
+
+\begin{comment}
+\sectiontwo{Comparing Densities [Optional]}
+\texfile{comparing-densities}
+\end{comment}
+
+\index{P}{barchart@\texttt{barchart}}
+\index{P}{Plotting \& Graphics!barchart@\texttt{barchart}}
+\index{C}{bar charts}
+The \code{barchart} operator will produce graphics from tables.
+
+<<var8-bar,fig=true,include=true>>=
+barchart( table(galton$sex) )
+@ 
+
+\index{C}{graphics!statistical|)}
+\index{C}{statistical graphics|)}
+
+\subsubsection{Resampling and extending the sample size}
+
+
+By default, the size of the sample produced by \function{resample} is
+the same as the size of the original set.  But you can construct
+larger or smaller resamples:
+<<>>=
+resample(nums,10)
+resample(nums,35)
+resample(nums,3)
+@ 
+
+
+
+\sectiontwo{Technical Note: The $t^\star$ multiplier}
+
+\label{sec:why-two}
+
+It's very standard to use a confidence level of 95\% in constructing a
+confidence interval.  You may never need to use anything else.  Still,
+here is how to find the multiplier sanctioned by conventional
+statistical practice, often called $t^\star$.
+
+\begin{enumerate}
+\item Suppose your desired confidence level is called $\alpha$, say
+  $\alpha = 0.90.$  Then compute the ``tail probability'' $(1-\alpha)/2$.  For $\alpha=0.90$,
+  this is $0.1/2 = 0.05$.
+
+\item Look at the regression report to find the ``degrees of freedom''
+  of the residual.  In the above model of swim times, this is reported
+  as 59.  You can, if you want, calculate it yourself by subtracting
+  the number of coefficients in the report from the number of cases.
+  For the swim data, there are $n=62$ cases and $m=3$ coefficients in
+  the model, so the calculation is $62-3 = 59$.
+
+\item The appropriate multipler will be the quantile 
+from the $t$-distribution with
+  the number of degrees of freedom from (2) and the tail probability
+  from (1).  For this example:
+\begin{verbatim}
+> qt( 0.05, df=59)
+[1] -1.671
+\end{verbatim}
+
+\end{enumerate} 
+Following this algorithm, the 90-percent confidence interval on the
+\indicatorVar{sex}{M} coefficient will be
+\begin{verbatim}
+> -9.7980 - 1.671*1.0129
+[1] -11.49
+> -9.7980 + 1.671*1.0129
+[1] -8.105
+\end{verbatim}
+
+This algorithm is consistent with the multiplier 2 for a 95\%
+confidence interval when the degrees of freedom is larger than, say,
+50:
+\begin{verbatim}
+> qt( 0.025, df=50)
+[1] -2.009
+\end{verbatim}
+
+
+\subsection{Repeating Trials}
+
+You have already seen the \code{resample} operator which, when
+combined with \code{lm} and other software, makes it easy to see how \datasetSwimming
+coefficients vary due to sampling variability.  For example, here are models fit to the \code{swim} data and to resampled versions of it.
+\begin{verbatim}
+> lm( time~year+sex, data=swim)
+(Intercept)        year        sexM 
+   555.7168     -0.2515     -9.7980 
+
+> lm( time~year+sex, data=resample(swim))
+(Intercept)        year        sexM 
+   661.2486     -0.3048    -12.2551 
+
+> lm( time~year+sex, data=resample(swim))
+(Intercept)        year        sexM 
+   597.0033     -0.2727     -9.7788 
+
+> lm( time~year+sex, data=resample(swim))
+(Intercept)        year        sexM 
+    542.774      -0.245      -9.757 
+\end{verbatim}
+Even from this small set of trials, you can get a rough idea of the
+amount of sampling variability in the coefficients.
+
+It's helpful to be able to automate this process of generating
+trials.  The \code{do} operator does this.  To show how it
+works, this section gives some simple examples that don't use model
+fitting.  The next section shows how to use 
+repeated resampling to generate the resampling distribution of model coefficients.
+
+As an example, consider playing a board game in which you roll two
+dice and add up the results to determine your next move.  The
+\code{resample} operator can be used to generate a single move --- in
+statistical language a single \newword{trial} in which two dice are
+rolled and the results summed up.
+\begin{verbatim}
+> die = c(1,2,3,4,5,6)
+> sum( resample( die, 2 ) )
+[1] 5
+\end{verbatim}
+
+In order to perform more trials, you could give the same command over
+and over:
+\begin{verbatim}
+> sum(resample(die,2))
+[1] 9
+> sum(resample(die,2))
+[1] 7
+> sum(resample(die,2))
+[1] 6
+> sum(resample(die,2))
+[1] 8
+\end{verbatim}
+
+\index{P}{do@\texttt{do}*}
+The \code{do} operator automates this process.  It takes a single 
+arguments: the number of times to repeat a statement.  Just put it before
+the statement to be repeated with a multiplication sign.
+\begin{verbatim}
+> do(25) * sum(resample(die,2))
+ [1] 12  6 12 11  9 10  8  7  3 12  3  4 11 11  6 
+[16]  6  11 3  7  8  5  9  6  2  5
+\end{verbatim}
+You can read it like this ``do 25 times ...''
+
+The \code{do} operator will repeat the statement over and
+over again, $n$ times.  It collects the results into a vector.
+It is just as if you typed in the statement
+yourself, over and over, and then collected the results yourself.
+
+The \code{do} part of the command must always come first, before the statement
+to be repeated.
+
+Usually, you will want to do some further calculation on the results,
+so it is worthwhile to save them into an object.  Here I'll do 1000
+trials, each of which involves summing the score from two dice.  Then
+I'll count up how often each outcome occurs:
+\begin{verbatim}
+> samps = do(1000) * sum(resample(die,2))
+> table(samps)
+samps
+  2   3   4   5   6   7   8   9  10  11  12 
+ 26  50  84 112 133 168 134 115  81  69  28 
+\end{verbatim}
+Evidently 7 is the most likely total score from rolling two dice.
+
+In constructing a command involving \code{do}, you may
+find it worthwhile first to construct and test the statement that's
+to be repeated.  When you have this working, then use the command editor to 
+preceed the statement with \code{do(25)*}.  
+Of course, you might want to use some
+other value for the number of trials than $n=25$.
+
+Occasionally, you might need to include more than one statement
+to be repeated by \code{do}.  One way to do this is to group
+the statements into a function.  For example:
+\index{P}{function@\texttt{function}}
+\begin{verbatim}
+f = function() {
+  s = resample( die, 2 )
+  sum(s)
+}
+\end{verbatim}
+Then hand the name of the function to \code{do} as the first argument:
+\begin{verbatim}
+> do(10) * f()
+ [1]  8 12  7  8  8  3  7  8  6  9
+\end{verbatim}
+
+For convenience, a number of related operators have been defined in
+terms of \code{do}: \code{five}, \code{ten}, \code{dozen},
+\code{hundred}, \code{thousand}.  For instance
+\begin{verbatim}
+> five*f()
+[1] 4 9 7 7 9
+> dozen*f()
+ [1]  5  7  3  6  3  9  8  9  9  6  7 11
+\end{verbatim}
+
+When there are many levels, and when the names of the levels are long,
+it can become hard to read the labels on the graph.  An effective
+solution is to rotate the labels, perhaps by 45 degrees.  Here is \model{\VN{wage}}{\VN{sector}}
+\index{C}{graphics!rotating labels}
+\index{P}{labels!rotating}
+\index{P}{Plotting \& Graphics!rotating labels}
+<<box2,fig=true,include=true>>=
+bwplot(wage~sector, data=cps, scales=list(rot=45) )
+@ 
+%\noindent\graphicsfile[width=2.5in]{box2.pdf}
+
+\noindent Admittedly, the argument \code{scales=list(rot=45)} is obscure.  When
+you need to use it, just copy it from this example.
+
+\subsubsection{Shorthand notation for modeling}
+
+The intercept term is almost always included in models.  For this reason, it's included by default even if you don't have the \texttt{1} term explicitly in the design of your model.
+For example, \texttt{mod2} could have been constructed with this statement:
+<<>>=
+mod2 = lm( time ~ year, data=swim )
+@ 
+
+\subsubsection{Suppressing the Intercept Term}
+
+\index{C}{intercept!suppressing}
+\index{P}{minus@\texttt{-1}}
+\index{P}{Modeling!suppressing the intercept}
+You will rarely have to do it, but if you want to {\em exclude} the
+intercept term from a model, you use the notation \code{-1} in the
+model formula:
+<<fitted3,fig=true,include=true>>=
+mod6 = lm( time ~ year-1, data=swim)
+xyplot( time + fitted(mod6) ~ year, data=swim)
+@ 
+
+% \noindent\graphicsfile[width=2.5in]{fitted3.pdf}
+
+The model shown in the graph is obviously a poor fit to the data.
+This is because the intercept has been left out.  The line indicated
+by the fitted model values therefore has to run through the origin:
+\VN{time}=0 when \VN{year}=0.
+
+\subsection{Correlation coefficient, $r$}
+
+\index{P}{cor@\texttt{cor}}
+\index{P}{Descriptive Statistics!cor@\texttt{cor}}
+\index{C}{correlation!coefficient!computing}
+The \code{cor} operator will compute the correlation coefficient $r$
+between two variables.  To illustrate, here is $r$ between \VN{age} and \VN{wage} in the Current Population Survey data.\datasetCPS
+<<>>=
+cps = fetchData("cps.csv")
+cor( cps$wage, cps$age)
+@ 
+
+Little $r$ is closely related to $R^2$ of the straight-line model.
+Here is $R^2$ of the model \model{\VN{wage}}{1+\VN{age}}:
+<<>>=
+mod2 = lm( wage ~ 1 + age, data=cps )
+var(fitted(mod2))/var(cps$wage)
+@ 
+Just take the square-root to find $r$ from $R^2$:
+<<>>=
+sqrt(0.03132)
+@ 
+Since the variance is the square of the standard deviation, the
+above could have been calculated in a more streamlined way:
+<<>>=
+sd( fitted( mod2)) / sd( cps$wage )
+@ 
+
+The correlation coefficient 
+$r$ summarizes only the simple linear model \model{A}{B+1} where
+B is quantitative.  But the coefficient of determination, $R^2$, summarizes any model; it is much more useful.
+
+
+\subsection{Typical Size of Residuals}
+
+The $R^2$ statistic describes what fraction of the variance in the response
+variable is accounted for by the model.  The fraction that is left
+unaccounted for is $1 - R^2$. 
+The typical size of a residual gives an indication of how the actual
+response values are scattered around the fitted model values.
+One way to estimate this size is with the standard deviation:
+<<>>=
+sd( resid(mod) )
+@ 
+
+\index{C}{residual!typical size}
+\index{C}{standard deviation!of residuals}
+\index{P}{sd@\texttt{sd}!of residuals}
+\index{P}{Modeling!sd@\texttt{sd} of residuals}
+
+
+\index{C}{prediction}
+\index{C}{residual!and prediction}
+When models are to be used for prediction, the typical size of a
+residual provides a simple guide to how precise an individual
+prediction will be.  Suppose, for example, that you want to guess 
+the hourly wage of a 30-year old female working in the management sector.  
+You have constructed this model: \datasetCPS
+<<>>=
+mod3 = lm( wage ~ age + sex + sector, data=cps )
+summary(mod3)
+@ 
+
+The prediction is to be made for a female
+in the management sector, so the calculation is:
+
+<<>>=
+4.071 + 0.079*30 + 2.150*0 + 0.215*0 + 4.245*1 + -0.352*0
+@ 
+
+The size of a typical residual from this model is 
+<<>>=
+sd( resid(mod3))
+@ 
+indicating how different from the prediction of \$10.69 a typical individual's
+wage is likely to be.  It turns out --- for reasons to be discussed in
+later chapters --- that a better estimate of the size of a typical residual is the \newworddef{residual standard error}{residual!standard error}.  This is a little bigger than the standard deviation of the residuals and is given in the regression report.  (It's 4.5 in the above report.)
+
+In section \ref{sec:prediction-confidence} you will see that in assessing the likely residual from a prediction, it's important to take into account the uncertainty in the coefficients themselves.
+
+\index{C}{coefficients!uncertainty}
+\index{C}{standard error!of residuals}
+
+\noindent The R package  insists on putting interaction terms after
+the corresponding main terms.  
+
+\index{C}{interaction term!in ANOVA}
+
+\subsection{Technical Note}
+\index{C}{ANOVA!compare two models}
+
+On occasion, you might be interested in answering questions not about
+individual model terms but about the variables themselves.   For instance, you might want to know whether adding \VN{year} to the model reduces the size
+of the residuals in a significant way, but you're not particularly interested in just the main term of \VN{year} but also in how \VN{year} combines with
+other variables in interaction terms.
+
+\ANOVA\ can be used to compare complete models to one another.  The idea is to see how the second model reduces the residuals compared to what was accomplished in the first model.  To illustrate, I'll compare a model with just \VN{sex} as the explanatory term to a model that includes both \VN{sex} and \VN{year}, including the interaction term:
+<<>>=
+mod3 = lm( time ~ sex, data=swim)
+mod4 = lm( time ~ sex*year, data=swim)
+anova( mod3, mod4)
+@ 
+Adding the two new terms (\VN{year} and \VN{sex}:\VN{year}) involved two degrees of freedom and reduced the residual sum of squared from 4278 to 639.  
+Thus, these two terms had a mean square of $(4278 - 639)/2 = 1820$.  The mean square of the residuals is $639/58 = 11.02$ giving an F value of $1820/11.02 = 165$, as shown in the report.
+

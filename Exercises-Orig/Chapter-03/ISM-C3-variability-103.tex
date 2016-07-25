@@ -1,0 +1,110 @@
+%% Author: Daniel Kaplan
+%% Subject: Computation (means, medians, sums of squares)
+
+
+
+\providecommand{\HCode}[1]{#1} % dummy, just in case it's PDFlatex
+\HCode{<link rel="stylesheet" href="fixSweave.css" type="text/css"
+  media="screen" />}
+\HCode{<link rel="stylesheet" href="http://dl.dropbox.com/u/5098197/Math135/RGuide/fixSweave.css" type="text/css"
+ media="screen" />}
+
+Use R to generate the sequence of 101 numbers: $0, 1, 2, 3, \cdots, 100$.
+
+\begin{AnswerText}
+\begin{Schunk}
+\begin{Sinput}
+  s1 = seq(0,100)
+\end{Sinput}
+\end{Schunk}
+\end{AnswerText}
+
+\begin{enumerate}
+
+\item What's the mean value?\\
+\SelectSetHoriz{50}{25,50,75,100}
+
+\begin{AnswerText}
+\begin{Schunk}
+\begin{Sinput}
+  mean(s1)
+\end{Sinput}
+\begin{Soutput}
+[1] 50
+\end{Soutput}
+\end{Schunk}
+\end{AnswerText}
+
+
+\item What's the median value?\\
+\SelectSetHoriz{50}{25,50,75,100}
+
+\begin{AnswerText}
+\begin{Schunk}
+\begin{Sinput}
+  median(s1)
+\end{Sinput}
+\begin{Soutput}
+[1] 50
+\end{Soutput}
+\end{Schunk}
+\end{AnswerText}
+
+\item What's the standard deviation?\\
+\SelectSetHoriz{29.3}{10.7,29.3,41.2,53.8}
+
+\begin{AnswerText}
+\begin{Schunk}
+\begin{Sinput}
+  sd(s1)
+\end{Sinput}
+\begin{Soutput}
+[1] 29.3
+\end{Soutput}
+\end{Schunk}
+\end{AnswerText}
+
+\item What's the sum of squares?\\
+\SelectSetHoriz{338350}{5050,20251,103450,338350,585200}
+\end{enumerate}
+
+\begin{AnswerText}
+\begin{Schunk}
+\begin{Sinput}
+  sum( s1^2 )
+\end{Sinput}
+\begin{Soutput}
+[1] 338350
+\end{Soutput}
+\end{Schunk}
+\end{AnswerText}
+
+Now generate the sequence of perfect squares $0, 1, 4, 9, \cdots, 10000$,
+or, written another way, $0^2, 1^2, 2^2, 3^2, \cdots, 100^2$.  (Hint:
+Make a simple sequence 0 to 100 and square it.)
+
+\begin{AnswerText}
+\begin{Schunk}
+\begin{Sinput}
+  s2 = seq(0,100)^2
+\end{Sinput}
+\end{Schunk}
+\end{AnswerText}
+
+
+\begin{enumerate}
+
+\item What's the mean value?\\ 
+\SelectSetHoriz{3350}{50,2500,3350,4750,7860}
+
+\item What's the median value?\\
+\SelectSetHoriz{2500}{50,2500,3350,4750,7860}
+
+\item What's the standard deviation?\\ 
+\SelectSetHoriz{3028}{29.3,456.2,3028,4505,6108}
+
+\item What's the sum of squares?\\
+\SelectSetHoriz{2050333330}{5050,20251,338350,585200,2050333330}
+\end{enumerate}
+
+

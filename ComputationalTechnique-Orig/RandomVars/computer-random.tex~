@@ -1,0 +1,412 @@
+One of the most surprising outcomes of the revolution in computing
+technology has been the discovery of diverse uses for randomness 
+in the analysis of data and in science generally.  Most young people
+have little trouble with the idea of a computer generating random data;
+they see it in computer games and simulations.  Older people,
+raised with the idea that computers do mathematical operations and
+that such operations are completely deterministic, sometimes find 
+computer-generated randomness suspect.  Indeed, standard algebraic
+notation --- $+$, $-$, $\sqrt{}$, $\cos$, and so on --- has no
+notation for ``generate at random.''
+
+One of the simplest operators for generating random events is
+\code{resample}.  This takes two arguments: the first is a set of
+items to choose from at random, the second is how many events
+to generate.  Each item is equally likely to be
+choosen.  For example, here is a simulation of a coin flip:
+\begin{verbatim}
+> coin = c("H","T")
+> resample(coin, 5)
+[1] "H" "T" "T" "H" "T"
+> resample(coin, 5)
+[1] "T" "H" "T" "H" "H"
+\end{verbatim}
+The first command creates an object holding the possible outcome of
+each event, called \code{coin}.  The next command generated five
+events, each event being a random choice of the outcomes in
+\code{coin}.
+
+Another example is rolling dice.  First, construct a set of the
+possible outcomes: the numbers 1, 2, 3, 4, 5, 6.
+\begin{verbatim}
+> die = seq(1,6)
+> die
+[1] 1 2 3 4 5 6
+\end{verbatim}
+Then generate random events.  Here is a roll of two dice.
+\begin{verbatim}
+> resample(die,2)
+[1] 4 5
+\end{verbatim}
+
+The \code{resample} operator is also useful for selecting cases at
+random from a data frame.  This use will be the basis for statistical
+methods introduced in later chapters. 
+
+
+\sectionone{Random Draws from Probability Models}
+
+Although \code{resample} is useful for random sampling, it can work
+only with finite sets of possible outcomes such as H/T or 1/2/3/4/5/6
+or the cases in a data frame.  The underlying probability model is
+\newword{equiprobability} --- each possible outcome is equally likely.
+R provides other operators that allow
+draws to be made from outcome sets that are infinite or from
+different probability models than equiprobability.
+
+For example, the \code{rnorm} operator makes random draws from a
+normal probability distribution.  The required argument tells how many
+draws to make.  Optional, named arguments let you specify the mean and
+standard deviation of the particular normal distribution that you
+want.  To illustrate, here is a set of 15 random numbers from a normal
+distribution with mean 1000 and standard deviation 75:
+\begin{verbatim}
+> samps = rnorm(15, mean=1000, sd=75)
+> samps
+ [1]  949.1 1007.7  885.8  956.2 1006.8  985.0 1019.3
+ [8]  824.2 1132.5  881.6  905.7  976.9  926.1 1104.9
+[15] 1081.1
+\end{verbatim}
+In this example, I assigned the output to an object \code{samps}
+because I want to be able to do some additional computations to the
+values.  For instance, here is the mean and standard deviation of the
+sample:
+\begin{verbatim}
+> mean(samps)
+[1] 976.2
+> sd(samps)
+[1] 86.47
+\end{verbatim}
+Don't be surprised that the mean and standard deviation of the sample
+don't match exactly the parameters that were set with the arguments
+\code{mean=1000, sd=75}.  The sample was drawn at random and so the
+sample statistics are going to vary from one sample to the next.  Part
+of the statistical methodology to be studied in later chapters has to
+do with determining how close the statistics calculated from a sample
+are likely to be to the parameters of the underlying population.
+
+Often you will generate very large samples.  In these situations you
+usually don't want to display all the samples, just do calculations
+with them.  The practical limits of ``large'' depend on the computer
+you are using and how much time you are willing to spend on a
+calculation.   For an operator like \code{rnorm} and the others to be
+introduced in this chapter, it's feasible to generate samples of size
+10,000 or 100,000 on an ordinary laptop computer.  
+\begin{verbatim}
+> samps = rnorm(100000, mean=1000, sd=75)
+> mean(samps)
+[1] 999.8
+> sd(samps)
+[1] 74.65
+\end{verbatim}
+Notice that the sample mean and standard deviation are quite close to
+the population parameters in this large sample.
+
+The simulations that you will do in later chapters
+will be much more elaborate than simple draws as performed by
+\code{rnorm} and will involve hundreds to thousands of trials.
+
+\sectionone{Standard Probability Models}
+
+R provides a large set of operators like \code{rnorm} for different
+probability models.  All of these operators work in the same way:
+\begin{itemize}
+\item Each has a required first argument that gives the number of
+draws to make.
+
+\item Each has an optional set of parameters that specify the
+particular probability distribution you want.
+\end{itemize}
+
+All the operators start with the letter \code{r} --- standing for
+``random'' --- followed by the name of the probability model:
+\bigskip
+\centerline{\begin{tabular}{llp{1.5in}l}
+Family & R name & Parameters & \\\hline
+Normal & \texttt{rnorm} & \texttt{mean},\texttt{sd} & continuous\\
+Uniform & \texttt{runif} & \texttt{min},\texttt{max} & continuous\\
+Binomial & \texttt{rbinom}& \texttt{size},\texttt{prob} & discrete\\
+Poisson & \texttt{rpois}& Average rate (written \texttt{lambda})& discrete \\
+Exponential & \texttt{rexp}& Same rate as in poisson but the parameter
+is called \texttt{rate}.& continuous \\
+Lognormal & \texttt{rlnorm}& Mean and sd of the natural
+logarithm. \texttt{meanlog}, \texttt{sdlog}& continuous \\
+$\chi^2$ & \texttt{rchisq} & Degrees of freedom (\texttt{df})&continuous \\
+F & \texttt{rf} & Degrees of freedom in the numberator and in the
+denominator (\texttt{df1}, \texttt{df2})&continuous\\
+\end{tabular}}
+\bigskip
+
+To use these operators, you first must choose a particular probability
+model based on the setting that applies in your situation.  This
+setting will usually indicate what the population parameters should
+be.  Some examples:
+\begin{itemize}
+
+\item You are in charge of a hiring committee 
+which is  going to interview three candidates selected from a
+population of job applicants that is 63\% female.  How many of the
+interviewees will be female?  Modeling this as random selection from
+the applicant pool, a binomial model is appropriate.  The \code{size}
+of each trial is 3, the probability of being female is 63\%:
+\begin{verbatim}
+> samps = rbinom(40, size=3, prob=0.63)
+> samps
+ [1] 2 2 1 1 1 3 3 3 2 2 3 3 1 2 1 2 3 2 1 2 2 3 3 2 1
+[26] 2 1 3 2 1 0 3 2 2 2 3 0 1 1 2
+\end{verbatim}
+There are 40 trials here, since the first argument was set to 40.
+Remember, each of the trials is a simulation of one hiring event.  In
+the first simulated event, two of the interviewees were female; in the
+third only one was female.  Typically, you will be summarizing all the
+simulations, for example to see how likely each possible outcome is.
+\begin{verbatim}
+> table(samps)
+samps
+ 0  1  2  3 
+ 2 11 16 11 
+\end{verbatim}
+
+\item You want to simulate the number of customers who come into a
+store over the course of an hour.  The average rate is 15 per hour.
+To simulate a situation where customers arrive randomly, the poisson
+model is appropriate:
+\begin{verbatim}
+> rpois(25, lambda=15)
+ [1] 18 11 11 12 13 19 11 17 11 22 11 15 19  8 16 19 11
+[18] 21 19  9 21 15 12 25 11
+\end{verbatim}
+
+\item You want to generate a simulation of the interval between
+earthquakes and in Example \ref{example:earthquake-intervals}.  To
+simulate the random intervals with a typical rate of 0.03 earthquakes
+per year, you would use
+\begin{verbatim}
+> rexp( 15, rate=0.03 )
+ [1]  0.4709 15.6561 21.3271 13.7895 89.0088 87.8006
+ [7]  1.3473 14.7994 49.0427 49.8065 20.4635  9.3172
+[13] 23.3749 51.1697 23.3353
+\end{verbatim}
+Notice the huge variation in the intervals, from less than half a year
+to almost 90 years between earthquakes.
+
+\end{itemize}
+
+\sectionone{Coverage Intervals}
+
+You will often need to compute coverage intervals in order to describe 
+the range of likely outcomes from a random process.  R provides a
+series of operators for this purpose; a separate operator for each
+named probability model.  The operators all begin with \code{q},
+standing for \newword{quantiles}.  In all cases, the first argument is
+the set of quantiles you want to calculate for the particular
+probability model.  The optional named arguments are the parameters.
+
+To illustrate, here are 95\% and 99\% coverage intervals for a few
+probability models.  Remember
+that to find a 95\% coverage interval you need the 0.025 and 0.975
+quantiles.  For a 99\% interval, you need the 0.005 and 0.995
+quantiles.
+\begin{itemize}
+\item A normal distribution with mean 0 and standard deviation 1:
+\begin{verbatim}
+> qnorm( c(0.025, 0.975), mean=0, sd=1)
+[1] -1.96  1.96
+> qnorm( c(0.005, 0.995), mean=0, sd=1)
+[1] -2.576  2.576
+\end{verbatim}
+
+\item The hiring committee situation modelled by a binomial
+distribution with \code{size=3} and \code{prob=0.63}:
+\begin{verbatim}
+> qbinom( c(0.025, 0.975), size=3, prob=0.63)
+[1] 0 3
+> qbinom( c(0.005, 0.995), size=3, prob=0.63)
+[1] 0 3
+\end{verbatim}
+Perhaps you are surprised to see that the coverage interval includes
+all the possible outcomes.  That's because the number of cases in each
+trial ($n=3$) is quite small. 
+
+\item The number of customers entering a store during an hour 
+as modelled by a poisson
+distribution with an average rate of 15 per hour.
+\begin{verbatim}
+> qpois( c(0.025, 0.975), lambda=15)
+[1]  8 23
+> qpois( c(0.005, 0.995), lambda=15)
+[1]  6 26
+\end{verbatim}
+
+\item The interval between earthquakes modelled by an exponential
+distribution with a typical rate of 0.03 earthquakes per year:
+\begin{verbatim}
+> qexp( c(.025, .975), rate=0.03)
+[1]   0.844 122.963
+> qexp( c(.005, .995), rate=0.03)
+[1]   0.1671 176.6106
+\end{verbatim}
+\end{itemize}
+
+You can also use the \code{q} operators to find the value that would
+be at a particular percentile.  For example, the above model 
+gives 25th percentile of
+the interval between earthquakes as:
+\begin{verbatim}
+> qexp( c(.25), rate=0.03)
+[1] 9.59
+\end{verbatim}
+A quarter of the time, the interval between earthquakes will be 9.59
+years or less.
+
+It's entirely feasible to calculate percentiles and 
+coverage intervals by combining
+the random-number generators with \code{quantile}.  For example, here
+is the 95\% coverage interval from a normal distribution with mean 0
+and standard deviation 1:
+\begin{verbatim}
+> samps = rnorm(10000, mean=0, sd=1)
+> quantile( samps, c(.025, .975) )
+  2.5%  97.5% 
+-1.961  1.939 
+\end{verbatim}
+The disadvantage of this approach is that it is a simulation and the
+results will vary randomly.  By making the sample size large enough
+--- here it is $n=10000$ --- you can reduce the random variation. 
+Using the \code{q} operators uses mathematical analysis to give 
+you what is effectively an
+infinite sample size.  For this reason, it's advisable to use the
+\code{q} operators when you can.  However, for many of the techniques to
+be introduced in later chapters you will have to generate a random
+sample and then apply \code{quantile} to approximate the coverage intervals.
+
+\sectionone{Percentiles}
+
+A percentile computation is applies to situations where you have a
+measured value and you want to know where that value ranks relative to
+the entire set of possible outcomes.  You have already seen
+percentiles computed from
+
+It's easy to confuse percentiles with quantiles because they are so
+closely related.
+Mathematically, the percentile operators are the inverse of the
+quantile operators. 
+To help you remember which is which, it's helpful to distinguish them
+based on the type of argument that you give to the operator:
+\begin{description}
+\item[Percentile] The input 
+argument is a measured value, something that could be the
+output of a single draw from the probability distribution. The output
+is always a number between 0 and 1 --- a percentile. 
+
+\item[Quantile] The input is a percentile, a number between 0 and 1.
+The output is on the scale of the measured variable.
+\end{description}
+
+
+Example:  You have just gotten your score, 670, on a professional school
+admissions test.  According to the information published by the
+testing company, the scores are normally distributed with a mean of
+600 and a standard deviation of 100.  So, your ranking on the test, as
+indicated by a percentile, is:
+\begin{verbatim}
+> pnorm(670, mean=600, sd=100)
+[1] 0.758
+\end{verbatim}
+Your score is at about the 75th percentile.  
+
+Example: Unfortunately, the professional school that you want to go to
+accepts only students with scores in the top 15 percent.  Your score,
+at 75.8\%, isn't good enough.  So, you will study some more and take
+practice tests until your score is good enough.
+How well will you need to score to reach the 85\%?
+\begin{verbatim}
+> qnorm(0.85, mean=600, sd=100)
+[1] 703.6
+\end{verbatim}
+
+
+
+
+\sectionone{Technical Note}
+
+For those people who are offended at the idea that a computer is doing
+things at random, please be assured that the actual computations
+involved in operators such as \code{resample}, \code{rnorm},
+\code{rbinom}, and the other random number generators are completely
+deterministic.  Strictly speaking, the generators are called
+\newword{pseudo-random}, since they are just mimicking random numbers
+by using mathematical systems where the output depends very sensitive
+on the starting point of the calculation.  Once started, however, the 
+pseudo-random calculations will follow a completely deterministic
+sequence.
+
+
+Ordinarily, you don't see this determinism because R sets the starting
+point of the pseudo-random calculations based on the computer's clock
+at the time that you started R.  So, from session to session or from
+computer to computer, you can expect to see different outputs from the
+pseudo-random number generators.
+
+It can occasionally be convenient to be able to repeat a pseudo-random
+computation exactly, for example to verify that a new software
+program is working properly.  You can do this by setting the starting
+point of the pseudo-random number generator, which is called the
+\newword{seed}.  To illustrate, here is a sequence of identical
+statements, each of which gives a different result:
+\begin{verbatim}
+> rnorm(5)
+[1] -0.2034  1.3042 -0.7146 -1.0344  0.7223
+> rnorm(5)
+[1] -1.1146  0.1837 -0.3828  0.5599  1.3750
+> rnorm(5)
+[1] -0.027814 -0.990655  0.002043  0.456935  0.362455
+\end{verbatim}
+If you want to be able to repeat the calculations, you must {\bf
+first} set the seed.  This is done with the \code{set.seed} operator,
+which takes an integer as an argument.  Anything will do so long as it
+is several digits long.  For example, here I do a random simulation
+that I want to be able to repeat later on:
+\begin{verbatim}
+> set.seed(12345)
+> rnorm(5)
+[1]  0.5855  0.7095 -0.1093 -0.4535  0.6059
+> rnorm(5)
+[1] -1.8180  0.6301 -0.2762 -0.2842 -0.9193
+> rnorm(5)
+[1] -0.1162  1.8173  0.3706  0.5202 -0.7505
+\end{verbatim}
+
+The next time I want to repeat this calculation, I need to set things
+up with \code{set.seed}:
+\begin{verbatim}
+> set.seed(12345)
+\end{verbatim}
+Thereafter, the pseudo-random number generator will follow the same
+course as it did the first time the generator was set:
+\begin{verbatim}
+> rnorm(5)
+[1]  0.5855  0.7095 -0.1093 -0.4535  0.6059
+> rnorm(5)
+[1] -1.8180  0.6301 -0.2762 -0.2842 -0.9193
+> rnorm(5)
+[1] -0.1162  1.8173  0.3706  0.5202 -0.7505
+\end{verbatim}
+
+Keep in mind that the repeat will be exact only if you do 
+{\em exactly} the same
+calculations after setting the seed.  If you vary things, even
+slightly, the results will quickly diverge from the original
+calculation.  For example, here I'll modify the calculation
+slightly:
+\begin{verbatim}
+> set.seed(12345)
+> rnorm(6)
+[1]  0.5855  0.7095 -0.1093 -0.4535  0.6059 -1.8180
+> rnorm(6)
+[1]  0.6301 -0.2762 -0.2842 -0.9193 -0.1162  1.8173
+> rnorm(6)
+[1]  0.3706  0.5202 -0.7505  0.8169 -0.8864 -0.3316
+\end{verbatim}
+
+ADD TO READINGS --- random number generation.

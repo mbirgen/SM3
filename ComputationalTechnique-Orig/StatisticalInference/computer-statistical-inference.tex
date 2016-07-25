@@ -1,0 +1,363 @@
+
+
+
+Again, you will need the \pkg{mosaic} package in R, which provides
+some of the basic operators for constructing sampling and resampling distributions.
+\begin{Schunk}
+\begin{Sinput}
+> require(mosaic)
+\end{Sinput}
+\end{Schunk}
+
+The examples will be based on 
+the Cherry-Blossom 2008 data described earlier: \datasetCherryBlossomEight
+\begin{Schunk}
+\begin{Sinput}
+> runners = fetchData("Cherry-Blossom-2008.csv")
+> names( runners )
+\end{Sinput}
+\begin{Soutput}
+[1] "position" "division" "total"    "name"     "age"      "place"   
+[7] "net"      "gun"      "sex"     
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Finding a Sampling Distribution through Bootstrapping}
+\label{sec:find-sampling-distribution}
+
+Your data are typically a sample from a population.  Collecting the
+sample is usually hard work.  Just to illustrate the context of
+a sampling distribution, here is a simulation of selecting a sample of
+size $n=100$ from the population of runners.  It's essential to keep
+in mind that {\bf you do not usually} pull out your sample using the
+computer in this way.  Instead, you go into the field or laboratory and collect your data.
+\begin{Schunk}
+\begin{Sinput}
+> mysamp = deal( runners, 100 ) # A Simulation of sampling
+\end{Sinput}
+\end{Schunk}
+
+Now that you have a sample, you can calculate the sample statistic
+that's of interest to you.  For instance:
+\begin{Schunk}
+\begin{Sinput}
+> mean( gun ~ sex, data=mysamp )
+\end{Sinput}
+\begin{Soutput}
+  sex     S  N Missing
+1   F 100.4 47       0
+2   M  88.1 53       0
+\end{Soutput}
+\end{Schunk}
+Note that the results are slightly different from those found above
+using the whole population.  That's to be expected, since the sample
+is just a random part of the population.  But ordinarily, you will not
+know what the population values are; all you have to work with is your
+sample.  
+
+Theoretically, the sampling distribution reflects the variation from
+one randomly dealt sample to another, where each sample is taken from
+the population.  In practice, your only ready access to the population
+is through your sample.  So, to simulate the process of random
+sampling, re-sampling is used and the re-sampling distribution is used
+as a convenient approximation to the sampling distribution.
+
+Re-sampling involves drawing from the set of cases in your sample with replacement.  To
+illustrate, consider this example of a 
+very small, simple set: 
+the numbers 1 to 5:
+\begin{Schunk}
+\begin{Sinput}
+> nums = c(1,2,3,4,5)
+> nums
+\end{Sinput}
+\begin{Soutput}
+[1] 1 2 3 4 5
+\end{Soutput}
+\end{Schunk}
+
+Each resample of size $n$ consists of $n$ members from the set, but in
+any one resample
+each member might appear more than once and some might not appear at
+all.  Here are three different resamples from \texttt{nums}:
+\begin{Schunk}
+\begin{Sinput}
+> resample(nums)
+\end{Sinput}
+\begin{Soutput}
+[1] 1 1 4 5 4
+\end{Soutput}
+\begin{Sinput}
+> resample(nums)
+\end{Sinput}
+\begin{Soutput}
+[1] 4 2 3 4 2
+\end{Soutput}
+\begin{Sinput}
+> resample(nums)
+\end{Sinput}
+\begin{Soutput}
+[1] 5 2 2 1 1
+\end{Soutput}
+\end{Schunk}
+
+To use resampling to estimate the sampling distribution of a
+statistic, you apply the calculation of the statistic to a resampled
+version of your sample.  For instance, here are the group-wise means
+from one resample of the running sample:
+\begin{Schunk}
+\begin{Sinput}
+> mean( gun ~ sex, data=resample(mysamp) )
+\end{Sinput}
+\begin{Soutput}
+  sex    S  N Missing
+1   F 97.9 47       0
+2   M 92.5 53       0
+\end{Soutput}
+\end{Schunk}
+And here is another:
+\begin{Schunk}
+\begin{Sinput}
+> mean( gun ~ sex, data=resample(mysamp) )
+\end{Sinput}
+\begin{Soutput}
+  sex     S  N Missing
+1   F 101.3 45       0
+2   M  87.1 55       0
+\end{Soutput}
+\end{Schunk}
+
+\index{C}{bootstrapping}
+
+The bootstrap procedure involves conducting many such trials and examining the
+variation from one trial to the next.  
+
+The \function{do} function lets
+you automate the collection of multiple trials.  For instance, here
+are five trials carried out using \function{do}:
+\begin{Schunk}
+\begin{Sinput}
+> do(5) * mean( gun ~ sex, data=resample(mysamp) )
+\end{Sinput}
+\begin{Soutput}
+   sex     S  N Missing do.rep
+1    F  97.8 46       0      1
+2    M  89.9 54       0      1
+3    F  99.2 44       0      2
+4    M  87.0 56       0      2
+5    F 100.0 40       0      3
+6    M  90.3 60       0      3
+7    F 100.6 44       0      4
+8    M  87.6 56       0      4
+9    F 102.8 56       0      5
+10   M  88.2 44       0      5
+\end{Soutput}
+\end{Schunk}
+
+Typically, you will use several hundred trials for bootstrapping.  The
+most common way to summarize the variation in bootstrap trials, you
+can calculate a 95\% coverage interval.  (When applied to a sampling
+distribution, the coverage interval is called a \newword{confidence interval}.)
+
+To do the computation, give a name to  the results of the repeated
+bootstrap trials, here it's called \texttt{trials}:
+\begin{Schunk}
+\begin{Sinput}
+> trials = do(500) * mean( gun ~ sex, data=resample(mysamp) )
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Sinput}
+> trials
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+  sex    S  N Missing do.rep
+1   F 99.6 44       0      1
+2   M 87.4 56       0      1
+3   F 97.1 48       0      2
+4   M 88.0 52       0      2
+5   F 98.0 55       0      3
+6   M 88.4 45       0      3
+... for 1000 rows altogether ...
+\end{Soutput}
+\end{Schunk}
+
+Computing the coverage intervals can be done using \function{qdata} on
+the columns, or, for convenience, use the \function{confint} function.
+\begin{Schunk}
+\begin{Sinput}
+> confint(trials)
+\end{Sinput}
+\begin{Soutput}
+  sex 2.5% 97.5%
+1   F 96.9 104.2
+2   M 83.6  92.4
+\end{Soutput}
+\end{Schunk}
+
+The idea of sampling distributions is based on
+drawing at random from the population, not resampling.  Ordinarily,
+you can't do this calculation since you don't have the population at
+hand.  But in this example, we happen to have the data for all
+runners.  Here's the population-based confidence interval for the mean
+running time, with sample size $n=100$, broken down by sex:
+
+\index{P}{confint}
+\index{C}{confidence intervals}
+
+\begin{Schunk}
+\begin{Sinput}
+> trials = do(500) * mean( gun ~ sex, data=deal(runners,100) )
+> confint(trials)
+\end{Sinput}
+\begin{Soutput}
+  sex 2.5% 97.5%
+1   F 95.1 102.5
+2   M 84.1  92.2
+\end{Soutput}
+\end{Schunk}
+
+\index{C}{confidence level}
+
+The output of \function{confint} shows the lower and upper limits of
+the confidence interval for each of the groups.  The labels on the
+columns indicate the confidence level.  By default, the interval is at
+the 95\% level, and so the interval runs from the 2.5 percentile to
+the 97.5 percentile. 
+
+Historically, statisticians have been concerned with very small
+samples: say $n=2$ or $n=3$.  Even in this era of huge data sets, such
+small sample sizes often are encountered in laboratory experiments,
+etc. Bootstrapping cannot work well with such
+small samples, and other techniques are needed to simulate sampling
+variability.  Many of these techniques are based in algebra and
+probability theory, and give somewhat complex formulas for calculating confidence
+intervals from data. The formulas are often found in textbooks, but for most of the modeling techniques you will use
+in later chapters, appropriate formulas for confidence intervals have been implemented in
+software.  For other modeling techniques, bootstrapping is used to 
+find the confidence intervals.  But keep in mind that bootstrapping
+can only be effective when the sample size $n$ is one or two dozen or
+larger.  
+
+
+\subsection{Computing Grade-Point Averages}
+
+The grade-point average is a kind of group-wise mean, where the group
+is an individual student.  This is not the usual way of looking at
+things for a student, who sees only his or her own grades.  But
+institutions have data on many students.
+
+The data files \texttt{grades.csv} and \texttt{courses.csv} are drawn from
+an institutional database at a college.  They give the grades for more
+than 400 students who graduated in year 2005.  Another file,
+\texttt{grade-to-number.csv}, gives the rules used by the institution
+in converting letter grades to numbers.  
+
+The data files are part of a \newword{relational data base}, a very
+important way of managing large amounts of data used by private and
+public institutions, corporations and governments --- it's the basis
+for a multi-billion dollar segment of the economy.  Ordinarily,
+relational data bases are queried using special-purpose computer
+languages that sort, extract, and combine the data.  Here are the R
+commands for converting the letter grades to numbers and extracting
+the data for one student:
+\begin{Schunk}
+\begin{Sinput}
+> grades = fetchData("grades.csv")
+> gp = fetchData("grade-to-number.csv")
+> all.students = merge(grades, gp)
+> one.student = subset( all.students, sid=="S31509" )
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Sinput}
+> one.student
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+     grade    sid   sessionID gradepoint
+192      A S31509 session3443          4
+543      A S31509 session2308          4
+674      A S31509 session2851          4
+1280     A S31509 session2737          4
+... for 13 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+
+Calculating the mean grade-point for the one student is a simple matter:
+\begin{Schunk}
+\begin{Sinput}
+> mean( gradepoint, data=one.student )
+\end{Sinput}
+\begin{Soutput}
+[1] 3.6
+\end{Soutput}
+\end{Schunk}
+
+It's equally straightforward to calculate the grade-point averages
+for all students as individuals:
+\begin{Schunk}
+\begin{Sinput}
+> mean( gradepoint ~ sid, data=all.students )
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+     sid    S  N Missing
+1 S31185 2.41  8       0
+2 S31188 3.02 16       2
+3 S31191 3.21 14       1
+4 S31194 3.36 12       0
+5 S31197 3.36 13       0
+... for 443 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+
+\index{P}{do}
+\index{P}{confint}
+\index{P}{mean}
+
+Bootstrapping can be used to find the confidence interval on the
+grade-point average for each student:
+\begin{Schunk}
+\begin{Sinput}
+> trials = do(100)*mean(gradepoint ~ sid, data=resample(all.students) )
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> confint(trials)
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Soutput}
+     sid 2.5% 97.5%
+1 S31185 1.65  3.14
+2 S31188 2.56  3.47
+3 S31191 3.01  3.43
+4 S31194 3.05  3.70
+5 S31197 3.20  3.52
+... for 443 students altogether ...
+\end{Soutput}
+\end{Schunk}
+
+It's important to point out that there are other methods for calculating
+confidence intervals that are based on the standard deviation of the
+data.  Formulas and procedures for such methods are given in just
+about every standard introductory statistics book and would certainly
+be used instead of bootstrapping in a simple calculation of the sort
+illustrated here.  
+
+However, such formulas don't go to the heart of the problem: 
+accounting for variation in the grades and the contribution from
+different sources of that variation.  For example, some of the
+variation in this student's grades might be due systematically to
+improvement over time or due to differences between instructor's
+practices.  The modeling techniques introduced in the following
+chapters provide a means to examine and quantify the different sources
+of variation.

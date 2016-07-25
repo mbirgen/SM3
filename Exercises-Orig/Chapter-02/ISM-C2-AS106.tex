@@ -1,0 +1,81 @@
+%% Author: Daniel Kaplan
+%% Subject: Data organization (identifying cases and variables)
+
+Here is a small data frame about automobiles.
+
+\bigskip
+\centerline{\small\begin{tabular}{|rrrrll|}\hline
+Make and & Vehicle & Trans. & \# of & City & Hwy \\
+model & type & type & cyl. & MPG & MPG \\ \hline \hline
+Kia Optima & compact & Man. & 4 & 21 & 31\\
+Kia Optima & compact & Auto. & 6 & 20 & 28\\
+Saab 9-7X AWD & SUV & Auto. & 6 & 14 & 20\\
+Saab 9-7X AWD & SUV & Auto. & 8 & 12 & 16\\
+Ford Focus & compact & Man. & 4 & 24 & 35\\
+Ford Focus & compact  & Auto. & 4 & 24 & 33\\
+Ford F150 2WD & pickup  & Auto. & 8 & 13 & 17\\\hline
+\end{tabular}}
+
+\bigskip
+
+\begin{enumerate}[(a)]
+\item What are the cases in the data frame?  
+
+\begin{MultipleChoice}
+\wrong{Individual car companies}
+\wrong{Individual makes and models of cars}
+\correct{Individual configurations of cars}
+\wrong{Different sizes of cars}
+\end{MultipleChoice}
+
+\begin{AnswerText}
+Each case is a different make and model in a particular
+configuration.  For instance, there are two cases that are Kia
+Optimas.  One of these cases has a manual transmission, the other an
+automatic transmission.  For the Saab, the two cases have different
+numbers of cylinders, even though both are automatic transmissions.
+\end{AnswerText}
+
+\item For each case, what variables are given?  Are they categorical 
+or quantitative?
+
+\begin{itemize}
+\item Kia Optima:
+  \SelectSetHoriz{not.a.variable}{not.a.variable,categorical,quantitative}
+
+\begin{AnswerText}
+The Kia Optima is not a variable, it's a level of the \VN{Make and
+  model} variable.
+\end{AnswerText}
+
+\item City MPG: \SelectSetHoriz{quantitative}{not.a.variable,categorical,quantitative}
+
+\item Vehicle type: \SelectSetHoriz{categorical}{not.a.variable,categorical,quantitative}
+
+\item SUV:  \SelectSetHoriz{not.a.variable}{not.a.variable,categorical,quantitative}
+
+\begin{AnswerText}
+SUV is a level of the \VN{Vehicle type} variable.
+\end{AnswerText}
+
+\item Trans. type: \SelectSetHoriz{categorical}{not.a.variable,categorical,quantitative}
+
+\item \# of cyl.: \SelectSetHoriz{quantitative}{not.a.variable,categorical,quantitative}
+\end{itemize}
+
+\item Why are some cars listed twice?  Is this a mistake in the table?
+
+\begin{MultipleChoice}
+\wrong{Yes, it's a mistake.}
+\correct{A car brand might be listed more than once, but the cases have
+  different attributes on other variables.}
+\wrong{Some cars are more in demand than others.}
+\end{MultipleChoice}
+
+\begin{AnswerText}
+As explained above, the cases with the same make and model are
+different in other variables.
+\end{AnswerText}
+
+\end{enumerate}
+

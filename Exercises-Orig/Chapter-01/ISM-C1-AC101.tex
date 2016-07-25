@@ -1,0 +1,130 @@
+%% Author: Daniel Kaplan
+%% Subject: R (basic commands)
+
+NOTE: Remember to load the \texttt{mosaic} package before starting:
+\begin{verbatim}
+> load(mosaic)
+\end{verbatim}
+
+\bigskip
+
+Each of the following statements has a syntax mistake.  Write the
+statements properly and give a sentence saying what was wrong. (Cut
+and paste the correct statement from R, along with any output that R
+gives and your sentence saying what was wrong in the original.)
+
+\noindent Here's an example: 
+
+\begin{quotation}
+\noindent QUESTION: What wrong with this statement?
+\begin{verbatim}
+> a = fetchData(myfile.csv) 
+\end{verbatim}
+
+\noindent ANSWER: {\em It should be 
+\begin{verbatim}
+> a = fetchData("myfile.csv") 
+\end{verbatim}
+The file name is a character string and
+therefore should be in quotes.  Otherwise it's treated as an object
+name, and there is no object called myfile.csv.}
+\end{quotation}
+
+Now for the real thing.  Say what's wrong with each of these
+statements for the purpose given:
+
+\begin{enumerate}[(a)]
+\item \verb|> seq(5;8)|  to give \verb|[1] 5 6 7 8|
+%\begin{MultipleChoice}
+%\wrong{Nothing is wrong.}
+%\correct{Use a comma instead of a semi-colon to separate arguments: \texttt{seq(5,8)}.}
+%\wrong{It should be \texttt{seq(5 to 8)}.}
+%\end{MultipleChoice}
+\TextEntry
+
+\begin{AnswerText}
+The semi-colon is not a valid separator between arguments.  The statement should be \code{seq(5,8)}.
+\end{AnswerText}
+
+\item \verb|> cos 1.5| to calculate the cosine of 1.5 radians
+
+\TextEntry
+
+\begin{AnswerText}
+The parentheses have been left out.  It should be \code{cos(1.5)}
+\end{AnswerText}
+
+
+\item \verb|> 3 + 5 = x| to  make x take the value 3+5
+
+\TextEntry
+
+\begin{AnswerText}
+Assignment statements should have the object name on the left: \code{x=3+5}.
+\end{AnswerText}
+
+
+\item \verb|> sqrt[4*98]| to find the square root of 392
+
+\TextEntry
+
+\begin{AnswerText}
+Use parentheses, not square brackets, to invoke an operator: \code{sqrt(4*98)}.
+
+\end{AnswerText}
+
+
+\item \verb|> 10,000 + 4,000| adding two numbers to get 14,000
+
+\TextEntry
+
+\begin{AnswerText}
+Don't punctuate numbers with commas, just the digits: \code{10000+4000}.
+\end{AnswerText}
+
+
+\item \verb|> sqrt(c(4,16,25,36))=4| intended to give 
+\begin{verbatim}[1] FALSE TRUE FALSE FALSE
+\end{verbatim}
+
+\TextEntry
+
+\begin{AnswerText}
+Only a single \code{=} was used, the assignment operator rather than equality.  It should be \code{sqrt(c(4,16,25,36)) == 4}
+\end{AnswerText}
+
+
+\item \verb|> fruit = c(apple, berry, cherry)| to create
+a collection of names 
+\begin{verbatim}
+[1] "apple" "berry" "cherry"
+\end{verbatim}
+
+\TextEntry
+
+\begin{AnswerText}
+The character strings have to be quoted to distinguish them from object names.  It should be \code{fruit = c( "apple", "berry", "cherry")}.
+\end{AnswerText}
+
+
+\item \verb|> x = 4(3+2)| where x is intended to be assigned the value 20
+
+\TextEntry
+
+\begin{AnswerText}
+The multiplication operator needs to be specified explicitly and not implicitly as in algebraic notation.  The statement should be \code{x = 4*(3+2)}.
+\end{AnswerText}
+
+
+
+\item \verb|> x/4 = 3+2| where x is intended to be assigned the value 20
+
+\TextEntry
+
+\begin{AnswerText}
+Only an object name can be on the left side of the assignment operator.  It should be \code{x = 4*(3+2)}.
+\end{AnswerText}
+
+
+\end{enumerate}
+

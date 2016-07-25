@@ -1,0 +1,33 @@
+Density plots are particularly useful for comparing distributions.
+For example, here is a graph that displays the distribution of both
+the adult children's heights and their mother's heights.  This is done
+with two commands, one to draw the density plot for the mothers'
+heights and the second for the children's heights.  
+\begin{verbatim}
+> plot( density(galton$mother), 
+     main="Children & Mothers", 
+     xlab="Height (inches)",
+     xlim=c(55,75), 
+     col="red")
+> lines( density( galton$height), col='blue')
+\end{verbatim}
+\noindent \graphicsfile[width=2.5in]{density2.pdf}
+This example illustrates how the construction of a graphic can become
+complicated.  The \code{plot} operator was used in the first command
+in order to start a new graphic, erasing any previous graphics.  
+The second command used \code{lines}
+in order to add on to the existing graphic.  R set the scales for the
+axes automatically based on the range of the data used in the
+\code{plot} command, but these turned out to be inappropriate for the
+data in the second command.  So, the \code{xlim} argument was used to
+set the scale of the $x$ axis to run from 55 to 75.
+
+The labels for the curves were added this way:
+\begin{verbatim}
+> text(locator(1), "Children")
+> text(locator(1), "Mothers")
+\end{verbatim}
+The \code{locator(1)} statement causes R to activate the mouse so that
+a position can be marked on the graph.  This position is then passed
+as an argument to \code{text} to add the text string to the graphic at
+that point.

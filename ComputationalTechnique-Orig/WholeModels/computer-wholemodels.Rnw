@@ -1,0 +1,166 @@
+\SweaveOpts{keep.source=TRUE,pdf=TRUE,eps=TRUE,prefix.string=Figures/whole}
+
+<<setup,echo=F>>=
+source('../../../setup.R')
+require(ggplot2)
+@ 
+
+
+The chapter presents two ways of doing hypothesis tests on whole
+models: (1) permutation tests where the connection is severed between
+the explanatory and response variables, (2) tests such as \ANOVA\
+where the sampling distribution is calculated from first principles.
+In practice, first-principle tests are used most of the time.
+Still, the permutation test is useful for developing intuition about
+hypothesis testing --- our main purpose here --- 
+and for those not-so-rare occasions where the assumptions
+behind the first-principle tests are dubious.
+
+\subsection{The Permutation Test}
+
+The idea of a permutation test is to enforce the null hypothesis that
+there is no connection between the response variables and the
+explanatory variables.  An effective way to do this is to randomize
+the response variable in a way that is consistent with sampling
+variability.  When constructing confidence intervals, the
+\function{resampling} function was used.  Re-sampling will typically
+repeat some cases and omit others.  Here, the \function{shuffle}
+function will be used instead, to scramble the order of one or more
+variables while leaving the others in their original state.
+
+
+To illustrate, consider a model for exploring whether \VN{sex} and
+\VN{mother}'s height are related to the height of the child: \datasetGalton
+<<>>=
+galton = fetchData("galton.csv")
+mod = lm(height ~ sex + mother, data=galton)
+coefficients(mod)
+@ 
+The coefficients indicate that typical males are taller than typical 
+females by about 5 inches and that for each inch taller the mother is,
+a child will typically be taller by 0.35 inches.  
+A reasonable test statistic to summarize the whole model is $R^2$:
+<<>>=
+rsquared(mod)
+@ 
+
+For confidence intervals, re-sampling was applied to the entire data
+frame.  This selects random cases, but each selected case is an
+authentic one that matches exactly the original values for that case.
+The point of re-sampling is to get an idea of the variability
+introduced by random sampling of authentic cases.
+<<>>=
+do(5) * lm(height ~ sex + mother, data=resample(galton))
+@ 
+The \indicatorVar{sex}{M} coefficients are tightly grouped near 5
+inches, the \VN{mother} coefficients are around 0.3 to 0.4.
+
+\index{P}{resample@\texttt{resample}*}
+\index{P}{shuffle@\texttt{shuffle}*}
+\index{P}{Hypothesis Testing!resample@\texttt{resample}*}
+\index{P}{Hypothesis Testing!shuffle@\texttt{shuffle}*}
+
+\index{P}{Resampling!resample@\texttt{resample}*}
+\index{P}{Resampling!shuffle@\texttt{shuffle}*}
+\index{C}{permutation test!computing}
+
+In order to carry out a permutation test, do not randomize the
+whole data frame.  Instead, shuffle just the response variable:
+<<>>=
+do(5) * lm(shuffle(height) ~ sex + mother, data=galton)
+@ 
+Now the \indicatorVar{sex}{M} and \VN{mother} 
+coefficients are close to zero, as would be expected when
+there is no relationship between the response variable and the
+explanatory variables.
+
+In constructing the sampling distribution under the null hypothesis,
+you should do hundreds of trials of fitting the model to the scrambled
+data, calculating the test statistic ($R^2$ here) for each trial.  Note that each
+trial itself involves all of the cases in your sample, but those cases
+have been changed so that the shuffled variable almost certainly
+takes on a different value in every case than in the original data.
+<<echo=false>>=
+rsquared = function(mod) {
+  var(fitted(mod)) / var(fitted(mod) + resid(mod))
+  }
+@ 
+<<>>=
+nulltrials = do(500) *  rsquared(
+    lm(shuffle(height) ~ sex + mother, data=galton))
+@ 
+Notice that the \function{rsquared} operator has been used to calculate
+the test statistic $R^2$ from the model.  The output of \function{do}
+is a data frame: 
+<<results=hide>>=
+nulltrials
+@ 
+<<echo=false>>=
+brief.output( nulltrials, 3, "trials")
+@ 
+Naturally, all of the $R^2$ values for the trials are close to zero.
+After all,  there is no
+relation between the response variable (after randomization with
+\function{shuffle}) and the explanatory variables.
+
+The p-value can be calculated directly from the trials, by comparison
+to the observed value in the actual data: $R^2$ was 0.5618. 
+<<>>=
+count(var > 0.5618, nulltrials)
+@ 
+None of the 500 trials were greater than the value of the test statistic, 0.5618.
+It wouldn't be fair to claim that $p=0$, since we only did 500 trials,
+but it is reasonable to say that the permutation test shows the 
+p-value is $p \leq 1/500$.
+
+
+\subsection{First-Principle Tests}
+
+\index{C}{regression report!hypothesis testing}
+\index{C}{hypothesis testing!in regression report}
+On modern computers, the permutation test is entirely practical.  But
+a few decades ago, it was not.  Great creativity was applied to
+finding test statistics where the sampling distribution could be
+estimated without extensive calculation.  One of these is the F
+statistic.  This is still very useful today and is a standard part of
+the regression report in many statistical packages.  
+
+\index{P}{summary@\texttt{summary}!for linear models}
+\index{P}{Hypothesis Testing!summary@\texttt{summary}!for linear models}
+
+Here is the regression report from the
+\model{\VN{height}}{\VN{sex}+\VN{mother}}:
+<<>>=
+mod = lm( height ~ sex + mother, data=galton)
+summary(mod)
+@ 
+The last line of the report
+shows an F statistic of 574 based on an $R^2$ of 0.562 and
+translates this to a p-value that is practically zero: \code{<2e-16}.
+
+By way of showing that the regression report is rooted in the same
+approach shown in the chapter, you can confirm the calculations.
+There are $m=3$ coefficients and $n=898$ cases,
+producing $n-m=895$ degrees of freedom in the denominator and $m-1=2$
+degrees of freedom in the numerator. The calculation of the F
+statistic from $R^2$ and the degrees of freedom follows the formula
+given in the chapter.  
+$$ F = \frac{R^2}{m-1} \Biggm/ \frac{1-R^2}{n-m} $$
+Plugging the values into the formula
+<<>>=
+(0.562/2) / ((1-.562)/895)
+@ 
+F is the test statistic.  To convert it to a p-value, you need to
+calculate how extreme the value of F$=574.2$ is with reference to the
+F distribution with 895 and 2 degrees of freedom.
+<<>>=
+1 - pf( 574.2, 2, 895)
+@ 
+\index{P}{pf@\texttt{pf}}
+\index{P}{Hypothesis Testing!pf@\texttt{pf}}
+\index{C}{p value!from F statistic}
+The calculation of p-values from F always follows this form.  In the
+context of the F distribution, ``extreme'' always means ``bigger
+than.''  So, calculate the area under the F distribution to the right
+of the observed value.
+

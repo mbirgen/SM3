@@ -1,0 +1,141 @@
+\SweaveOpts{keep.source=TRUE,pdf=TRUE,eps=TRUE,prefix.string=Figures/groupwise}
+
+<<setup,echo=F>>=
+source('../../../setup.R')
+require(ggplot2)
+@ 
+
+Calculating means and other simple statistics is a matter of using the
+right function in R.  The \pkg{mosaic} package --- which you should
+load in to R as shown in Section \ref{sec:loading-mosaic} --- makes it
+straightforward to calculate either a ``grand'' statistic or a
+``group-wise'' statistic.   To illustrate:
+
+\noindent Load the \pkg{mosaic} package, needed only once per session:
+<<>>=
+require(mosaic) 
+@ 
+
+\noindent Read in data you are interested in analyzing, for instance
+the Cherry-Blossom 2008 data described earlier: \datasetCherryBlossomEight
+<<>>=
+runners = fetchData("Cherry-Blossom-2008.csv")
+names( runners )
+@ 
+
+\noindent Calculate a grand mean on the ``gun'' time --- the time from
+the start of the race, signalled by a gun, and when each runner
+crossed the finish line:
+<<>>=
+mean( gun, data=runners )
+@ 
+\noindent Or other ``grand'' statistics.
+
+<<>>=
+median( gun, data=runners )
+sd( gun, data=runners )
+@ 
+
+To tell R that you want to break the statistics down by groups, use
+the \verb+~+ notation, pronounced ``\newword{tilde}.''  You will be
+using this notation frequently in building models.  It means, ``model
+by'' or ``broken down by'' or ``versus.''
+<<>>=
+mean( gun ~ sex, data=runners )
+@ 
+
+Other statistics work the same way, for instance,
+<<>>=
+sd( gun ~ sex, data=runners )
+@ 
+
+Another example ... wage broken down by sector of the economy, using
+data :
+<<>>=
+cps = fetchData("cps.csv")
+mean( wage ~ sector, data=cps )
+@ 
+
+In the Whickham smoking data example, the outcome for each person was
+not a number but a category: Alive or Dead at the time of the
+follow-up.  \datasetWhickham
+<<w0>>=
+w = fetchData("whickham.csv")
+names(w)
+levels(w$outcome)
+@ 
+
+To find the proportion of people who were alive at the end of the
+20-year follow-up period, you can use a computational trick.  Convert
+the \VN{outcome} variable to \texttt{TRUE} or \texttt{FALSE} to
+indicate whether an individual is alive, then take the mean of the
+true/false values.  R, like many computer languages, treats
+\texttt{TRUE} as 1 and \texttt{FALSE} as 0 for the purposes of doing arithmetic.
+<<w1>>=
+mean( outcome=="Alive", data=w )
+@ 
+
+Here's the breakdown according to smoking status:
+<<w2>>=
+mean( outcome=="Alive" ~ smoker, data=w )
+@ 
+
+A more meaningful question is whether smokers are different from
+non-smokers when holding other variables constant, such as age.  To
+address this question, you need to add age into the model.
+
+It might be natural to consider
+each age --- 35, 36, 37, and so on --- as a separate group, but you
+won't get very many members of each group.  And, likely, the data for
+35 year-olds has quite a lot to say about 36 year-olds, so it doesn't
+make sense to treat them as completely separate groups.
+
+You can use the \function{cut} function to divide up a quantitative
+variable into groups.  You get to specify the breaks between groups.
+<<w3>>=
+w$ageGroups = cut(w$age, breaks=c(0,30,40,53,64,75,100) )
+mean( outcome=="Alive" ~ ageGroups, data=w )
+mean( outcome=="Alive" ~ smoker + ageGroups, data=w )
+@ 
+
+With modeling techniques, to be introduced in later chapters, you can use
+quantitative variables without the need to divide them into groups.
+
+\subsection{Model Values and Residuals}
+
+<<echo=false>>=
+source("../../SimpleModels/case-by-case.R")
+@ 
+
+A group-wise model tells you a model value for each group, but often
+you will need these in a case-by-case format: the model value for each
+case in a data set.  The \function{fitted} function carries out
+this simple calculation, taking each case in turn, figuring out which
+group it belongs to, and then returning the set of model values for
+all the cases.  It requires two arguments: the group-wise model and
+the data on which the model was based.  For example:
+
+\index{P}{fitted}
+\index{P}{fetchData}
+
+<<>>=
+kids = fetchData("kidsfeet.csv")
+mod = mean( width ~ sex, data=kids )
+fitted( mod, kids )
+@ 
+
+The residuals are found by subtracting the case-by-case model value
+from the actual values for each case.  
+<<>>=
+res = kids$width - fitted(mod, kids)
+@ 
+Take care to use the same quantitative variable (\VN{width} in this case) from the
+data as was used in constructing the model.
+
+The \function{var} function will calculate the variance:
+<<>>=
+var( kids$width )  # overall variation
+var( fitted(mod, kids) ) # variation in model values
+var( kids$width - fitted(mod, kids) ) # residual variation
+@ 
+

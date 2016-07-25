@@ -1,0 +1,215 @@
+\SweaveOpts{keep.source=TRUE,pdf=TRUE,eps=TRUE,prefix.string=Figures/traditional}
+
+<<setup,echo=F>>=
+source('../../../setup.R')
+require(ggplot2)
+@ 
+
+COMPARE THIS TO THE GROUP-WISE MODEL Chapter
+
+Emphasize that covariates are important.  There's no reason to ignore
+them just because this was common in traditional tests.
+
+Difference between experimental work and field or observational work.
+
+Title of Fisher's book: ``for experimental workers''
+
+\subsubsection{Differences Between Means of Two Groups: the Two-Sample t-test}
+
+The one-way \ANOVA\ approach works when comparing the means among
+groups.  It can be applied to any number of groups: 2 groups, 3
+groups, 4 groups, and so on.
+
+You might be surprised to hear that there is a special test, called
+the \newword{two-sample t-test} for testing whether the means are
+different between two groups.  I'll illustrate it using the question
+of whether the current population survey data give 
+significant evidence that wages are different between men and women
+--- two groups.
+
+\index{P}{summary@\texttt{summary}!for linear models}
+\index{P}{Hypothesis Testing!summary@\texttt{summary}!for linear models}
+
+
+Using the modeling approach, the calculations are:
+<<>>=
+cps = fetchData("cps.csv")
+mod3 = lm( wage ~ sex, data=cps)
+summary(mod3)
+@ 
+The p-value is very small, justifying rejection of the null
+hypothesis.  (This conclusion is subject to some legitimate
+criticism, since no attempt has been made to adjust for covariates
+such as \VN{age} or the level of education.  With a modeling approach,
+you can add these covariates to the model.  But the t-test and one-way
+\ANOVA\ approaches don't allow this to be done.  That's sufficient
+reason not to use them.  For the purpose here, to demonstrate how to
+perform a t-test, I'll continue on without claiming that the use of
+the method is justified in anything but a formal sense.)
+
+The streamlined form of the calculation produces the same F and p-value:
+<<>>=
+anova(mod3)
+@ 
+
+Now to do this in the form of a t-test.  The command uses the familiar
+modeling language to identify the response variable (\VN{wage)} and
+the explanatory grouping variable (\VN{sex}).
+<<>>=
+t.test( wage ~ sex, data=cps, var.equal=TRUE)
+@ 
+Rather than computing F, the t-test computes a statistic called the t
+value.  The relationship between the two is simple: $t^2 = F$.  So,
+the t of $-4.84$ corresponds to F $=23.4$.
+Similarly, in the t-test there is a quantity called the ``degrees of
+freedom.''  This corresponds to the degrees of freedom in the
+denominator in the F test.  The p-values from the t-test and the F
+test are the same!
+
+\subsubsection{Technical Note: The Unequal Variance t-test}
+\label{sec:unequal-variance-t-test}
+\index{C}{t-test!unequal variance}
+
+Actually, the above t-test is not the one that many people would
+perform in this situation.  The full name of the above test is the
+\newword{equal-variance t-test}. 
+I include this section mainly for the
+reader who has been told about the 
+\newworddef{unequal-variance t-test}{unequal variance t-test}.
+The issue of whether to use an equal-variance test or an unequal
+variance test is one of the places where the approach taken in this
+book rubs against conventional pedagogical practice.  
+
+The term {\bf equal variance} refers to an extension of the null
+hypothesis: rather than the null hypothesis being that the population
+means of the response variable are the same in the two groups, the
+null is expanded to say also that the population variances are equal.
+The named argument \code{var.equal=TRUE} is what specifies this
+additional assumption to the software.
+
+If you suspend the assumption that the group variances are equal, the
+appropriate t-test test takes on another form, the \newword{unequal
+  variance t-test}.  Here it is:
+<<>>=
+t.test( wage ~ sex, data=cps)
+@ 
+The results of the unequal variance t-test are somewhat different from
+those of \ANOVA\ or the equal variance t-test. To summarize these 
+differences:
+
+\bigskip
+\centerline{\begin{tabular}{lccc}
+ & & equal var. & unequal var.  \\
+ &  F-test & t-test & t-test \\\hline
+D.F.& 532 & 532 & 530.5 \\
+t & & $-4.84$ & $-4.885$  \\
+t$^2$ or F & 23.4 & 23.4 & 23.86 \\
+p-value & $1.7\times10^{-6}$  & $1.7\times10^{-6}$ & $1.369\times10^{-6}$\\
+\end{tabular}}
+\bigskip
+The values provided by the equal and unequal variance t-tests 
+are different but very close.  
+
+\index{C}{t-test!and adjustment}
+\index{C}{adjustment!and t-test}
+\index{C}{equal-variance t-test}
+\index{C}{unequal variance t-test}
+
+Which test to use?  Many people will argue that the unequal variance
+t-test is the appropriate test to use when you don't have a good
+reason to assume that the variances of the two groups are different.
+This is reasonable enough if one is trying to choose between the
+equal-variance and the unequal-variance t-test.  But there is an
+``elephant in the room,'' an aspect of the situation that dominates
+things but that, for some reason, people don't talk about.  This
+elephant is the covariates --- the other explanatory variables 
+that you should be adjusting for.  The t-test approach doesn't provide
+any capability for such adjustment.  Indeed, if you try to add another
+explanatory variable to the t-test command, you get an error message:
+<<eval=false>>=
+t.test( wage ~ sex + educ, data=cps)
+@ 
+<<echo=false,results=verbatim>>=
+tryout = try( t.test( wage ~ sex + educ, data=cps) )
+cat(tryout)
+@ 
+The same applies to trying to do a t-test with a quantitative
+explanatory variable:
+<<eval=false>>=
+t.test( wage ~ educ, data=cps)
+@ 
+<<echo=false,results=verbatim>>=
+tryout = try( t.test( wage ~ educ, data=cps) )
+cat(tryout)
+@ 
+
+\index{C}{ANOVA!covariates}
+\index{C}{covariate!ANOVA}
+
+The \ANOVA\ approach easily allows the addition of covariates to the
+model.  
+
+If you find yourself in a situation where there are no covariates and
+you are comparing two groups with potentially unequal variances, it
+makes sense to use the unequal variance t-test.  I regard it as a
+special-purpose method that should be used only in such special
+situations.  As it happens, the results you get with the
+equal-variance t-test and the unequal-variance t-test will be very
+close ... unless the variances of the two groups are hugely different.
+And, if the variances are indeed so different, you should be asking
+yourself deeper questions, such as ``Why am I interested in the group
+mean in the first place?  Isn't the difference in variance telling me
+something, too?''
+
+
+\subsubsection{The Grand Mean: the One-Sample t-test}
+\index{C}{t-test!one-sample}
+\index{C}{t-test!computing}
+\index{C}{one-sample t-test}
+
+Occasionally, the question to be asked of a variable is very simple:
+Is there evidence that the overall mean is different from some specified
+value.  For example, suppose the government had published figures
+saying that the mean wage was \$9.25 per hour 
+at the time the current population survey
+data were collected.  You're interested to know whether the CPS data
+are consistent with this claim.  
+
+The one-sample t-test is designed to deal with this situation.
+<<>>=
+t.test( cps$wage, mu=9.25)
+@ 
+The named argument \code{mu=9.25} specifies the population value of
+the mean under the null hypothesis.  In this case, the p-value is
+large, $0.3101$, so there is no reason to reject the null hypothesis.
+
+The one-sample t-test is equivalent to the F test applied to a model
+where the only explanatory model term is the intercept.  As always,
+$t^2 = F$, so the effective F value from the t-test is $-1.016^2 = 1.032$
+<<>>=
+mod4 = lm( wage - 9.25 ~ 1, data=cps)
+anova(mod4)
+@ 
+> 
+The results are identical to the one-sample t-test. (There is no
+unequal-variance, one-sample t-test for the simple reason that in the
+one-sample t-test there are no groups to have difference variances!)
+
+Notice that in forming the model, 
+the null hypothesis parameter, $9.25$ has been subtracted
+from the response variable in the modeling statement.  This is
+essential.  Otherwise, the test will be whether the sample mean is
+consistent with a population value of zero.  Formally, that's a
+possible null hypothesis, but it makes no sense in this situation.
+
+One important use for the one-sample t-test occurs in situations where 
+measurements have been made in pairs, for example, before-and-after
+measurements.  When used this way, the one-sample t-test is called a
+\newword{paired t-test}.  The idea is to test the difference within
+each pair to see if it is non-zero.  As you'll see in the next
+chapter, \ANOVA\ can also be configured to perform such paired tests
+and, in fact, is able to generalize them to multiple measurements and
+to adjust for covariates.
+\index{C}{t-test!paired}
+
+

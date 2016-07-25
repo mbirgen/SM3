@@ -1,0 +1,188 @@
+There are two kinds of questions that are often asked relating to
+percentiles:
+\begin{itemize}
+
+\item What is the value that falls at a given percentage?  For
+  instance, in the \texttt{ten-mile-race.csv} running data, how fast are the
+  fastest 10\% of runners?    In R, you would ask in this way:
+\begin{verbatim}
+> run = fetchData("ten-mile-race.csv")
+> qdata(0.10, run$net)
+ 10% 
+4409 
+\end{verbatim}
+The answers is in the units of the  variable, in this case seconds.
+So 10\% of the runners have net times faster than or equal to 4409 seconds.
+
+\item What percentage falls at a given value?  For instance, what
+  fraction of runners are faster than 4000 seconds?
+
+\begin{verbatim}
+> pdata(4000, run$net)
+[1] 0.04029643
+\end{verbatim}
+The answer includes those whose \VN{net} time is exactly {\bf equal to} or
+{\bf less than} 4000 seconds.
+
+\end{itemize}
+
+It's important to pay attention to the \texttt{p} and \texttt{q} in
+the statement.  \texttt{pdata} and \texttt{qdata} ask related but
+different questions.
+
+\bigskip
+
+\bigskip
+
+Use \texttt{pdata} and \texttt{qdata} to answer the following
+questions about the running data.
+
+\begin{enumerate}
+\item Below (or equal to)  what age are the youngest 35\% of
+  runners?
+
+\begin{itemize}
+\item Which statement will do the correct calculation?
+\begin{MultipleChoice}
+\wrong{\code{pdata(0.35,run$age)}}
+\correct{\code{qdata(0.35, run$age)}}
+\wrong{\code{pdata(35,run$age)}}
+\wrong{\code{qdata(35, run$age)}}
+\end{MultipleChoice}
+
+\item What will the answer be? \\
+\SelectSetHoriz{31}{28,29,30,31,32,33,34,35}
+\end{itemize}
+
+\bigskip
+
+\item What's the \VN{net} time that divides the slowest 20\% of
+  runners from the rest of the runners?
+
+\begin{itemize}
+\item Which statement will do the correct calculation?
+\begin{MultipleChoice}
+\wrong{\code{pdata(0.20,run$net)}}
+\wrong{\code{qdata(0.20, run$net)}}
+\wrong{\code{pdata(0.80,run$net)}}
+\correct{\code{qdata(0.80, run$net)}}
+\end{MultipleChoice}
+
+\item What will the answer be?\\
+  \SelectSetHoriz{6346}{4921,5318,5988,6346,7123,7431}
+seconds
+\end{itemize}
+
+\bigskip
+
+\item What is the 95\% coverage interval on age?
+\begin{itemize}
+\item Which statement will do the correct calculation?
+\begin{MultipleChoice}
+\wrong{\code{pdata(c(0.025,0.975),run$age)}}
+\correct{\code{qdata(c(0.025,0.975),run$age)}}
+\wrong{\code{pdata(c(0.050,0.950),run$age)}}
+\wrong{\code{qdata(c(0.050,0.950),run$age)}}
+\end{MultipleChoice}
+
+\item What will the answer be?
+\begin{MultipleChoice}
+\correct{22 to 60}
+\wrong{20 to 65}
+\wrong{25 to 59}
+\wrong{20 to 60}
+\end{MultipleChoice}
+\end{itemize}
+
+\bigskip
+
+\item What fraction of runners are 30 or younger?\\
+\begin{itemize}
+\item Which statement will do the correct calculation?
+\begin{MultipleChoice}
+\correct{\code{pdata(30, run$age)}}
+\wrong{\code{qdata(30, run$age)}}
+\wrong{\code{pdata(30.1, run$age)}}
+\wrong{\code{qdata(30.1, run$age)}}
+
+\end{MultipleChoice}
+
+\item What will the answer be?  \\
+In percent: \SelectSetHoriz{33.7}{29.3,30.1,33.7,35.9,38.0,39.3} 
+\end{itemize}
+
+\bigskip
+
+\item What fraction of runners are 65 or older?  (Caution: This isn't
+  yet in the form of a BELOW question.)
+\begin{itemize}
+\item Which statement will do the correct calculation?
+\begin{MultipleChoice}
+\wrong{\code{pdata(65, run$age)}}
+\wrong{\code{pdata(64.99, run$age)}}
+\wrong{\code{pdata(65.01, run$age)}}
+\wrong{\code{1-pdata(65, run$age)}}
+\correct{\code{1-pdata(64.99, run$age)}}
+\wrong{\code{1-pdata(65.01, run$age)}}
+\end{MultipleChoice}
+
+\begin{AnswerText}
+Since \code{pdata} answers a {\bf below} question, the first step is
+to ask a relevant question in that form.  You want the runners who are
+65 or older, which is related to the fraction who are younger than
+65.  So, \code{pdata(64.99, run$age)}  %$ 
+which works because the ages
+are in integer years.  Subtract that answer from 1 to get the final answer.
+
+
+\end{AnswerText}
+
+
+\item What will the answer be?\\
+In percent: \SelectSetHoriz{1.1}{0.5,1.1,1.7,2.3,2.9} 
+\end{itemize}
+
+\item The time it takes for a runner to get to the start line after
+  the starting gun is fired is
+  the difference between the \VN{time} and \VN{net}. 
+\begin{verbatim}
+run$to.start = run$time - run$net
+\end{verbatim}
+
+\bigskip
+
+\begin{itemize}
+\item How long is it before 75\% of runners get to the start line?\\
+In seconds: \SelectSetHoriz{351}{164,192,213,294,324,351} 
+
+\bigskip
+
+
+\item What fraction of runners get to the start line before one
+  minute?  (Caution: the times are measured in seconds.)\\
+In percent: \SelectSetHoriz{25}{10,15,19,22,25,31,34} 
+
+
+\end{itemize}
+
+\bigskip
+
+\item What is the 95\% coverage interval on the ages of female
+  runners?
+\begin{MultipleChoice}
+\wrong{19 to 61 years}
+\wrong{22 to 61 years}
+\wrong{19 to 56 years}
+\correct{22 to 56 years}
+\end{MultipleChoice}
+
+\bigskip
+
+\item What fraction of runners have a \VN{net} time BELOW 4000
+  seconds?  (That is, don't include those who are at exactly 4000
+  seconds.)\\
+In percent: \SelectSetHoriz{4.00}{3.72,4.00,4.03,4.07,5.21} 
+
+
+\end{enumerate}
+

@@ -1,0 +1,69 @@
+The first step in analyzing data in R is to \newword{read in the data}
+from a file.  For data stored as a CSV file, 
+this is a simple, automatic process.  All you need to do
+is tell R where the data file is located.  There are two principal
+sorts of locations:
+\begin{description}
+
+\item[On your computer] This is a good choice for data that you create
+  yourself, or if you always use your own computer and you need to do
+  your work when your computer is not connected to the Internet.
+
+  It's a good idea to create a directory to hold the CSV data files
+  that you will need to use.  Then copy the data files you will need
+  onto your computer either by downloading them at some time when the
+  computer is connected to the Internet, or by using some portable
+  memory medium such as a flash drive or a CD/DVD disk.  Information
+  on the location of the data files is given at the web site
+  \url{www.macalester.edu/~kaplan/ISM}
+
+
+\item[On the Internet] This is a good choice if you use shared
+  computers (such as laboratory or classroom computers).  The data
+  files used in this book will be identified with a URL link that will
+  work in any browser. 
+\end{description}
+
+Whether a data file is located on your computer or on the Internet, the
+process of reading it into R is the same.  For CSV files, the standard 
+operator to use is \code{read.csv}.  This takes as an argument the name and
+location of the file.  The output of \code{read.csv} is a data frame
+--- you will want to store this in an object. 
+
+The basic use of \code{read.csv} is simple.  For instance:
+\begin{verbatim}
+> swim = read.csv("swim100m.csv")
+\end{verbatim}
+This will read in the contents of the file \code{swim100m.csv}, and
+create a data frame named \code{swim}.
+ 
+Whether the above statement will work depends on where the file is
+located.  Most likely, it will generate an error message unless you
+have put the file in a place that R knows about.
+\begin{verbatim}
+> swim = read.csv("swim100m.csv")
+Error 
+  cannot open file 'swim100m.csv': 
+  No such file or directory
+\end{verbatim}  
+Unfortunately, much of the content of error messages is hard to interpret.  
+It's good to get in the habit of scanning such messages, when they appear, to 
+look for some part of it that makes sense.  Here, ``no such file or
+directory'' is a good hint that R can't find your data file.
+ 
+When you create a data file or download one to your computer, you put
+it in a ``directory'' (sometimes called a ``folder'').  For example,
+files that you download using a web browser are often placed into a
+directory called the {\em desktop} or {\em downloads}.  To help
+organize their files, people often create new directories for each
+project, storing the files related to that project in the new
+directory.
+
+However you choose to organize things, you need to tell R where to
+look for the files you create or download.  On the Windows version of
+R, you can do this by using the {\sc FILE/Change Working Directory}
+menu in R.  On Macintosh, this is done using the {\sc MISC/Change
+  Working Directory} menu item.  Either way, the result is to bring up
+a standard file-system navigator window that lets you select the
+appropriate directory.
+

@@ -1,0 +1,129 @@
+There are many different numerical descriptions of distributions:
+mean, median, standard deviation, variance, IQR, coverage interval,
+...   And these are just the ones we have touched on so far.  We'll
+also encounter ``standard error,''  ``margin of error,''  ``confidence
+interval.''  There are so
+many that it becomes a significant challenge to students to keep them
+straight.  Eventually, statistical workers learn the subtleties of the
+different descriptions and when each is appropriate.  Then, like using
+near synonyms in English, it becomes second nature.  
+
+As an example,
+consider the verb ``spread.''.  Here are some
+synonyms from the thesaurus, each of which is appropriate in a particular context:
+broadcast, scatter, propagate, sprawl, extend, stretch, cover, daub, ...  If you
+were talking to a farmer about sewing seeds, the words ``broadcast''
+or ``scatter'' would be appropriate, but it would be silly to say the
+seeds are being ``daubbed'' or ``sprawled''.  On the other hand, to an urbanite
+concerned with congestion in traffic, the growth of the city might
+well be summarized with ``sprawl.''  You have to know the context and
+the intent to choose the correct term.  
+
+To help to understand the different context and intents, here are
+two important ways of categorizing what a particular description captures:
+
+\begin{itemize}
+\item[(1)] Location and scatter
+\begin{itemize}
+\item What is a typical value? (``center'')
+\item What are the top and bottom range of the values? (``range'')
+\item How far are the values scattered? (``scatter'')
+\item What is high? or What is low? (``non-central'')
+\end{itemize}
+
+\item[(2)] Including the ``extremes''
+\begin{itemize}
+\item All inclusive, and sensitive to outliers. (``not-robust'')
+\item All inclusive, but not sensitive to outliers. (``robust'')
+\item Leaves out the very extremes. (``plausible''')
+\item Focuses on the middle. (``mainstream'')
+\end{itemize}
+Note that descriptors of both the ``plausible'' and the ``mainstream''
+type are necessarily robust, since they leave out the outliers.
+
+\item[(3)] Individual versus whole sample.
+\begin{itemize}
+\item Description relevant to individual cases
+\item Description or summary of entire samples, combining many cases.
+\end{itemize}
+You won't have to deal with this until later, where it explains terms
+that you haven't yet encountered like like ``standard error'',
+``margin of error'', ``confidence interval.''
+
+\end{itemize}
+
+\medskip
+
+\noindent Example: The {\bf mean} describes the {\em center} of a
+distribution.  It is calculated from all the data and {\em not-robust}
+against outliers.
+
+\bigskip
+
+For each of the following descriptors of a distribution , choose the
+items that best characterize the descriptor.
+
+\begin{enumerate}
+\item Median
+\begin{enumerate}
+\item \SelectSetHoriz{center}{center,range,scatter,non-central}
+\item \SelectSetHoriz{robust}{robust,not-robust,plausible,mainstream}
+\end{enumerate}
+
+\item Standard Deviation
+\begin{enumerate}
+\item \SelectSetHoriz{scatter}{center,range,scatter,non-central}
+\item \SelectSetHoriz{not-robust}{robust,not-robust,plausible,mainstream}
+\end{enumerate}
+
+\item IQR
+\begin{enumerate}
+\item \SelectSetHoriz{scatter}{center,range,scatter,non-central}
+\item \SelectSetHoriz{robust}{robust,not-robust,plausible,mainstream}
+\end{enumerate}
+
+\item Variance
+\begin{enumerate}
+\item \SelectSetHoriz{scatter}{center,range,scatter,non-central}
+\item \SelectSetHoriz{not-robust}{robust,not-robust,plausible,mainstream}
+\end{enumerate}
+
+\item 95\% coverage interval
+\begin{enumerate}
+\item \SelectSetHoriz{range}{center,range,scatter,non-central}
+\item \SelectSetHoriz{plausible}{robust,not-robust,plausible,mainstream}
+\end{enumerate}
+
+\item 50\% coverage interval
+\begin{enumerate}
+\item \SelectSetHoriz{range}{center,range,scatter,non-central}
+\item \SelectSetHoriz{mainstream}{robust,not-robust,plausible,mainstream}
+\end{enumerate}
+
+\item 50th percentile
+\begin{enumerate}
+\item \SelectSetHoriz{non-central}{center,range,scatter,non-central}
+\end{enumerate}
+
+\item 80th percentile
+\begin{enumerate}
+\item \SelectSetHoriz{non-central}{center,range,scatter,non-central}
+\end{enumerate}
+
+\item 99th percentile
+\begin{enumerate}
+\item \SelectSetHoriz{non-central}{center,range,scatter,non-central}
+\end{enumerate}
+
+\item 10th percentile
+\begin{enumerate}
+\item \SelectSetHoriz{non-central}{center,range,scatter,non-central}
+\end{enumerate}
+
+\end{enumerate}
+
+One of the reasons why there are so many descriptive terms is that
+they have different roles in theory.  For example, the variance turns
+out to have simple theoretical properties that make it useful when
+describing sums of variables.  It's much simpler than, say, the IQR.
+

@@ -1,0 +1,52 @@
+
+\subsubsection{Reading CSV Files into R}
+\label{sec:read-csv}
+
+For the data sets associated with this book and its exercises, an easy way 
+to import data into R is with the \code{ISMdata} 
+operator that's
+included in the extensions to R found in the \code{ISM.Rdata} workspace file.
+(See Section \ref{sec:R-customizations} on page
+\pageref{sec:R-customizations}.  You must load the workspace file before you
+can use \code{ISMdata}.)  
+
+\index{P}{ISMdata}
+\index{P}{Data!ISMdata@\texttt{ISMdata}*}
+\index{C}{Data files!reading with ISMdata}
+\index{C}{Data files!on Internet}
+\index{C}{Internet!data files on}
+
+\code{ISMdata} lets you refer to a file by a short name in quotes without worrying about where it is located.
+It knows where to locate the data files used with this
+book, whether they be on your computer or on the web.  For example, the data set \code{hdd-minneapolis.csv} is stored on the Internet.  You can read it into an objected named \code{hdd} with this statement:
+\begin{verbatim}
+> hdd = ISMdata("hdd-minneapolis.csv")
+Not in library.  Trying to find it on the web ...
+File was read from the web.
+\end{verbatim}
+If you do not have an Internet connection, then \code{ISMdata} will be able to locate only 
+files on your computer.
+
+It is possible to use \code{ISMdata} to read in your own data that you have created and stored in CSV files.  To do this, you need to tell \code{ISMdata} where the data is located.
+The easiest way to do this is to use a mouse-based file navigator.  To do this, invoke \code{ISMdata} with no input argument:
+\begin{verbatim}
+> swim = ISMdata()
+\end{verbatim}
+Since there was no character string file name given as an argument, 
+\code{ISMdata} brings up a file navigator to let you select the file
+interactively:
+
+\bigskip
+\centerline{\graphicsfile[width=2.5in]{select-file.png}}
+
+\centerline{\parbox{2.5in}{\sf Selecting a file interactively.}}
+\bigskip
+
+Selecting and opening the desired file will cause it to be read into R
+as a data frame.  Make sure to choose the correct CSV file.  If you
+choose some other sort of file by accident, \code{ISMdata} will
+struggle to read it in, displaying various junk on your screen.
+
+The statement above will cause the resulting data frame to be called \code{swim}.  But be careful. If you accidentally choose a different file (e.g., \code{kidsfeet.csv}) the data from that file will be read in and stored under the name \code{swim}, even though they have nothing to do with swimming.
+
+

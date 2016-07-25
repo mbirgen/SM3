@@ -1,0 +1,170 @@
+\SweaveOpts{keep.source=TRUE,pdf=TRUE,eps=TRUE,prefix.string=Figures/formulas,width=3,height=3}
+
+<<setup,echo=F>>=
+source('../../../setup.R')
+require(xtable)
+@ 
+
+Using the \code{lm} software is largely a matter of familiarity 
+with the model design language described in Chapter \ref{chap:language}.  
+Computing the fitted model values and the residuals is 
+done with the \code{fitted} and \code{resid}.  These operators take
+a model as an input.  To illustrate:
+\index{P}{lm@\texttt{lm}}
+\index{P}{fitted@\texttt{fitted}}
+\index{P}{resid@\texttt{resid}}
+\index{P}{Modeling!lm@\texttt{lm}}
+\index{P}{Modeling!fitted@\texttt{fitted}}
+\index{P}{Modeling!resid@\texttt{resid}}
+
+\index{C}{residual!computing}
+\index{C}{fitted model values!computing}
+\index{C}{fitting!software}
+\index{C}{regression report!computing}
+
+
+
+<<>>=
+swim = fetchData("swim100m.csv")
+mod1 = lm(time ~ year + sex, data=swim)
+coef(mod1)
+@ 
+
+\datasetSwimming
+
+Once you have constucted the model, you can use \code{fitted} and
+\code{resid}: 
+<<results=hide>>=
+fitted(mod1)
+@ 
+<<echo=false,results=verbatim>>=
+brief.output( fitted(mod1), 12 )
+@ 
+
+\subsection{Sums of Squares}
+
+\index{C}{sum of squares!computing}
+
+Computations can be performed on the fitted model values and the
+residuals, just like any other quantity:
+<<>>=
+mean(fitted(mod1))
+var(resid(mod1))
+sd(resid(mod1))
+summary(resid(mod1))
+@ 
+
+Sums of squares are very important in statistics.  Here's how to
+calculate them for the response values, the fitted model values, and
+the residuals:
+<<>>=
+sum(swim$time^2)
+sum(fitted(mod1)^2)
+sum(resid(mod1)^2)
+@ 
+The partitioning of variation by models is seen by the way 
+\index{C}{partitioning!sums of squares}
+\index{C}{sum of squares!partitioning}
+the sum of squares of the fitted and the residuals add up to the sum of squares of the response:
+<<>>=
+227699 + 935.8
+@ 
+
+Don't forget the squaring stage of the operation!  The sum of the
+residuals (without squaring) 
+is very different from the sum of squares of the residuals:
+<<>>=
+sum(resid(mod1))
+sum(resid(mod1)^2)
+@ 
+Take care in reading numbers formatted like 
+\code{1.849e-14}.   The notation stands for $1.849 \times 10^{-14}$.
+That number, $0.00000000000001849$, is effectively zero compared to the
+residuals themselves!
+\index{C}{scientific notation}
+\index{C}{zero}
+
+
+\subsection{Redundancy}
+
+\index{C}{redundancy!and NA}
+\index{C}{coefficients!NA (redundancy)}
+The \code{lm} operator will automatically detect redundancy and deal
+with it by leaving the redundant terms out of the model.  
+
+To see how redundancy is handled, here is an example with a
+constructed redundant variable in the swimming dataset.  
+The following statement adds a new variable to the
+dataframe counting how many years after the end of World War II each
+record was established:
+<<>>=
+swim$afterwar = swim$year - 1945
+@ 
+
+Here is a model that doesn't involve redundancy
+<<>>=
+mod1 = lm( time ~ year + sex, data=swim)
+coef(mod1)
+@ 
+
+When the redundant variable is added in, \code{lm} successfully
+detects the redundancy and handles it.  This is indicated by a
+coefficient of NA on the redundant variable.
+<<>>=
+mod2 = lm( time ~ year + sex + afterwar, data=swim)
+coef(mod2)
+@ 
+
+In the absence of redundancy, the model coefficients don't depend on
+the order in which the model terms are specified.  But this is not the
+case when there is redundancy, since any redundancy is blamed on the
+later variables.  For instance, here \VN{afterwar} has been put first
+in the explanatory terms, so \code{lm} identifies \VN{year} as the
+redundant variable:
+<<>>=
+mod3 = lm( time ~ afterwar + year + sex, data=swim)
+coef(mod3)
+@ 
+
+\index{C}{redundancy!fitted model values}
+Even though the coefficients are different, the fitted model values
+and the residuals are exactly the same (to within computer round-off)
+regardless of the order of the
+model terms.
+<<results=hide>>=
+fitted(mod2)
+@ 
+<<echo=false,results=verbatim>>=
+brief.output( fitted( mod2 ), 12 )
+@ 
+<<results=hide>>=
+fitted(mod3)
+@ 
+<<echo=false,results=verbatim>>=
+brief.output( fitted( mod3 ), 12 )
+@ 
+
+\index{C}{redundancy!in categorical variables}
+Note that whenever you use a categorical variable and an intercept
+term in a model, there is a redundancy.  This is not shown explicitly.
+For example, here is a model with no intercept term, and both levels
+of the categorical variable \VN{sex} show up with coefficients:
+<<>>=
+lm(time ~ sex - 1, data=swim)
+@ 
+If the intercept term is included (as it is by default unless
+\code{-1} is used in the model formula), one of the levels is simply
+dropped in the report:
+<<>>=
+lm(time ~ sex, data=swim)
+@ 
+Remember that this coefficient report implicitly involves a
+redundancy.  If the software had been designed differently, the report
+might look like this:
+\begin{Schunk}
+\begin{Soutput}
+(Intercept)     sexF      sexM     
+       65.2       NA     -10.5  
+\end{Soutput}
+\end{Schunk}
+

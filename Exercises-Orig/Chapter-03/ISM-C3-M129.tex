@@ -1,0 +1,48 @@
+%% Author: Daniel Kaplan
+%% Subject: Describing variability (percentiles, quintiles)
+
+
+Data on the distribution of economic variables, such as income, is often presented in quintiles: divisions of the group into five equal-sized parts.  
+
+Here is a table from the US Census Bureau (Historical Income Tables from March 21, 2002) giving the distribution of income across US households in year 2000.
+
+\bigskip
+
+\centerline{\begin{tabular}{lrr}
+ & Upper & Mean\\
+Quintile & Boundary & Value\\\hline
+Lowest & \$17,955 & \$10,190\\
+Second & \$33,006 & \$25,334\\
+Third  & \$52,272 & \$42,361\\
+Fourth & \$81,960 & \$65,729\\
+Fifth & --- & \$141,260\\
+\end{tabular}}
+
+\bigskip
+
+Based on this table, calculate:
+\begin{enumerate}[(a)]
+\item The 20th percentile of family income. 
+
+\SelectSetHoriz{17955}{10190,17955,33006,25334,52272,42361,81960,141260}
+
+
+\item The 80th percentile of family income. 
+
+\SelectSetHoriz{81960}{10190,17955,33006,25334,52272,42361,81960,141260}
+
+\item The table doesn't specify the median family income but you can
+  make a reasonable estimate of it.  Pick the closest one.
+
+\SelectSetHoriz{42500}{10000,18000,25500,42500,53000,65700}
+
+
+\item Note that there is no upper boundary reported for the fifth
+  quintile, and no lower boundary reported for the first quintile.
+  Why? \TextEntry[itemname=boundaries]
+
+\item From this table, what evidence is there that family income has a
+  skew rather than ``normal'' distribution? \TextEntry[itemname=skew]
+
+\end{enumerate}
+

@@ -1,0 +1,278 @@
+
+
+
+Using the \code{lm} software is largely a matter of familiarity 
+with the model design language described in Chapter \ref{chap:language}.  
+Computing the fitted model values and the residuals is 
+done with the \code{fitted} and \code{resid}.  These operators take
+a model as an input.  To illustrate:
+\index{P}{lm@\texttt{lm}}
+\index{P}{fitted@\texttt{fitted}}
+\index{P}{resid@\texttt{resid}}
+\index{P}{Modeling!lm@\texttt{lm}}
+\index{P}{Modeling!fitted@\texttt{fitted}}
+\index{P}{Modeling!resid@\texttt{resid}}
+
+\index{C}{residual!computing}
+\index{C}{fitted model values!computing}
+\index{C}{fitting!software}
+\index{C}{regression report!computing}
+
+
+
+\begin{Schunk}
+\begin{Sinput}
+> swim = fetchData("swim100m.csv")
+> mod1 = lm(time ~ year + sex, data=swim)
+> coef(mod1)
+\end{Sinput}
+\begin{Soutput}
+(Intercept)        year        sexM 
+    555.717      -0.251      -9.798 
+\end{Soutput}
+\end{Schunk}
+
+\datasetSwimming
+
+Once you have constucted the model, you can use \code{fitted} and
+\code{resid}: 
+\begin{Schunk}
+\begin{Sinput}
+> fitted(mod1)
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+   1    2    3    4    5    6    7    8    9   10   11   12 
+66.9 66.1 65.6 65.1 63.6 63.1 62.6 62.1 59.6 59.3 59.1 57.1 
+... for 62 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Sums of Squares}
+
+\index{C}{sum of squares!computing}
+
+Computations can be performed on the fitted model values and the
+residuals, just like any other quantity:
+\begin{Schunk}
+\begin{Sinput}
+> mean(fitted(mod1))
+\end{Sinput}
+\begin{Soutput}
+mean 
+59.9 
+\end{Soutput}
+\begin{Sinput}
+> var(resid(mod1))
+\end{Sinput}
+\begin{Soutput}
+ var 
+15.3 
+\end{Soutput}
+\begin{Sinput}
+> sd(resid(mod1))
+\end{Sinput}
+\begin{Soutput}
+  sd 
+3.92 
+\end{Soutput}
+\begin{Sinput}
+> summary(resid(mod1))
+\end{Sinput}
+\begin{Soutput}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  -4.70   -2.70   -0.60    0.00    1.28   19.10 
+\end{Soutput}
+\end{Schunk}
+
+Sums of squares are very important in statistics.  Here's how to
+calculate them for the response values, the fitted model values, and
+the residuals:
+\begin{Schunk}
+\begin{Sinput}
+> sum(swim$time^2)
+\end{Sinput}
+\begin{Soutput}
+[1] 228635
+\end{Soutput}
+\begin{Sinput}
+> sum(fitted(mod1)^2)
+\end{Sinput}
+\begin{Soutput}
+[1] 227699
+\end{Soutput}
+\begin{Sinput}
+> sum(resid(mod1)^2)
+\end{Sinput}
+\begin{Soutput}
+[1] 936
+\end{Soutput}
+\end{Schunk}
+The partitioning of variation by models is seen by the way 
+\index{C}{partitioning!sums of squares}
+\index{C}{sum of squares!partitioning}
+the sum of squares of the fitted and the residuals add up to the sum of squares of the response:
+\begin{Schunk}
+\begin{Sinput}
+> 227699 + 935.8
+\end{Sinput}
+\begin{Soutput}
+[1] 228635
+\end{Soutput}
+\end{Schunk}
+
+Don't forget the squaring stage of the operation!  The sum of the
+residuals (without squaring) 
+is very different from the sum of squares of the residuals:
+\begin{Schunk}
+\begin{Sinput}
+> sum(resid(mod1))
+\end{Sinput}
+\begin{Soutput}
+[1] 1.85e-14
+\end{Soutput}
+\begin{Sinput}
+> sum(resid(mod1)^2)
+\end{Sinput}
+\begin{Soutput}
+[1] 936
+\end{Soutput}
+\end{Schunk}
+Take care in reading numbers formatted like 
+\code{1.849e-14}.   The notation stands for $1.849 \times 10^{-14}$.
+That number, $0.00000000000001849$, is effectively zero compared to the
+residuals themselves!
+\index{C}{scientific notation}
+\index{C}{zero}
+
+
+\subsection{Redundancy}
+
+\index{C}{redundancy!and NA}
+\index{C}{coefficients!NA (redundancy)}
+The \code{lm} operator will automatically detect redundancy and deal
+with it by leaving the redundant terms out of the model.  
+
+To see how redundancy is handled, here is an example with a
+constructed redundant variable in the swimming dataset.  
+The following statement adds a new variable to the
+dataframe counting how many years after the end of World War II each
+record was established:
+\begin{Schunk}
+\begin{Sinput}
+> swim$afterwar = swim$year - 1945
+\end{Sinput}
+\end{Schunk}
+
+Here is a model that doesn't involve redundancy
+\begin{Schunk}
+\begin{Sinput}
+> mod1 = lm( time ~ year + sex, data=swim)
+> coef(mod1)
+\end{Sinput}
+\begin{Soutput}
+(Intercept)        year        sexM 
+    555.717      -0.251      -9.798 
+\end{Soutput}
+\end{Schunk}
+
+When the redundant variable is added in, \code{lm} successfully
+detects the redundancy and handles it.  This is indicated by a
+coefficient of NA on the redundant variable.
+\begin{Schunk}
+\begin{Sinput}
+> mod2 = lm( time ~ year + sex + afterwar, data=swim)
+> coef(mod2)
+\end{Sinput}
+\begin{Soutput}
+(Intercept)        year        sexM    afterwar 
+    555.717      -0.251      -9.798          NA 
+\end{Soutput}
+\end{Schunk}
+
+In the absence of redundancy, the model coefficients don't depend on
+the order in which the model terms are specified.  But this is not the
+case when there is redundancy, since any redundancy is blamed on the
+later variables.  For instance, here \VN{afterwar} has been put first
+in the explanatory terms, so \code{lm} identifies \VN{year} as the
+redundant variable:
+\begin{Schunk}
+\begin{Sinput}
+> mod3 = lm( time ~ afterwar + year + sex, data=swim)
+> coef(mod3)
+\end{Sinput}
+\begin{Soutput}
+(Intercept)    afterwar        year        sexM 
+     66.620      -0.251          NA      -9.798 
+\end{Soutput}
+\end{Schunk}
+
+\index{C}{redundancy!fitted model values}
+Even though the coefficients are different, the fitted model values
+and the residuals are exactly the same (to within computer round-off)
+regardless of the order of the
+model terms.
+\begin{Schunk}
+\begin{Sinput}
+> fitted(mod2)
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+   1    2    3    4    5    6    7    8    9   10   11   12 
+66.9 66.1 65.6 65.1 63.6 63.1 62.6 62.1 59.6 59.3 59.1 57.1 
+... for 62 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Sinput}
+> fitted(mod3)
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+   1    2    3    4    5    6    7    8    9   10   11   12 
+66.9 66.1 65.6 65.1 63.6 63.1 62.6 62.1 59.6 59.3 59.1 57.1 
+... for 62 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+
+\index{C}{redundancy!in categorical variables}
+Note that whenever you use a categorical variable and an intercept
+term in a model, there is a redundancy.  This is not shown explicitly.
+For example, here is a model with no intercept term, and both levels
+of the categorical variable \VN{sex} show up with coefficients:
+\begin{Schunk}
+\begin{Sinput}
+> lm(time ~ sex - 1, data=swim)
+\end{Sinput}
+\begin{Soutput}
+...
+sexF  sexM  
+65.2  54.7  
+\end{Soutput}
+\end{Schunk}
+If the intercept term is included (as it is by default unless
+\code{-1} is used in the model formula), one of the levels is simply
+dropped in the report:
+\begin{Schunk}
+\begin{Sinput}
+> lm(time ~ sex, data=swim)
+\end{Sinput}
+\begin{Soutput}
+...
+(Intercept)         sexM  
+       65.2        -10.5  
+\end{Soutput}
+\end{Schunk}
+Remember that this coefficient report implicitly involves a
+redundancy.  If the software had been designed differently, the report
+might look like this:
+\begin{Schunk}
+\begin{Soutput}
+(Intercept)     sexF      sexM     
+       65.2       NA     -10.5  
+\end{Soutput}
+\end{Schunk}
+

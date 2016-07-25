@@ -1,0 +1,37 @@
+%% Author: Daniel Kaplan
+%% Subject: Group Means
+%% Title: Residuals
+
+Read in the Galton height data
+\begin{verbatim}
+> g = fetchData("galton.csv")
+\end{verbatim}
+
+\begin{enumerate}[(a)]
+\item What is the standard deviation of the height?
+\item Calculate the grand mean and, from that, the residuals of the
+  actual heights from the grand mean.
+\begin{verbatim}
+> mean(height, data=g)
+[1] 66.76069
+> res0 = g$height - 66.76069
+> sd(res0)
+\end{verbatim}
+What is the standard deviation of the residuals from this "grand mean"
+model? \SelectSetHoriz{3.58}{2.51,2.58,2.92,3.58,3.82}
+\item Calculate the group-wise mean for the different sexes and, from
+  that, the residuals of the actual heights from this group-wise
+  model.
+\begin{verbatim}
+> mod1 = mean( height ~ sex, data=g)
+> res1 = g$height - fitted( mod1, data=g)
+> sd(res1)
+\end{verbatim}
+What is the standard deviation of the residuals from this group-wise
+model? 
+\SelectSetHoriz{2.51}{2.51,2.58,2.92,3.58,3.82}
+\item Explain why the standard deviation of the residuals of the
+  group-wise model less than the standard deviation of the residuals
+  of the ``grand mean'' model. \TextEntry
+
+\end{enumerate}

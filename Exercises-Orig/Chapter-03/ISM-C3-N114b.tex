@@ -1,0 +1,54 @@
+%% Author: Daniel Kaplan
+%% Subject: Describing Variability (percentiles and IQR, outliers)
+
+Here is a small table of percentiles of typical daily calorie consumption 
+of college students.
+
+\bigskip
+\centerline{\begin{tabular}{rr}
+Percentile & Calories\\\hline
+0 & 1400\\
+5 & 1800\\
+10 & 2000\\
+25 & 2400\\
+50 & 2600\\
+75 &  2900\\
+90 &  3100\\
+95 &  3300\\
+100 & 3700\\
+\end{tabular}}
+\bigskip
+
+
+\begin{enumerate}[(a)]
+
+\item What is the 50\%-coverage interval?
+\begin{description}
+\item[Lower Boundary] \SelectSetHoriz{2400}{1800,1900,2000,2200,2400,2500,2600}
+\item[Upper Boundary] \SelectSetHoriz{2900}{2600,2750,2900,3000,3100,3200,3500}
+\end{description}
+
+
+
+\item What percentage of cases lie between 2900 and 3300? \\
+\SelectSetHoriz{20}{10,20,25,30,40,50,60,70,80,90,95}
+
+
+\item What is the percentile
+that marks the upper end of the
+95\%-coverage interval? 
+\SelectSetHoriz{97.5}{75,90,92.5,95,97.5,100}
+
+Estimate the corresponding calorie value from the table.\\
+\SelectSetHoriz{3500}{2900,3000,3100,3300,3500,3700}
+
+
+\item Using the 1.5 IQR rule-of-thumb for identifying an outlier,
+what would be the threshold for identifying a low calorie consumption as 
+an outlier?\\
+\SelectSetHoriz{1650}{1450,1500,1650,1750,1800,2000}
+
+
+
+\end{enumerate}
+

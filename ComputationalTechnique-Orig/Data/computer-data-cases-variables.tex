@@ -1,0 +1,392 @@
+
+\subsection{Reading Tabular Data into R}
+
+Data used in statistical modeling are usually organized into tables, 
+often created using spreadsheet software. Most people
+presume that the same software used to create a table of data should
+be used to display and analyze it.  This is part of the reason for the
+popularity of spreadsheet programs such as Excel and Google Spreadsheets.
+
+\index{C}{Excel}
+\index{C}{Google Spreadsheets}
+\index{C}{spreadsheet software}
+\index{P}{Importing data to R}
+\index{P}{Data!importing to R}
+\index{P}{ISMdata}
+\index{P}{CSV files!reading}
+\index{P}{Data!ISMdata@\texttt{ISMdata}*}
+\index{P}{read.csv@\texttt{read.csv}}
+\index{P}{Data!read.csv@\texttt{read.csv}}
+\index{P}{reading CSV files}
+
+For serious statistical work, it's helpful to take another approach that
+strictly separates the processes of data collection and of data
+analysis: use one program to create data files and another program to
+analyze the data stored in those files.  
+By doing this, one guarantees that the original data are
+not modified accidentally in the process of analyzing them.  This also
+makes it possible to perform many different analyses of the data;
+modelers often create and compare many different models of the same
+data.
+
+\subsubsection{Reading Tabular Data into R}
+
+Data is central to statistics, and the tabular arrangement
+of data is very common.  Accordingly, R provides a large number of
+ways to read in tabular
+data.  These vary depending on how the data are stored, where they are
+located, etc.  To help keep things as simple as possible, the \pkg{mosaic}
+package in R provides an operator, \function{fetchData} that allows
+you to access data files in tabular format on your computer as well as data stored on
+repositories such as the one associated with this book or one that a
+course instructor might set up for his or her students.
+
+\index{P}{fetchData}
+
+\label{sec:loading-mosaic}
+To use \function{fetchData}, as well as a variety of other operators
+that you will encounter later, you need to load the \pkg{mosaic}
+package. 
+\begin{Schunk}
+\begin{Sinput}
+> require(mosaic)
+\end{Sinput}
+\end{Schunk}
+You need do this only once in each session of R, and on systems such
+as RStudio the package will generally be reloaded automatically.
+(If you get an error message, it's likely that the \pkg{mosaic} package
+has not been installed on your system.  Use the package installation
+menu in R to install \pkg{mosaic}, after which the \function{require}
+function will load the package.)
+
+Reading in a data table that's been connected with \function{fetchData}
+is simply a matter of knowing the name of the data set.  For instance,
+one data table used in examples in this book is
+\texttt{swim100m.csv}.  To read in this data table and create an
+object in R that contains the data, use a command like this:
+\datasetSwimming
+\begin{Schunk}
+\begin{Sinput}
+> swim = fetchData("swim100m.csv")
+\end{Sinput}
+\end{Schunk}
+
+The \texttt{csv} part of the name in \texttt{"swim100m.csv"} indicates
+that the file has been stored in a particular data format,
+\newword{comma-separated values} that is handled by spreadsheet
+software as well as many other kinds of software.
+
+The part of this command that requires creativity is choosing a
+name for the R object that will hold the data.  In the above command
+it is called \texttt{swim}, but you might prefer another name, e.g.,
+\texttt{s} or \texttt{sdata} or even \texttt{ralph}.  Of course, it's
+sensible to choose names that are short, easy to type and remember,
+and remind you what the contents of the object are about.
+
+To help you identify data tables that can be accessed through
+\function{fetchData}, examples in this book will be marked with a flag
+containing the name of the file containing the data file.  The files
+themselves are either built in to the \pkg{mosaic} package or
+available automatically through the web site for this book.
+
+\subsubsection{Data Frames}
+\index{P}{data@\texttt{data}}
+\index{C}{data frame|(}
+
+The type of R object created by \function {fetchData} is called a
+\newword{data frame} and is essentially a tabular layout. To illustrate , here are the first several cases
+of the \texttt{swim} data frame created by the previous use of \function{fetchData()}:
+\begin{Schunk}
+\begin{Sinput}
+> head(swim)
+\end{Sinput}
+\begin{Soutput}
+  year time sex
+1 1905 65.8   M
+2 1908 65.6   M
+3 1910 62.8   M
+4 1912 61.6   M
+5 1918 61.4   M
+6 1920 60.4   M
+\end{Soutput}
+\end{Schunk}
+Note that the \function{head} function, one of several functions that
+operate on data frames, takes the R object that you
+created, not the quoted name of the data file.  
+
+Data frames, like tabular data generally, involve variables and
+cases.  In R, each of the variables is given a name.  You can refer to
+the variable by name in a couple of different ways.  To see the
+variable names in a data frame, something you might want to do to
+remind yourself of how names a spelled and capitalized, use the
+\function{names} function:
+\begin{Schunk}
+\begin{Sinput}
+> names(swim)
+\end{Sinput}
+\begin{Soutput}
+[1] "year" "time" "sex" 
+\end{Soutput}
+\end{Schunk}
+Another way to get quick information about the variables in a data
+frame is with \function{summary}:
+\begin{Schunk}
+\begin{Sinput}
+> summary(swim)
+\end{Sinput}
+\begin{Soutput}
+      year           time      sex   
+ Min.   :1905   Min.   :47.8   F:31  
+ 1st Qu.:1924   1st Qu.:53.6   M:31  
+ Median :1956   Median :56.9         
+ Mean   :1952   Mean   :59.9         
+ 3rd Qu.:1976   3rd Qu.:65.2         
+ Max.   :2004   Max.   :95.0         
+\end{Soutput}
+\end{Schunk}
+
+To see how many cases there are in a data frame, use \function{nrow}:
+\begin{Schunk}
+\begin{Sinput}
+> nrow(swim)
+\end{Sinput}
+\begin{Soutput}
+[1] 62
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{Variables in Data Frames}
+
+\index{C}{data frame!variables of}
+\index{C}{columns!in data frames}
+\index{P}{columns!in data frame}
+\index{C}{variables!in data frames}
+\index{P}{variables!in data frame}
+\index{P}{.@{\texttt{\$}}}
+\index{P}{Data!access variables with \$}
+Perhaps the most common operation on a data frame is to refer to the
+values in a single variable.  The two ways you will most commonly use
+involve functions with a \texttt{data=} argument and the direct use of
+the \verb+$+ notation.
+
+Most of the statistical modeling functions you will encounter in this
+book are designed to work with data frames and allow you to refer
+directly to variables within a data frame.  For instance:
+\begin{Schunk}
+\begin{Sinput}
+> mean(year, data = swim)
+\end{Sinput}
+\begin{Soutput}
+[1] 1952
+\end{Soutput}
+\begin{Sinput}
+> min(year, data = swim)
+\end{Sinput}
+\begin{Soutput}
+[1] 1905
+\end{Soutput}
+\end{Schunk}
+
+The \texttt{data=} argument tells the function which data frame to pull the
+variable from.  Leaving off that argument leads to an error:
+\begin{Schunk}
+\begin{Sinput}
+> mean(year)
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+Error in mean(year) : 
+   error in evaluating the argument 'x' 
+\end{Soutput}
+\end{Schunk}
+% The following was replaced with the Schunk for formatting purposes.
+
+Of course, you know that the variable \texttt{year}
+is defined within the data frame \texttt{swim}, but you have to give
+this information to the function \function{mean} explicitly, otherwise
+it doesn't know where to find the variable.  
+
+You can also refer to the variable using the \verb+$+ notation, e.g.
+\begin{Schunk}
+\begin{Sinput}
+> mean(swim$year)
+\end{Sinput}
+\begin{Soutput}
+mean 
+1952 
+\end{Soutput}
+\end{Schunk}
+Think of this as referring to the variable by both its family name
+(the data frame's name,``swim'') and its given name (``year''), something
+like Einstein\$Albert.
+
+The advantage of the \texttt{data=} approach becomes evident when you
+construct statements that involve more than one variable within a data
+frame.  For instance, here's a calculation of the mean year separately
+for the different sexes:
+\begin{Schunk}
+\begin{Sinput}
+> mean(year ~ sex, data = swim)
+\end{Sinput}
+\begin{Soutput}
+  sex    S  N Missing
+1   F 1951 31       0
+2   M 1954 31       0
+\end{Soutput}
+\end{Schunk}
+You will see much more of the \verb+~+ (``tilde'') 
+starting in Chapter \ref{chap:simple-models}.  It's the R notation for ``broken down by'' or ``versus.''
+
+Both the \function{mean} and \function{min} functions know to look in
+the data frame when interpreting variables, but not all R functions
+--- particularly older ones --- are designed this way.\footnote{The
+  ability of \function{mean}, \function{median}, and similar
+  functions to handle the \texttt{data=} format is provided by the
+  \pkg{mosaic} package.}  When you encounter a function that can't
+handle the \texttt{data=} format, use the \texttt{\$} notation. 
+For example, this works
+\begin{Schunk}
+\begin{Sinput}
+> mean(sqrt(year), data = swim)
+\end{Sinput}
+\begin{Soutput}
+[1] 44.2
+\end{Soutput}
+\end{Schunk}
+But not this:
+\begin{Schunk}
+\begin{Sinput}
+> sqrt(year, data = swim)
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+Error in try(sqrt(year, data = swim)) : object 'year' not found
+\end{Soutput}
+\end{Schunk}
+
+
+
+\index{P}{length@\texttt{min}}
+\index{P}{mean@\texttt{mean}}
+\index{P}{max@\texttt{max}}
+
+\subsubsection{Adding a New Variable}
+
+\index{C}{data frame!adding a new variable}
+\index{C}{variable!adding to a data frame}
+
+Sometimes you will compute a new quantity from the existing variables and 
+want to treat this as a new variable.  Adding a new variable to a data
+frame can be done with the \texttt{\$} notation. 
+For instance, here is how to create a new variable in \texttt{swim}
+that holds the \texttt{time} converted from minutes to units of seconds:
+\begin{Schunk}
+\begin{Sinput}
+> swim$minutes = swim$time/60
+\end{Sinput}
+\end{Schunk}
+The new variable appears just like the old
+ones:
+\begin{Schunk}
+\begin{Sinput}
+> names(swim)
+\end{Sinput}
+\begin{Soutput}
+[1] "year"    "time"    "sex"     "minutes"
+\end{Soutput}
+\end{Schunk}
+You could also, if you want, redefine an existing variable, for
+instance:
+\begin{Schunk}
+\begin{Sinput}
+> swim$time = swim$time/60
+\end{Sinput}
+\end{Schunk}
+Such assignment operations do not change the original file from which
+the data were read, only the data frame in the current session of R.
+This is an advantage, since it means that your data in the data file
+stay in their original state and therefore won't be corrupted by
+operations made during analysis.
+
+\subsection{Sampling from a Sample Frame}
+
+\index{C}{sampling!with resample}
+\index{C}{sampling!with shuffle}
+
+Much of statistical analysis is concerned with the consequences of
+drawing a sample from the population.  
+Ideally, you will
+have a sampling frame that lists every member of the population from
+which the sample is to be drawn.  With this in hand, you could treat
+the individual cases in the sampling frame as if they were cards in a
+deck of hands.  To pick your random sample, shuffle the deck and deal
+out the desired number of cards.  
+
+When doing real work in the field, you would use the randomly dealt
+cards to locate the real-world cases they correspond to.  Sometimes in
+this book, however, in order to let you explore the consequences of
+sampling, you will select a sample from an existing data set.  The
+\function{deal} function performs this, taking as an argument the data
+frame to be used in the selection and the number of cases to sample.
+
+For example, the \texttt{kidsfeet.csv} data set \datasetFeet has
+$n=39$ cases.
+\begin{Schunk}
+\begin{Sinput}
+> kids = fetchData("kidsfeet.csv")
+> nrow(kids)
+\end{Sinput}
+\begin{Soutput}
+[1] 39
+\end{Soutput}
+\end{Schunk}
+Here's how to take a random sample of five of the cases:
+\begin{Schunk}
+\begin{Sinput}
+> deal(kids, 5)
+\end{Sinput}
+\begin{Soutput}
+       name birthmonth birthyear length width sex biggerfoot domhand
+8   Caitlin          6        88   23.0   8.8   G          L       R
+17 Caroline         12        87   24.0   8.7   G          R       L
+29     Mike         11        88   24.2   8.9   B          L       R
+6    Scotty          3        88   25.7   9.7   B          R       R
+20  Heather          3        88   25.5   9.5   G          R       R
+\end{Soutput}
+\end{Schunk}
+
+
+\index{C}{sampling}
+\index{C}{resampling!with replacement}
+\index{P}{resample@\texttt{resample}*}
+\index{P}{deal@\texttt{deal}*}
+\index{P}{Resampling!resample@\texttt{resample}*}
+
+The results returned by \function{deal} will never contain the same
+case more than once, just as if you were dealing cards from a shuffled
+deck.  In contrast, \code{resample} replaces each case after it is
+dealt so that it can appear more than once in the result.  You
+wouldn't want to do this to select from a sampling frame, but it turns
+out that there are valuable statistical uses for this 
+sort of \newworddef{sampling with replacement}{sampling!with
+  replacement}.  You'll make use of re-sampling in Chapter \ref{chap:statistical-inference}.
+
+
+\begin{Schunk}
+\begin{Sinput}
+> resample(kids, 5)
+\end{Sinput}
+\begin{Soutput}
+         name birthmonth birthyear length width sex biggerfoot domhand
+15      Julie         11        87   26.0   9.3   G          L       R
+31   Danielle          6        88   24.0   9.3   G          L       R
+29       Mike         11        88   24.2   8.9   B          L       R
+38     Hayley          1        88   21.6   7.9   G          R       R
+29.1     Mike         11        88   24.2   8.9   B          L       R
+\end{Soutput}
+\end{Schunk}
+
+Notice that Mike was sampled twice.
+

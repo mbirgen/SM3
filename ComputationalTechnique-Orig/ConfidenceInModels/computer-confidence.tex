@@ -1,0 +1,275 @@
+
+
+ 
+Regression reports are generated using software you have already encountered: \code{lm} to fit a model and \code{summary} to construct the report from
+the fitted model.  To illustrate: \datasetSwimming
+\begin{Schunk}
+\begin{Sinput}
+> swim = fetchData("swim100m.csv")
+> mod = lm(time ~ year + sex, data=swim)
+> summary(mod)
+\end{Sinput}
+\begin{Soutput}
+...
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 555.7168    33.7999   16.44  < 2e-16 ***
+year         -0.2515     0.0173  -14.52  < 2e-16 ***
+sexM         -9.7980     1.0129   -9.67  8.8e-14 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+Residual standard error: 3.98 on 59 degrees of freedom
+Multiple R-squared: 0.844,	Adjusted R-squared: 0.839 
+F-statistic:  160 on 2 and 59 DF,  p-value: <2e-16 
+\end{Soutput}
+\end{Schunk}
+
+
+\subsection{Confidence Intervals from Standard Errors}
+
+\index{P}{Confidence Intervals}
+
+Given the coefficient estimate and the standard error
+from the regression report, the confidence interval is easily generated.  
+For a 95\% confidence interval, you just multiply the standard error by 2 
+to get the margin of error.  For example, in the above, the
+margin of error on \indicatorVar{sex}{M} is $2 \times 1.013 = 2.03$, or, in 
+computer notation:
+\begin{Schunk}
+\begin{Sinput}
+> 2 * 1.0129
+\end{Sinput}
+\begin{Soutput}
+[1] 2.03
+\end{Soutput}
+\end{Schunk}
+
+If you want the two endpoints of the confidence interval, rather than 
+just the margin of error, do these
+simple calculations: (1) subtract the margin of error from the estimate; 
+(2) add the margin of error to the estimate.  So, 
+\begin{Schunk}
+\begin{Sinput}
+> -9.798 - 2*1.0129
+\end{Sinput}
+\begin{Soutput}
+[1] -11.8
+\end{Soutput}
+\begin{Sinput}
+> -9.798 + 2*1.0129
+\end{Sinput}
+\begin{Soutput}
+[1] -7.77
+\end{Soutput}
+\end{Schunk}
+The key thing is to remember the multiplier that is applied 
+to the standard error.  A multiplier of approximately 2 is for
+a 95\% confidence level.  
+
+The \function{confint} function provides a convenient way to calculate
+confidence intervals directly.
+\index{C}{confidence interval!computation}
+\index{P}{confint@\texttt{confint}}
+\index{P}{Confidence Intervals!confint@\texttt{confint}}
+It calculates the exact multiplier (which depends somewhat on the
+sample size)  and applies it to the standard error to produce the confidence intervals.
+\begin{Schunk}
+\begin{Sinput}
+> mod = lm(time ~ year + sex, data=swim)
+> confint(mod)
+\end{Sinput}
+\begin{Soutput}
+              2.5 %  97.5 %
+(Intercept) 488.083 623.350
+year         -0.286  -0.217
+sexM        -11.825  -7.771
+\end{Soutput}
+\end{Schunk}
+
+It would be convenient if the regression report included confidence
+intervals rather than the standard error.  Part of the reason it
+doesn't is historical: the desire to connect to the traditional by-hand calculations.
+
+
+
+\subsection{Bootstrapping Confidence Intervals}
+
+Confidence intervals on model coefficients can be computed using the
+same bootstrapping technique introduced in Chapter \ref{chap:statistical-inference}.
+
+Start with your fitted model. To illustrate, here is a model of
+swimming time over the years, taking into account sex:
+\begin{Schunk}
+\begin{Sinput}
+> swim = fetchData("swim100m.csv")
+> lm(time ~ year + sex, data=swim)
+\end{Sinput}
+\begin{Soutput}
+...
+(Intercept)         year         sexM  
+    555.717       -0.251       -9.798  
+\end{Soutput}
+\end{Schunk}
+These coefficients reflect one hypothetical draw from the
+population-based sampling
+distribution.  It's impossible to get another draw from the
+``population'' here: the actual records are all you've got.
+
+But to approximate sampling variation, you can treat the sample as
+your population and re-sample:
+\begin{Schunk}
+\begin{Sinput}
+> lm(time ~ year + sex, data=resample(swim))
+\end{Sinput}
+\begin{Soutput}
+...
+(Intercept)         year         sexM  
+    495.600       -0.221       -8.717  
+\end{Soutput}
+\end{Schunk}
+
+Constructing many such re-sampling trials and collect the results 
+\begin{Schunk}
+\begin{Sinput}
+> s = do(500) * lm(time ~ year + sex, data=resample(swim))
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Sinput}
+> s
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Soutput}
+  Intercept   year   sexM sigma r-squared
+1       531 -0.239  -9.60  3.71     0.853
+2       514 -0.230 -10.25  3.28     0.893
+3       525 -0.236  -9.70  3.67     0.827
+4       562 -0.255  -9.41  3.97     0.846
+5       568 -0.257 -10.76  4.65     0.819
+... for 500 cases altogether ...
+\end{Soutput}
+\end{Schunk}
+
+To find the standard error of the coefficients, just take the standard
+deviation across the re-sampling trials:
+\begin{Schunk}
+\begin{Sinput}
+> sd(s)
+\end{Sinput}
+\begin{Soutput}
+Intercept      year      sexM     sigma r-squared 
+  43.5426    0.0220    0.9530    0.8057    0.0343 
+\end{Soutput}
+\end{Schunk}
+
+Multiplying the standard error by 2 gives the approximate 95\% margin
+of error.  Alternatively, you can use the \function{confint} function
+to calculate this for you:
+\begin{Schunk}
+\begin{Sinput}
+> confint(s, method="stderr")
+\end{Sinput}
+\begin{Soutput}
+       name    2.5%   97.5%
+1 Intercept 472.355 643.454
+2      year  -0.296  -0.209
+3      sexM -11.621  -7.876
+4     sigma   2.215   5.381
+5 r-squared   0.788   0.923
+\end{Soutput}
+\end{Schunk}
+
+
+
+\subsection{Prediction Confidence Intervals}
+
+\index{C}{confidence interval!for prediction}
+\index{C}{prediction!confidence interval}
+
+When a model is used to make a prediction, it's helpful to be able to
+describe how precise the prediction is.  For instance, suppose you \datasetFeet
+want to use the \texttt{kidsfeet.csv} data set to make a prediction of
+the foot width of a girl whose foot length is 25 cm. 
+
+\index{P}{predict@\texttt{predict}}
+\index{P}{Modeling!predict@\texttt{predict}}
+
+First, fit your model:
+\begin{Schunk}
+\begin{Sinput}
+> feet = fetchData("kidsfeet.csv")
+> names(kids)
+\end{Sinput}
+\begin{Soutput}
+ [1] "Gender"      "Grade"       "Age"         "Race"       
+ [5] "Urban.Rural" "School"      "Goals"       "Grades"     
+ [9] "Sports"      "Looks"       "Money"      
+\end{Soutput}
+\begin{Sinput}
+> levels(kids$sex)
+\end{Sinput}
+\begin{Soutput}
+NULL
+\end{Soutput}
+\begin{Sinput}
+> mod = lm(width ~ length + sex, data=feet)
+\end{Sinput}
+\end{Schunk}
+
+Now apply the model to the new data for which you want to make a
+prediction.  Take care to use the right coding for categorical variables.
+\begin{Schunk}
+\begin{Sinput}
+> predict(mod, newdata=data.frame( length=25, sex="G" ))
+\end{Sinput}
+\begin{Soutput}
+   1 
+8.93 
+\end{Soutput}
+\end{Schunk}
+
+In order to generate a confidence interval, the \code{predict}
+operator needs to be told what type of interval is wanted.  There are
+two types of prediction confidence intervals:
+\begin{description}
+\item[Interval on the model value] which reflects the sampling
+  distributions of the coefficients themselves.  To calculate this,
+  use the \code{interval="confidence"} named argument:
+\begin{Schunk}
+\begin{Sinput}
+> predict(mod, newdata=data.frame( length=25, sex="G" ), 
+         interval="confidence")
+\end{Sinput}
+\begin{Soutput}
+   fit  lwr  upr
+1 8.93 8.74 9.13
+\end{Soutput}
+\end{Schunk}
+
+The components named \code{lwr} and \code{upr} are the lower and upper
+limits of the confidence interval, respectively.
+\index{P}{interval@\texttt{interval=}!in \texttt{predict}}
+\index{P}{Confidence Intervals!interval@\texttt{interval=}!in \texttt{predict}}
+
+\item[Interval on the prediction] which includes the variation due to
+  the uncertainty in the coefficients as well as the size of a typical
+  residual.  To find this interval, use the
+  \code{interval="prediction"} named argument:
+\begin{Schunk}
+\begin{Sinput}
+> predict(mod, newdata=data.frame( length=25, sex="G" ), 
+         interval="confidence")
+\end{Sinput}
+\begin{Soutput}
+   fit  lwr  upr
+1 8.93 8.74 9.13
+\end{Soutput}
+\end{Schunk}
+
+The prediction interval is larger than the model-value confidence
+interval because the residual always gives additional uncertainty
+around the model value.
+\end{description} 
+
+

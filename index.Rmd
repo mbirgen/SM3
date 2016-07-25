@@ -18,7 +18,7 @@ description: "Third edition of Statistical Modeling: A Fresh Approach."
 
 # Outline {-}
 
-
+The outline is going to go here.
 
 # To build this book {-}
 

@@ -1,0 +1,64 @@
+\SweaveOpts{keep.source=TRUE,pdf=TRUE,eps=TRUE,prefix.string=Figures/formulas,width=3,height=3}
+
+<<setup,echo=F>>=
+source('../../../setup.R')
+require(xtable)
+@ 
+
+The coefficient of determination, $R^2$, 
+compares the variation in the response variable to the variation
+in the fitted model value.  It can be calculated as a ratio of variances: \datasetSwimming
+<<>>=
+swim = fetchData("swim100m.csv")
+mod = lm(time ~ year + sex, data=swim)
+var(fitted(mod)) / var(swim$time)
+@ 
+\index{C}{coef. of determination!computing}
+\index{P}{var@\texttt{var}}
+\index{P}{Descriptive Statistics!var@\texttt{var}}
+
+The convenience function \function{rsquared} does the calculation for you:
+<<>>=
+rsquared(mod)
+@ 
+
+The \newword{regression report} is a standard way of summarizing
+models.  Such a report is produced by most statistical software
+packages and used in many fields.  The first part of the table
+contains the coefficients --- labeled ``Estimate'' --- along with
+other information that will be introduced starting in Chapter
+\ref{chap:confidence}.  The $R^2$ statistic is a standard part of the
+report; look at the second line from the bottom.
+<<results=verbatim>>=
+summary(mod)
+@ 
+
+
+Occasionally, you may be interested in the correlation coefficient $r$ between two
+quantities.  
+You can, of course, compute $r$ by fitting a model, finding $R^2$,
+and taking a square root.
+<<>>=
+mod2 = lm(time ~ year, data=swim)
+coef(mod2)
+sqrt(rsquared(mod2))
+@ 
+
+The \function{cor} function computes this directly:
+<<>>=
+cor(swim$time, swim$year)
+@ 
+
+Note that the negative sign on $r$ indicates that record swim \VN{time}
+decreases as \VN{year} increases.  This information about the
+direction of change is contained in the sign of the coefficient from
+the model.  The magnitude of the coefficient tells how fast the
+\VN{time} is changing (with units of seconds per year).  The
+correlation coefficient (like $R^2$) is without units.
+
+Keep in mind that the correlation coefficient $r$ summarizes only the
+simple linear model \model{A}{B} where B is quantitative.  But the
+coefficient of determination, $R^2$, summarizes any model; it is much
+more useful.  If you want to see the direction of change, look at the
+sign of the coefficient.
+

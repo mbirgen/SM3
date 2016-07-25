@@ -1,0 +1,39 @@
+%% Author: Daniel Kaplan
+%% Subject: Computation (coverage intervals and data manipulation)
+
+In Galton's data, are the sons typically taller than their fathers? 
+Create a variable that is
+the difference between the son's height and the father's height.
+(Arrange it so that a positive number refers to a son who is taller
+than his father.)
+
+\begin{enumerate}
+\item What's the mean height difference (in inches)?\\
+\SelectSetHoriz{0.06}{-2.47,-0.31,0.06,66.76,69.23}
+
+\item What's the standard deviation (in inches)?\\
+\SelectSetHoriz{2.74}{1.32,2.63,2.74,3.58,3.75}
+
+\item What is the 95-percent coverage interval (in inches)?
+\begin{MultipleChoice}
+\wrong{-3.7 to 4.8}
+\wrong{-4.6 to 4.9}
+\correct{-5.2 to 5.6}
+\wrong{-9.5 to 4.5}
+\end{MultipleChoice}
+\end{enumerate}
+
+\begin{AnswerText}
+First, you need to pull out the data for males.
+\begin{verbatim}
+> males = subset( galton, sex=='M')
+> mean(males$height - males$father)
+[1] 0.06065
+> sd(males$height - males$father)
+[1] 2.735
+> quantile(males$height - males$father, c(.025,.975))
+ 2.5% 97.5% 
+-5.18  5.58 
+\end{verbatim}
+\end{AnswerText}
+

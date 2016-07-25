@@ -1,0 +1,72 @@
+%% Author=DTK,
+%% Subject=computational drill,
+
+
+Using Galton's height data (\code{galton.csv}), compute the answers to these
+questions about outliers using the 1.5 IQR rule of
+thumb and the \code{outlier} function.
+
+\begin{enumerate}
+\item Which of these statements will compute the number of cases that
+  are outliers with respect to \VN{height}?  (Assume that the data
+  frame is named \code{galton}.)
+\begin{MultipleChoice}
+\wrong{\code{outlier(galton$height)}}
+\correct{\code{table(outlier(galton$height))}}
+\wrong{\code{outlier(table(galton$height))}}
+\wrong{\code{subset(galton, outlier(galton$height))}}
+\wrong{\code{outlier(subset(galton, galton$height))}}
+\end{MultipleChoice}
+
+% $ to stop the 
+
+\item How many of the cases are outliers in \VN{height} ?\\
+\SelectSetHoriz{1}{0,1,2,3,5,10,15,20}
+
+\begin{AnswerText}
+\begin{verbatim}
+table( outlier( galton$height ) )
+FALSE  TRUE 
+  897     1 
+\end{verbatim}
+\end{AnswerText}
+
+\item How many of the cases are outliers in \VN{mother}?\\
+\SelectSetHoriz{44}{0,11,22,33,44,55,66}
+
+\begin{AnswerText}
+\begin{verbatim}
+> table( outlier( galton$mother ) )
+FALSE  TRUE 
+  854    44 
+\end{verbatim}
+\end{AnswerText}
+
+\item How many of the cases are outliers in \VN{father}?
+\SelectSetHoriz{9}{0,4,9,14,19,24,29}
+
+\begin{AnswerText}
+\begin{verbatim}
+table( outlier( galton$father ) )
+FALSE  TRUE 
+  889     9 
+\end{verbatim}
+\end{AnswerText}
+
+
+\item Looking just at the cases where \VN{mother} is an outlier, how
+  many of the children involved (variable \VN{sex}) are female?\\
+\SelectSetHoriz{20}{0,5,10,15,20,25,30,35}
+
+\begin{AnswerText}
+\begin{verbatim}
+> foo = subset(galton, outlier( galton$mother) ) 
+> table(foo$sex)
+ F  M 
+20 24 
+\end{verbatim}
+\end{AnswerText}
+
+
+\end{enumerate}
+
