@@ -126,21 +126,14 @@ elephant is the covariates --- the other explanatory variables
 that you should be adjusting for.  The t-test approach doesn't provide
 any capability for such adjustment.  Indeed, if you try to add another
 explanatory variable to the t-test command, you get an error message:
-<<eval=false>>=
+<<error = TRUE>>=
 t.test( wage ~ sex + educ, data=cps)
 @ 
-<<echo=false,results=verbatim>>=
-tryout = try( t.test( wage ~ sex + educ, data=cps) )
-cat(tryout)
-@ 
+
 The same applies to trying to do a t-test with a quantitative
 explanatory variable:
-<<eval=false>>=
+<<error = TRUE>>=
 t.test( wage ~ educ, data=cps)
-@ 
-<<echo=false,results=verbatim>>=
-tryout = try( t.test( wage ~ educ, data=cps) )
-cat(tryout)
 @ 
 
 \index{C}{ANOVA!covariates}

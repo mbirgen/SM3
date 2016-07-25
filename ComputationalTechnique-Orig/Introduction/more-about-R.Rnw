@@ -432,13 +432,10 @@ For instance, you can do arithmetic on numbers but not on characters.
 <<>>=
 3 + 2
 @ 
-<<eval=false,echo=true>>=
+<<error = TRUE>>=
 as.character(3) + 2
 @ 
-<<eval=true,echo=false,results=verbatim>>=
-tryout = try(as.character(3) + 2)
-cat(tryout)
-@ 
+
 \index{C}{character string!object type)}
 \index{C}{data!character)}
 

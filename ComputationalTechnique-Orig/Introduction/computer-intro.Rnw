@@ -1,6 +1,4 @@
-<<echo=false>>=
-source('../../../setup.R')
-@ 
+
 
 Modern statistics is done on the computer.  There was a time, 60 years
 ago and before, when computation could only be done by hand or using
@@ -26,7 +24,7 @@ often besting the mainframes of thirty years ago.)
 Hardware and software today pose no limitation; they are readily
 available.  
 
-\index{C}{computation!foundations}
+`r index_entry('C', 'computation!foundations')`
 Each chapter of this book includes a section on computational
 technique.  Many readers will be completely new to the use of
 computers for scientific and statistial work, so the first chapters
@@ -40,7 +38,7 @@ Chances are, you use a computer almost every day: for email,
 word-processing, managing your music or your photograph collection, 
 perhaps even using a spreadsheet program for accounting. The software
 you use for such activities makes it easy to get started.  Possibly
-you have never even looked at an instruction manual or used the ``help''
+you have never even looked at an instruction manual or used the "help"
 features on your computer. 
 
 When you use a word processor or email, the bulk of what you enter
@@ -69,10 +67,10 @@ computer.  The same difficulty would arise in word processing if the
 computer had to make sense of your writing, rejecting it when a claim
 is unconvincing or when a sentence is ambiguous. Statistical computing
 pioneer John Chambers 
-\index{C}{Chambers, John} refers to the ``Prime Directive'' of
-\index{C}{software!prime directive}
-software\cite{chambers-2008}: ``to program in such a way that
-computations can be understood and trusted.''
+`r index_entry('C', 'Chambers, John')` refers to the "Prime Directive" of
+`r index_entry('C', 'software!prime directive')`
+softwareTEX COMMAND NOT FOUND cite chambers-2008 : "to program in such a way that
+computations can be understood and trusted."
 
 Much of the design of software for scientific and statistical work is
 oriented around the difficulty of communicating intentions.  A popular
@@ -89,28 +87,29 @@ operations performed by others.
 
 Another style of scientific computation --- the one used in this
 book --- is based on language.  Rather than selecting an option with a
-mouse, you construct a \newword{command} that conveys both the
+mouse, you construct a `r new_word('command')` that conveys both the
 operation that you want and the data to which you want to apply that
 operation.  There are dramatic advantages to this language-based
 style of computation:
 
-\begin{itemize}
-\item It lets you connect computations to one another, so that the
+<!-- begin itemize -->
+
+#. It lets you connect computations to one another, so that the
   output of one operation can become the input to another.
-\item It lets you {\bf repeat} the operation on new or modified data,
+#. It lets you **repeat** the operation on new or modified data,
   allowing you to automate tedious tasks and, importantly, to verify
   the correctness of your computations on data where you already know
   the answer.
-\item It lets you {\bf accumulate} the results of previous operations,
+#. It lets you **accumulate** the results of previous operations,
   treating those results as new data.
-\item It lets you {\bf document} concisely what was done so that you can
+#. It lets you **document** concisely what was done so that you can
   demonstrate that what you said you did is what you actually did. 
   In this way, you or others can repeat the analysis 
   later if necessary to confirm your results.
-\item It lets you {\bf modify} the computation in a controlled way
+#. It lets you **modify** the computation in a controlled way
   to correct it or to vary some aspect of it while holding other
   aspects exactly the same as in the original.
-\end{itemize}
+<!-- end itemize -->
 
 In order to use the language-based approach, you will need to learn a
 few principles of the language itself: some vocabulary, some syntax,
@@ -123,7 +122,7 @@ effort effectively, the principles that you will learn are broadly
 applicable to many computer systems and can provide significant
 insight even to how to use mouse-based interfaces.
 
-\subsection{The Choice of Software}
+## The Choice of Software
 
 The software package used in this book is called R.  The R
 package provides an environment for doing statistical and scientific
@@ -135,30 +134,29 @@ There are several other major software packages widely used in statistics.
 Among the leaders are SPSS, SAS, and Stata.  Each of them provides
 the computational power needed for statistical modeling.
 Each has its own advantages and its own devoted group of users. 
-\index{C}{SPSS}\index{C}{SAS}\index{C}{Stata}
+\index{C}{SPSS} \index{C}{SAS} \index{C}{Stata}
 
 One reason for the choice of R is that it offers a command-based
 computing environment.  That makes it much easier to write about
 computing and also reveals better the structure of the computing
-process.\cite{kaplan-tise-2007} 
+process. [@kaplan-tise-2007]  
 R is available for free and works on the
 major types of computers, e.g., Windows, Macintosh, and
-Unix/Linux. The \Rstudio~ software lets you work with a complete R
+Unix/Linux. The RStudio software lets you work with a complete R
 system using an ordinary web browser or on your own computer.  
 
 \authNote{You can get information about how to install R on your
 computer at \url{www.r-project.org}.}
 
-In making your own choice, the most important thing is this: {\em choose 
-  something}!    Readers who are familiar with SPSS, SAS, or STATA can
+In making your own choice, the most important thing is this: *choose something*!    Readers who are familiar with SPSS, SAS, or STATA can
 use the information in each chapter's computational technique section
 to help them identify the facilities to look for in those packages.
 
 Another form of software that's often used with data
-is the spreadsheet.  Examples are Excel \index{C}{Excel} and Google Spreadsheets.
-\index{C}{Google spreadsheets}\index{C}{spreadsheets} 
-Spreadsheets are 
-effective for entering data and have nice facilities for formatting
+is the spreadsheet.  Examples are Excel `r index_entry('C', 'Excel')` and Google Spreadsheets.
+`r index_entry('Google spreadsheets')`
+`r index_entry('spreadsheets')` 
+Spreadsheets are effective for entering data and have nice facilities for formatting
 tables.  The visual layout of the
 data seems to be intuitive to many people.  Many businesses use spreadsheets
 and they are widely taught in high schools.  Unfortunately, they are very
@@ -173,20 +171,20 @@ As a result, despite the popularity of spreadsheets, I encourage you to
 reserve them for data entry and consider other software for the
 analysis of your data.
 
-\subsection{The R Command Console}
+## The R Command Console
 
 Depending on your circumstances, you may prefer to install R as
 software on your own computer, or use a web-based (``cloud
 computing'') service such as RStudio that runs through a web browser.  
 If you are using this book with a course, your instructor may 
 have set up a system for you.  If you are on your own, follow the set-up
-instructions available on-line at \url{www.r-project.org}.
+instructions available on-line at <www.r-project.org>.
 
 Depending on whether you run R on your own computer or in the cloud,
 you will start R either by clicking on an icon in the familiar way or
 by logging in to the web service.  In either case, you will see a
-\newword{console panel} in which you will be typing your commands to
-R.  It will look something like Figure \ref{fig:console-picture}.
+`r new_word('console panel')` in which you will be typing your commands to
+R.  It will look something like Figure \@ref("fig:console-picture").
 
 
 \begin{figure}
@@ -199,47 +197,48 @@ mathematical and scientific operations.  To use this power, you need
 to learn a little bit about the syntax and meaning of R commands.
 Once you have learned this, operations become simple to perform.
 
-\subsection{Invoking an Operation}
+## Invoking an Operation
 
-People often think of computers as {\em doing} things: sending email,
+People often think of computers as *doing* things: sending email,
 playing music, storing files.  Your job in using a computer is to tell
-the computer {\em what} to do.  There are many different words used 
-to refer to the ``what'': a procedure, a task, a function, a routine,
-and so on.  I'll use the word \newword{computation}.  Admittedly, this
+the computer *what* to do.  There are many different words used 
+to refer to the "what": a procedure, a task, a function, a routine,
+and so on.  I'll use the word `r new_word('computation')`.  Admittedly, this
 is a bit circular, but it is easy to remember: computers perform computations.
 
-Complex computations are built up from simpler computations.  This may seem obvious, but it is a powerful idea.  An \newword{algorithm} is just a description of a 
-computation in terms of other computations that you already know how to perform.  To help distinguish between the computation as a whole and the simpler parts, it is helpful to introduce a new word: an \newworddef{operator}{R software!operator} performs a computation.
+Complex computations are built up from simpler computations.  This may seem obvious, but it is a powerful idea.  An `r new_word('algorithm')` is just a description of a 
+computation in terms of other computations that you already know how to perform.  To help distinguish between the computation as a whole and the simpler parts, it is helpful to introduce a new word: an `r new_word("operator")` [@R software!operator] performs a computation.
 
 It's helpful to think of the computation carried out by an operator 
 as involving four parts:
-\begin{enumerate}
-\item The name of the operator
-\item The input arguments
-\item The output value
-\item Side effects
-\end{enumerate}
-A typical operation takes one or more {\bf input arguments} and uses the
-information in these to produce an {\bf output value}.  Along the way, the
+<!-- begin enumerate -->
+
+#. The name of the operator
+#. The input arguments
+#. The output value
+#. Side effects
+<!-- end enumerate -->
+A typical operation takes one or more **input arguments** and uses the
+information in these to produce an **output value**.  Along the way, the
 computer might take some action: display a graph,
 store a file, make a sound, etc.  These actions are called
-\newword{side effects}.  
+`r new_word('side effects')`.  
 
 To tell the computer to perform a computation --- call this
-{\bf invoking an operation} or giving a {\bf command} --- 
+**invoking an operation** or giving a **command** --- 
 you need to provide the
 name and the input arguments in a specific format. The computer then
-returns the output value.  For example, the command \code{sqrt(25)}
-invokes the square root operator (named \code{sqrt}) on the argument
+returns the output value.  For example, the command `sqrt(25)`
+invokes the square root operator (named `sqrt`) on the argument
 25.  The output from the computation will, of course, be 5.
 
-The syntax \index{C}{syntax!in R}\index{R!syntax}
+The syntax `r index_entry('C', 'syntax!in R')`  `r index_entry('R!syntax')`
 for invoking an operation consists of the operator's name,
 followed by round parentheses.  The input arguments go inside the
 parentheses.
 
 The software program that you use to invoke operators is called an
-\newword{interpreter}.  (The interpreter is the program you are
+`r new_word('interpreter')`.  (The interpreter is the program you are
 running when you start R.)  You enter your commands as a dialog
 between you and the interpreter.  To start, the interpreter prints a
 prompt, after which you type your command:
@@ -275,23 +274,25 @@ will print the output value from the computation:
 \draw [->] (nextlabel.east) -- (prompt2.west);
 \end{tikzpicture}
 
-\noindent The dialog continues as the interpreter prints another prompt and
+The dialog continues as the interpreter prints another prompt and
 waits for your further command.
 
 To save space, I'll usually show just the give-and-take from one round
 of the dialog:
-<<>>=
+```{r}
 sqrt(25)
-@ 
+```
+
 (Go ahead!  Type \code{sqrt(25)} after the prompt in the R
 interpreter, press ``enter,'' and see what happens.)
 
 Often, operations involve more than one argument.  The various
 arguments are separated by commas.  For example, here is an operation
-named \code{seq} 
-\index{P}{seq@\texttt{seq}}
+named `seq` 
+`r index_entry('P', 'seq@`seq')`
 that produces a sequence of numbers:
-% to color text: \textcolor{red}{the text to be colored}
+<!--  to color text: TEX COMMAND NOT FOUND textcolor red the text to be colored -->
+
 <<>>=
 seq(3,10)
 @ 

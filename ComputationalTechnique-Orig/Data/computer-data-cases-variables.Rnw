@@ -146,20 +146,10 @@ min( year, data=swim )
 
 The \texttt{data=} argument tells the function which data frame to pull the
 variable from.  Leaving off that argument leads to an error:
-<<eval=false>>=
+<<error = TRUE>>=
 mean( year )
 @ 
-\begin{Schunk}
-\begin{Soutput}
-Error in mean(year) : 
-   error in evaluating the argument 'x' 
-\end{Soutput}
-\end{Schunk}
-% The following was replaced with the Schunk for formatting purposes.
-<<eval=true,echo=false,results=hide>>=
-tryout = try( mean(year) )
-cat(tryout)
-@ 
+
 
 Of course, you know that the variable \texttt{year}
 is defined within the data frame \texttt{swim}, but you have to give
