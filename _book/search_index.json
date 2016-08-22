@@ -1,4 +1,4 @@
 [
-["index.html", "Statistical Modeling: A Fresh Approach (3/ed) Outline", " Statistical Modeling: A Fresh Approach (3/ed) Daniel Kaplan 2016-07-13 Outline "],
+["index.html", "Statistical Modeling: A Fresh Approach (3/ed) Outline", " Statistical Modeling: A Fresh Approach (3/ed) Daniel Kaplan 2016-07-25 Outline The outline is going to go here. "],
 ["to-build-this-book.html", "To build this book", " To build this book This index.Rmd will always contain the first part of the book. For a Tufte book in HTML, give the following command in the shell: sh _build.sh To get the navigation as a bar, somehow contrive to put these two lines just before the table of contents in the HTML file: &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot; type=&quot;text/css&quot; /&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;toc.css&quot; type=&quot;text/css&quot; /&gt; For a PDF file, change _build.sh or just run the following command: Rscript -e &quot;bookdown::render_book(&#39;index.Rmd&#39;, bookdown::tufte_book2())&quot; To avoid chapter numbering, put {-} after the level-one heading. "]
 ]

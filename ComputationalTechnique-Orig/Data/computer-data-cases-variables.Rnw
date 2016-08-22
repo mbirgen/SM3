@@ -1,8 +1,9 @@
-<<echo=false>>=
+```{r echo = FALSE}
 source('../../../setup.R')
-@ 
+```
+ 
 
-\subsection{Reading Tabular Data into R}
+## Reading Tabular Data into R
 
 Data used in statistical modeling are usually organized into tables, 
 often created using spreadsheet software. Most people
@@ -10,17 +11,17 @@ presume that the same software used to create a table of data should
 be used to display and analyze it.  This is part of the reason for the
 popularity of spreadsheet programs such as Excel and Google Spreadsheets.
 
-\index{C}{Excel}
-\index{C}{Google Spreadsheets}
-\index{C}{spreadsheet software}
-\index{P}{Importing data to R}
-\index{P}{Data!importing to R}
-\index{P}{ISMdata}
-\index{P}{CSV files!reading}
-\index{P}{Data!ISMdata@\texttt{ISMdata}*}
-\index{P}{read.csv@\texttt{read.csv}}
-\index{P}{Data!read.csv@\texttt{read.csv}}
-\index{P}{reading CSV files}
+`r index_entry('C', 'Excel')` 
+`r index_entry('C', 'Google Spreadsheets')` 
+`r index_entry('C', 'spreadsheet software')` 
+`r index_entry('P', 'Importing data to R')` 
+`r index_entry('P', 'Data!importing to R')` 
+`r index_entry('P', 'ISMdata')` 
+`r index_entry('P', 'CSV files!reading')` 
+`r index_entry('P', 'Data!ISMdata@`ISMdata`*')` 
+`r index_entry('P', 'read.csv@`read.csv`')` 
+`r index_entry('P', 'Data!read.csv@`read.csv`')` 
+`r index_entry('P', 'reading CSV files')` 
 
 For serious statistical work, it's helpful to take another approach that
 strictly separates the processes of data collection and of data
@@ -32,32 +33,33 @@ makes it possible to perform many different analyses of the data;
 modelers often create and compare many different models of the same
 data.
 
-\subsubsection{Reading Tabular Data into R}
+### Reading Tabular Data into R
 
 Data is central to statistics, and the tabular arrangement
 of data is very common.  Accordingly, R provides a large number of
 ways to read in tabular
 data.  These vary depending on how the data are stored, where they are
-located, etc.  To help keep things as simple as possible, the \pkg{mosaic}
-package in R provides an operator, \function{fetchData} that allows
+located, etc.  To help keep things as simple as possible, the `mosaic`
+package in R provides an operator, `fetchData()` that allows
 you to access data files in tabular format on your computer as well as data stored on
 repositories such as the one associated with this book or one that a
 course instructor might set up for his or her students.
 
-\index{P}{fetchData}
+`r index_entry('P', 'fetchData')` 
 
 \label{sec:loading-mosaic}
-To use \function{fetchData}, as well as a variety of other operators
-that you will encounter later, you need to load the \pkg{mosaic}
+To use `fetchData()`, as well as a variety of other operators
+that you will encounter later, you need to load the `mosaic`
 package. 
-<<>>=
+```{r }
 require(mosaic)
-@ 
+```
+ 
 You need do this only once in each session of R, and on systems such
 as RStudio the package will generally be reloaded automatically.
-(If you get an error message, it's likely that the \pkg{mosaic} package
+(If you get an error message, it's likely that the `mosaic` package
 has not been installed on your system.  Use the package installation
-menu in R to install \pkg{mosaic}, after which the \function{require}
+menu in R to install `mosaic`, after which the `require()`
 function will load the package.)
 
 Reading in a data table that's been connected with \function{fetchData}
@@ -70,35 +72,36 @@ object in R that contains the data, use a command like this:
 swim = fetchData("swim100m.csv")
 @ 
 
-The \texttt{csv} part of the name in \texttt{"swim100m.csv"} indicates
+The `csv` part of the name in `"swim100m.csv"` indicates
 that the file has been stored in a particular data format,
-\newword{comma-separated values} that is handled by spreadsheet
+`r new_word('comma-separated values')` that is handled by spreadsheet
 software as well as many other kinds of software.
 
 The part of this command that requires creativity is choosing a
 name for the R object that will hold the data.  In the above command
-it is called \texttt{swim}, but you might prefer another name, e.g.,
-\texttt{s} or \texttt{sdata} or even \texttt{ralph}.  Of course, it's
+it is called `swim`, but you might prefer another name, e.g.,
+`s` or `sdata` or even `ralph`.  Of course, it's
 sensible to choose names that are short, easy to type and remember,
 and remind you what the contents of the object are about.
 
 To help you identify data tables that can be accessed through
-\function{fetchData}, examples in this book will be marked with a flag
+`fetchData()`, examples in this book will be marked with a flag
 containing the name of the file containing the data file.  The files
-themselves are either built in to the \pkg{mosaic} package or
+themselves are either built in to the `mosaic` package or
 available automatically through the web site for this book.
 
-\subsubsection{Data Frames}
-\index{P}{data@\texttt{data}}
-\index{C}{data frame|(}
+### Data Frames
+`r index_entry('P', 'datadata')` 
+`r index_entry('C', 'data frame')` 
 
-The type of R object created by \function {fetchData} is called a
-\newword{data frame} and is essentially a tabular layout. To illustrate , here are the first several cases
-of the \texttt{swim} data frame created by the previous use of \function{fetchData()}:
-<<>>=
+The type of R object created by `%s()`{fetchData} is called a
+`r new_word('data frame')` and is essentially a tabular layout. To illustrate , here are the first several cases
+of the `swim` data frame created by the previous use of `fetchData()`:
+```{r }
 head(swim)
-@ 
-Note that the \function{head} function, one of several functions that
+```
+ 
+Note that the `head()` function, one of several functions that
 operate on data frames, takes the R object that you
 created, not the quoted name of the data file.  
 
@@ -107,22 +110,25 @@ cases.  In R, each of the variables is given a name.  You can refer to
 the variable by name in a couple of different ways.  To see the
 variable names in a data frame, something you might want to do to
 remind yourself of how names a spelled and capitalized, use the
-\function{names} function:
-<<>>=
+`names()` function:
+```{r }
 names(swim)
-@ 
+```
+ 
 Another way to get quick information about the variables in a data
-frame is with \function{summary}:
-<<>>=
+frame is with `summary()`:
+```{r }
 summary(swim)
-@ 
+```
+ 
 
-To see how many cases there are in a data frame, use \function{nrow}:
-<<>>=
+To see how many cases there are in a data frame, use `nrow()`:
+```{r }
 nrow(swim)
-@ 
+```
+ 
 
-\subsubsection{Variables in Data Frames}
+### Variables in Data Frames
 
 \index{C}{data frame!variables of}
 \index{C}{columns!in data frames}
