@@ -1,0 +1,90 @@
+# 15.8 Computational Technique
+
+```{r, message = FALSE}
+require(mosaic) # mosaic operators and data used in this section
+```
+
+
+The basic software for hypothesis testing on parts of models involves the 
+familiar `lm` and `summary` operators for generating the
+regression report and the `anova` operator for generating an
+**`ANOVA`**   report on a model.
+
+## ANOVA reports
+
+`r detex::index_entry('P', 'anova@anova')` 
+`r detex::index_entry('P', 'Hypothesis Testing!anova@anova')` 
+
+The `anova` operator takes a model as an argument and produces
+the term-by term `ANOVA` report.  To illustrate, consider this model
+of wages from the Current Population Survey data.  
+
+```{r}
+Cps <-  CPS85 # from mosaicData
+mod1 <-  lm( wage ~ married + age + educ, data = Cps)
+anova(mod1)
+```
+
+Note the small p-value on the `married` term: `0.0097`.
+
+To change the order of the terms in the report, you can create a new
+model with the explanatory terms listed in a different order.  For
+example, here's the `ANOVA` on the same model, but with `married`
+last instead of first:
+```{r}
+mod2 <- lm( wage ~ age + educ + married, data = Cps)
+anova(mod2)
+```
+
+Now the p-value on `married` is large.  This suggests that much of
+the variation in `wage` that is associated with `married` can
+also be accounted for by `age` and `educ` instead.
+
+
+## Non-Parametric Statistics
+
+Consider the model of world-record swimming times plotted on page 116.
+
+<!-- TEX COMMAND NOT FOUND pageref page:interaction-swimming .  -->
+
+It shows pretty clearly the
+interaction between `year` and `sex`.
+
+It's easy to confirm that this interaction term is statistically significant:
+
+```{r}
+Swim <-  SwimRecords  # in mosaicData
+anova( lm( time ~ year * sex, data = Swim) )
+```
+
+The p-value on the interaction term is very small: $2.8 \times10^{-6}$.
+
+To check whether this result might be influenced by the shape of the
+distribution of the `time` or `year` data, you can conduct a
+non-parametric test.  Simply take the rank of each quantitative variable:
+
+
+`r detex::index_entry('C', 'non-parametric statistics')` 
+`r detex::index_entry('C', 'outlier!and non-parametrics')` 
+
+`r detex::index_entry('P', 'rank@rank')` 
+`r detex::index_entry('P', 'Hypothesis Testing!rank@rank')` 
+
+```{r}
+mod <- lm( rank(time) ~ rank(year) * sex, data = Swim)
+anova(mod)
+```
+
+With the rank-transformed data, the p-value on the interaction term is
+much larger: no evidence for an interaction between
+`year` and `sex`.  You can see this directly in  a plot of the data
+after rank-transforming `time`:
+
+```{r}
+xyplot( rank(time) ~ year, groups = sex, data = Swim)
+```
+
+The rank-transformed data suggest that women's records are improving
+in about the same way as men's. 
+That is, new records are set by women at a rate similar to the rate
+at which men set them.
