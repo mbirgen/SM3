@@ -1,5 +1,5 @@
 --- 
-title: "Statistical Modeling: Computational Technique"
+title: "Statistical Modeling: Computational Technique" 
 author: "Daniel Kaplan and Frank Shaw"
 date: "September 2016"
 site: bookdown::bookdown_site
