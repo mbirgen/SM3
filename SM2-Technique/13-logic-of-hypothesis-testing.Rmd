@@ -1,0 +1,8 @@
+# The logic of hypothesis testing
+
+```{r include = FALSE}
+library(mosaic)
+options(width = 100)
+detex_index_entry <- function(...) {NULL}
+```
+

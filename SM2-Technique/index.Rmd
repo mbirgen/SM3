@@ -1,0 +1,48 @@
+--- 
+title: "Statistical Modeling: Computational Technique"
+author: "Daniel Kaplan and Frank Shaw"
+date: "September 2016"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/SM3
+description: "Up-to-date computational technique for Statistical Modeling: A Fresh Approach"
+---
+
+# Preface: Updating Computational Technique {-}
+
+The story in short: Things change, especially software, and including the `mosaic` package that the computational technique sections in *[Statistical Modeling: A Fresh Approach](http://Project-Mosaic-Books.com)* were based on. This document revises those sections to bring them up to date with the version of `mosaic` currently provided to R users.
+
+## The story in more detail {-}
+
+The first edition of *Statistical Modeling: A Fresh Approach* came out in 2009. That edition included add-in software for R that provided several custom features that made it easier to work with R for introductory students. Probably the most famous component of that software is the `do()` function. But there are others, such as `rand()` and `resample()`.
+
+Soon after the first edition appeared, the US National Science Foundation approved funding for *[Project MOSAIC](http://www.mosaic-web.org)*, a collaboration between *Fresh Approach* author Daniel Kaplan (Macalester College) and Randall Pruim (Calvin College), Nicholas Horton (Amherst College), and Eric Marland (Appalachian State University). Three of us --- Pruim, Horton, and Kaplan --- developed an R package based in large part on the software written for the first edition of *Fresh Approach*, but extended in important ways. A particularly important extension was the adoption of a user friendly interface for basic statistics that uses the "formula" notation in R. (See the `mosaic` vignette *[Less Volume: More Creativity](https://cran.r-project.org/web/packages/mosaic/vignettes/LessVolume-MoreCreativity.html)*.)
+
+The second edition of *Statistical Modeling: A Fresh Approach* made direct use of the `mosaic` package. This entailed a complete re-write of the computational technique chapters from the first edition. (Other changes were made as well.) The second edition came out at the end of 2011.
+
+Since 2011, the MOSAIC project and its `mosaic` package have continued to thrive. Our best estimate of the number of students who have made use of `mosaic` is about 200,000, as of the end of 2015. In addition to being used in *A Fresh Approach*, there are `mosaic` companions for several other textbooks: 
+
+* Lock 5 — *Statistics: Unlocking the Power of Data* [link to companion](https://github.com/rpruim/Lock5withR)
+* Tintle, et al — *Introduction to Statistical Investigation* [link to companion](https://github.com/rpruim/ISIwithR)
+* Moore/McCabe — *Introduction to the Practice of Statistics* [link to companion](http://www3.amherst.edu/~nhorton/ips6e/)
+
+These companions are the moral equivalent of the computational technique sections for *A Fresh Approach*, but those books do not have the emphasis on modeling and multiple explanatory variables that is the hallmark of *A Fresh Approach*.
+
+The `mosaic` package has evolved in the years since 2011. Some of the changes have introduced slight incompatibilities with the contents of the 2nd edition computational technique chapters. This document brings those chapter up to date. 
+
+Obviously, we can't update the many printed books already in circulation, so we are offering this update publicly via the web.
+
+## The story continues ... {-}
+
+These updates to the 2nd edition computational technique sections are part of a wider revision of *A Fresh Approach* to integrate it more closely to the data wrangling and visualization techniques that have become more accessible and powerful in the last few years, and adoption of a new publishing platform that will provide electronic access (as well as attractively priced printed access), make use of the vastly expanded capabilities of R, RMarkdown, and other publishing activities, provide a free and open source platform for interactive exercises, and link to online tutoring services such as [DataCamp](DataCamp.com).
+
+The third edition of *A Fresh Approach* will be even fresher. It will streamline the introduction to modeling by using concepts and techniques from machine learning (e.g. cross-validation as a central inference technique). The second edition's emphasis on model coefficients will be given a secondary role, as a specialized set of techniques but no longer as the primary engine for introducing concepts such as variation, co-variation, effect size, etc. A prototype for the software to be used in the third edition is available at <github.com/dtkaplan/StatisticalModeling>. This will likely undergo considerable revision and extension as the third edition is developed.
+
+Two online short courses are already available using the new approach of the third edition. These include short videos presenting concepts and many new computational exercises to develop the student's understanding of and capacity for statistical modeling.
+
+* [Statistical Modeling: Part I](https://www.datacamp.com/courses/introduction-to-statistical-modeling-part-1)
+* [Statistical Modeling: Part II](https://www.datacamp.com/courses/introduction-to-statistical-modeling-part-2)

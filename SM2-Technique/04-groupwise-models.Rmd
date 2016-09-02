@@ -1,0 +1,150 @@
+# Computational Technique
+
+```{r include = FALSE}
+library(mosaic)
+detex_index_entry <- function(...) {NULL}
+```
+
+
+Calculating means and other simple statistics is a matter of using the
+right function in R.  The **`mosaic`** package --- which you should
+load in to R as shown in Section \@ref("sec:loading-mosaic") --- makes it straightforward to calculate either a "grand" statistic or a
+"group-wise" statistic.   To illustrate:
+
+Load the **`mosaic`** package, needed only once per session.
+```{r, include = FALSE}
+require(mosaic) 
+```
+
+Read in data you are interested in analyzing, for instance
+the Cherry-Blossom 2008 data described earlier:^[These are also made available in the **`mosaic`** package as `TenMileRace`.]  
+
+```{r}
+Runners = read.csv("http://tiny.cc/mosaic/Cherry-Blossom-2008.csv")
+names( Runners )
+```
+
+Calculate a grand mean on the "gun" time --- the time between
+the start of the race, signalled by a gun, and when each runner
+crossed the finish line.  Here, to emphasize that this is a group--wise model, we use the
+function `gwm()` from the **`mosaic`** package.  It works the same as `mean()`, but its output
+is more formally the output of a model.
+
+```{r}
+gwm(gun ~ 1, data = Runners)
+```
+The model formula `gun ~ 1` is an "all cases the same" model.  You will refer to the `1` as the "Intercept  term" later in the text, but for now, think of it as "one value."  The one value here is the grand mean.
+Grand mean and other "grand" statistics.
+
+```{r}
+mean( gun ~ 1, data = Runners)
+median( gun ~ 1, data = Runners )
+sd( gun ~ 1, data = Runners )
+```
+
+To tell R that you want to break the statistics down by groups, replace the `1` with the variable
+which defines the groups.  You will be
+using this notation frequently in building models.  Here, as before, the `~` means, "model
+by" or "broken down by" or "versus."  To find the means for the gun time broken down by sex, enter
+```{r}
+gwm( gun ~ sex, data = Runners )
+```
+
+Other statistics work the same way, for instance,
+```{r}
+sd( gun ~ sex, data = Runners )
+```
+
+Another example ... wage broken down by sector of the economy, using
+data `cps.csv`:^[This data set is made available by **`mosaic`** as `CPS85`.]
+
+```{r}
+CPS = read.csv("http://tiny.cc/mosaic/cps.csv")
+gwm( wage ~ sector, data = CPS )
+```
+
+In the Whickham smoking data example^[This data set is made available by **`mosaic`** as `Whickham`.], the `outcome` for each person was
+not a number but a category: Alive or Dead at the time of the
+follow-up.  
+
+```{r}
+W <- read.csv("http://tiny.cc/mosaic/whickham.csv")
+names(W)
+levels(W$outcome)
+```
+
+The `gwm()` function recognizes that `outcome` is a categorical variable and outputs proportions.  In the case of "all cases the same," this is porportions of the data in the `outcome` levels:
+
+```{r}
+gwm( outcome ~ 1, data = W )
+```
+
+Here's the breakdown of the levels `Alive` and `Dead` according to smoking status:
+```{r}
+gwm( outcome ~ smoker, data = W )
+```
+
+You may be surbrised by this result.  But don't be misled.
+A more meaningful question is whether smokers are different from
+non-smokers when holding other variables constant, such as age.  To
+address this question, you need to add age into the model.
+
+It might be natural to consider
+each age --- 35, 36, 37, and so on --- as a separate group, but you
+won't get very many members of each group.  And, likely, the data for
+35 year-olds has quite a lot to say about 36 year-olds, so it doesn't
+make sense to treat them as completely separate groups.
+
+You can use the `cut()` function to divide up a quantitative
+variable into groups.  You get to specify the breaks between groups.
+
+```{r}
+W$ageGroups <- cut(W$age, breaks=c(0,30,40,53,64,75,100) )
+gwm( outcome ~ ageGroups, data = W )
+gwm( outcome ~ smoker + ageGroups, data = W )
+```
+
+With modeling techniques, to be introduced in later chapters, you can use
+quantitative variables without the need to divide them into groups.
+
+## Model Values and Residuals
+
+A group-wise model tells you a model value for each group, but often
+you will need these in a case-by-case format: the model value for each
+case in a data set.  The `fitted()` function carries out
+this simple calculation, taking each case in turn, figuring out which
+group it belongs to, and then returning the set of model values for
+all the cases.  It requires two arguments: the model (here provided by `gwm()`)
+the data on which the model was based.  For example:
+
+`r detex_index_entry('P', 'fitted')` 
+`r detex_index_entry('P', 'resid')` 
+
+```{r}
+Kids <- KidsFeet   # just get this from mosaicData instead of going out on the web with read.csv
+mod <- gwm( width ~ sex, data = Kids )
+fitted( mod, Kids )
+```
+
+The residuals are found by subtracting the case-by-case model value
+from the actual values for each case.  
+
+```{r}
+res <- Kids$width - fitted(mod, Kids)
+head(res) # display the first few residuals
+res <- resid(mod, Kids) # function resid does the calculation automatically
+head(res)
+```
+
+Take care to use the same quantitative variable (`width` in this case) from the
+data as was used in constructing the model.
+
+The `var()` function will calculate the variance:
+
+```{r}
+var( Kids$width )  # overall variation
+var( fitted(mod, Kids) ) # variation in model values
+var( resid(mod, Kids) ) # residual variation
+```
+
+Notice the "model triangle" relationship between these three numbers.

@@ -1,0 +1,167 @@
+# Confidence in models
+
+
+```{r include = FALSE}
+library(mosaic)
+options(width = 100)
+detex_index_entry <- function(...) {NULL}
+```
+
+Regression reports are generated using software you have already encountered: `lm` to fit a model and `summary` to construct the report from
+the fitted model.  To illustrate with the `SwimRecords` data from the **`mosaicData`** package:   
+```{r}
+mod <- lm(time ~ year + sex, data = SwimRecords)
+summary(mod)
+```
+
+
+## Confidence Intervals from Standard Errors
+
+`r detex_index_entry('P', 'Confidence Intervals')` 
+
+Given the coefficient estimate and the standard error
+from the regression report, the confidence interval is easily generated.  
+For a 95\%  confidence interval, you just multiply the standard error by 2
+to get the margin of error.  For example, in the above, the
+margin of error on `sex M` is $2 \times 1.013 = 2.03$, or, in 
+computer notation:
+```{r}
+2 * 1.0129
+```
+
+If you want the two endpoints of the confidence interval, rather than 
+just the margin of error, do these
+simple calculations: (1) subtract the margin of error from the estimate; 
+(2) add the margin of error to the estimate.  So, 
+```{r}
+-9.798 - 2*1.0129
+-9.798 + 2*1.0129
+```
+
+The key thing is to remember the multiplier that is applied 
+to the standard error.  A multiplier of approximately 2 is for
+a 95\% confidence interval.
+
+The `confint()` function provides a convenient way to calculate
+confidence intervals directly.
+
+`r detex_index_entry('C', 'confidence interval!computation')` 
+`r detex_index_entry('P', 'confint@confint')` 
+`r detex_index_entry('P', 'Confidence Intervals!confint@confint')` 
+It calculates the exact multiplier (which depends somewhat on the
+sample size)  and applies it to the standard error to produce the confidence intervals.
+
+```{r}
+mod <- lm( time ~ year + sex, data = SwimRecords)
+confint(mod)
+```
+
+It would be convenient if the regression report included confidence
+intervals rather than the standard error.  Part of the reason it
+doesn't is historical: the desire to connect to the traditional by-hand calculations.
+
+
+
+## Bootstrapping Confidence Intervals
+
+Confidence intervals on model coefficients can be computed using the
+same bootstrapping technique introduced in Chapter \@ref("chap:statistical-inference").
+
+Start with your fitted model. To illustrate, here is a model of world-record swimming time over the years, taking into account sex:
+```{r}
+lm( time ~ year + sex, data = SwimRecords)
+```
+These coefficients reflect one hypothetical draw from the
+population-based sampling
+distribution.  It's impossible to get another draw from the
+"population" here: the actual records are all you've got.
+
+But to approximate sampling variation, you can treat the sample as
+your population and re-sample:
+```{r}
+lm( time ~ year + sex, data = resample(SwimRecords))
+```
+
+Constructing many such re-sampling trials and collect the results 
+
+```{r}
+s = do(500) * lm( time ~ year + sex, data = resample(SwimRecords))
+head(s)
+```
+
+To find the standard error of the coefficients, just take the standard
+deviation across the re-sampling trials.  For the indicator variable `sex M`:
+```{r}
+sd(s$sexM)
+```
+
+Multiplying the standard error by 2 gives the approximate 95\% margin
+of error.  Alternatively, you can use the `confint()` function
+to calculate this for you:
+```{r}
+confint(s$sexM, method = "stderr")
+```
+
+
+
+## Prediction Confidence Intervals
+
+`r detex_index_entry('C', 'confidence interval!for prediction')` 
+`r detex_index_entry('C', 'prediction!confidence interval')` 
+
+When a model is used to make a prediction, it's helpful to be able to
+describe how precise the prediction is.  For instance, suppose you want to use the `KidsFeet` data set (from **`mosaicData`**) to make a prediction of the foot width of a girl whose foot length is 25 cm. 
+
+`r detex_index_entry('P', 'predict@predict')` 
+`r detex_index_entry('P', 'Modeling!predict@predict')` 
+
+First, fit your model:
+```{r}
+names(KidsFeet)
+levels(KidsFeet$sex)
+mod <- lm( width ~ length + sex, data = KidsFeet)
+```
+
+Now apply the model to the new data for which you want to make a
+prediction.  Take care to use the right coding for categorical variables.
+```{r}
+predict(mod, newdata = data.frame( length=25, sex="G" ))
+```
+
+In order to generate a confidence interval, the `predict`
+operator needs to be told what type of interval is wanted.  There are
+two types of prediction confidence intervals:
+<!-- begin description -->
+
+#. Interval on the model value which reflects the sampling
+  distributions of the coefficients themselves.  To calculate this,
+  use the `interval = "confidence"` named argument:
+```{r}
+predict(mod, newdata = data.frame( length = 25, sex = "G" ), 
+         interval = "confidence")
+```
+
+The components named `lwr` and `upr` are the lower and upper
+limits of the confidence interval, respectively.
+
+`r detex_index_entry('P', 'interval@interval=!in predict')` 
+`r detex_index_entry('P', 'Confidence Intervals!interval@interval=!in predict')` 
+
+#. Interval on the prediction which includes the variation due to
+  the uncertainty in the coefficients as well as the size of a typical
+  residual.  To find this interval, use the
+  `interval = "prediction"` named argument:
+```{r}
+predict(mod, newdata = data.frame( length = 25, sex = "G" ), 
+         interval = "prediction")
+```
+
+The prediction interval is larger than the model-value confidence
+interval because the residual always gives additional uncertainty
+around the model value. Predicting an individual's foot width, even if we
+know her sex and foot length, involves a lot more
+uncertainty than predicting the mean foot width of all individuals with these
+particular characteristics.
+<!-- end description -->  
+
+

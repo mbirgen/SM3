@@ -1,0 +1,87 @@
+# Total and partial relationships
+
+```{r include = FALSE}
+library(mosaic)
+options(width = 100)
+detex_index_entry <- function(...) {NULL}
+```
+
+
+## Adjustment
+
+`r detex_index_entry('C', 'adjustment!computation')` 
+
+There are two basic approaches to adjusting for covariates.
+Conceptually, the simplest one is to hold the covariates constant at
+some level when collecting data or by extracting a subset of data
+which holds those covariates constant.  The other approach is to
+include the covariates in your models.
+
+For example, suppose you want
+to study the differences in the wages of male and females.  The very
+simple model `wage` ~ `sex` might give some insight, but
+it attributes to `sex` effects that might actually be due to level
+of education, age, or the sector of the economy in which the person
+works.  Here's the result from the simple model:
+
+````{r}
+Cps <- CPS85
+mod0 <- lm( wage ~ sex, data = Cps)
+summary(mod0)
+```
+The coefficients indicate that a typical male makes \$2.12 more per
+hour than a typical female.  (Notice that $R^2 = 0.0422$ is very small:
+`sex` explains hardly any of the person-to-person variability in wage.)
+
+By including the variables `age`, `educ`, and `sector` in the
+model, you can adjust for these variables:
+```{r}
+mod1 <- lm( wage ~ age + sex + educ + sector, data = Cps)
+summary(mod1)
+```
+The adjusted difference between the sexes is \$1.94 per hour.  (The
+$R^2=0.30$ from this model is considerably larger than for `mod0`,
+but still a lot of the person-to-person variation in wages has not
+be captured.)
+
+It would be wrong to claim that simply including a covariate in a
+model guarantees that an appropriate adjustment has been made.  The
+effectiveness of the adjustment depends on whether the model design is
+appropriate, for instance whether appropriate interaction terms have
+been included.  However, it's certainly the case that if you **don't**
+include the covariate in the model, you have **not** adjusted for
+it.
+
+The other approach is to subsample the data so that the levels of the
+covariates are approximately constant.  For example, here is a subset
+that considers workers between the ages of 30 and 35 with between 10
+to 12 years of education and working in the sales sector of the
+economy:
+```{r}
+small <- subset(Cps, age <=35 & age >= 30 & 
+                       educ>=10 & educ <=12 & 
+                       sector=="sales" )
+```
+
+The choice of these particular levels of `age`, `educ`, and
+`sector` is arbitrary, but you need to choose some level if you
+want to hold the covariates appproximately constant.
+
+The subset of the data can be used to fit a simple model:
+```{r}
+mod4 <- lm( wage ~ sex, data = small)
+summary(mod4)
+```
+At first glance, there might seem to be nothing wrong with this
+approach and, indeed, for very large data sets it can be effective.
+In this case, however, there are only 3 cases that satisfy the various
+criteria: two women and one man.
+```{r}
+table( small$sex )
+```
+
+So, the \$4.50 difference between
+the sexes and wages depends entirely on the data from a single male!
+(Chapter \@ref("chap:confidence") describes how to assess the precision
+of model coefficients.  This one works out to be $4.50 \pm  11.00$ ---
+not at all precise.)

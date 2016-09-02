@@ -1,0 +1,145 @@
+# Models of Yes/No Variables
+
+```{r include = FALSE}
+library(mosaic)
+library(ggplot2)
+options(width = 100)
+detex_index_entry <- function(...) {NULL}
+```
+
+ 
+Fitting logistic models uses many of the same ideas as in linear
+models.
+
+```{r}
+library(mosaic)
+```
+
+## Fitting Logistic Models
+
+The `glm` operator fits logistic models.  (It also fits other
+kinds of models, but that's another story.)  `glm` takes model
+design and data arguments that are identical to their counterparts in
+`lm`.  Here's an example using the smoking/mortality data in `Whickham`:
+```{r}
+mod = glm( outcome ~ age + smoker, data=Whickham, 
+    family="binomial")
+```
+ 
+The last argument, `family="binomial"`, simply specifies to
+`glm()` that the logistic transformation should be used.
+`glm()` is short for Generalized Linear Modeling, a broad label
+that covers logistic regression as well as other types of models
+involving links and transformations.
+
+
+The regression report is produced with the `summary` operator,
+which recognizes that the model was fit logistically and does the
+right thing:
+```{r}
+summary(mod)
+```
+
+Keep in mind that the coefficients refer to the intermediate model
+values $Y$.  The probability $P$ will be $e^Y / (1 + e^Y )$.
+
+
+## Fitted Model Values
+
+Logistic regression involves two different kinds of fitted values:
+the intermediate "link" value $Y$ and the probability $P$.  The
+`fitted` operator returns the probabilities:
+```{r }
+probs = fitted(mod) 
+```
+ 
+There is one fitted probability value for each case.
+
+The link values can be gotten via the `predict` operator
+```{r}
+linkvals = predict(mod, type="link")
+head(linkvals)
+```
+
+
+Notice that the link values are not necessarily between zero and one.
+
+The `predict` operator can also be used to calculate the
+probability values.
+```{r}
+response_vals = predict(mod, type="response")
+head(response_vals)
+```
+
+This is particularly useful when you want to use `predict` to
+find the model values for inputs other than that original data frame
+used for fitting.
+
+## Which Level is "Yes"?
+
+In fitting a logistic model, it's crucial that the response variable
+be categorical, with two levels.  It happens that in the
+`Whickham` data, the `outcome` variable fits the bill: the
+levels are `Alive` and `Dead`.
+
+The `glm` software will automatically recode the response
+variable as 0/1.  The question is, which level gets mapped to 1?  In
+some sense, it makes no difference since there are only two levels.
+But if you're talking about the probability of dying, it's nice not
+to mistake that for the probability of staying alive.  So make sure
+that you know which level in the response variable corresponds to 1:
+it's the second level.  
+
+Here is an easy way to make sure which level has been coded as "Yes".
+First, fit the all-cases-the-same model, `outcome` ~ 1.  The
+fitted model value $P$ from this model will be the proportion of cases for which the outcome was "Yes."
+```{r }
+mod2 = glm( outcome ~ 1, data = Whickham, family = "binomial")
+```
+ 
+```{r eval = FALSE}
+fitted(mod2)
+```
+
+ 
+So, 28% of the cases were "Yes."  But which of the two levels is "Yes?" 
+Find out just by looking at the proportion of each level:
+```{r }
+tally( ~ outcome, data = Whickham, format = "proportion")
+```
+ 
+
+If you want to dictate which of the two levels is going to be encoded
+as 1, you can use a comparison operation to do so:
+```{r results = "hide"}
+mod3 = glm( outcome == "Alive" ~ 1, data=Whickham, 
+   family="binomial")
+mod3
+```
+
+In this model, "Yes" means `Alive`.
+
+## Analysis of Deviance
+
+The same basic logic used in analysis of variance applies to logistic
+regression, although the quantity being broken down into parts is not
+the sum of squares of the residuals but, rather, the `r detex::new_word('deviance')`.
+
+The `anova` software will take apart a logistic model, term by
+term, using the order specified in the model.
+
+```{r }
+anova(mod, test="Chisq")
+```
+ 
+
+
+Notice the second argument, `test="Chisq"`, which instructs
+`anova` to calculate a p-value for each term.  This involves a
+slightly different test than the F test used in linear-model ANOVA  
+
+The format of the ANOVA table for logistic regression is somewhat
+different from that used in linear models, but the concepts of degrees
+of freedom and partitioning still apply.  The basic idea is to ask
+whether the reduction in deviance accomplished with the model terms is
+greater than what would be expected if random terms were used instead.
