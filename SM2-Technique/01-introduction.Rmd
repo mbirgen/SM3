@@ -155,15 +155,11 @@ In making your own choice, the most important thing is this: *choose something*!
 use the information in each chapter's computational technique section
 to help them identify the facilities to look for in those packages.
 
-Another form of software that's often used with data
-is the spreadsheet.  Examples are Excel `r detex_index_entry('C', 'Excel')` and Google Spreadsheets.
 `r detex_index_entry("C", 'Google spreadsheets')`
 `r detex_index_entry("C", 'spreadsheets')` 
-Spreadsheets are effective for entering data and have nice facilities for formatting
-tables.  The visual layout of the
-data seems to be intuitive to many people.  Many businesses use spreadsheets
-and they are widely taught in high schools.  Unfortunately, they are very
-difficult to use for statistical analyses of any sophistication.
+Another form of software that's often used with data
+is the spreadsheet.  Examples are Excel `r detex_index_entry('C', 'Excel')` and Google Spreadsheets. Spreadsheets are effective for entering data and have nice facilities for formatting
+tables.  The visual layout of the data seems to be intuitive to many people.  Many businesses use spreadsheets and they are widely taught in high schools.  Unfortunately, they are very difficult to use for statistical analyses of any sophistication.
 Indeed, even some very elementary statistical tasks 
 such as making a histogram are difficult with spreadsheets
 and the results are usually unsatisfactory from a
@@ -354,7 +350,7 @@ simple assignment:
 `r detex_index_entry('P', 'R Syntax assignment =')` 
 `r detex_index_entry('P', '=')` 
 ```{r }
-x = 16
+x <- 16
 ```
 This command has stored the value 16 under the name `x`.
 The syntax is always the same: an equal sign (`=`) with a name
@@ -398,7 +394,7 @@ For the sake of readability, keep object names short.  But if you really must ha
 
 Objects can store all sorts of things, for example a sequence of numbers:
 ```{r results = "hide"}
-x = seq(1,7)
+x <- seq(1,7)
 ```
  
 When you assign a new value to an existing object, as just done to
@@ -426,7 +422,7 @@ x
 If you want to change the value of `x`, you need to use the
 assignment operator:
 ```{r }
-x = sqrt(x)
+x <- sqrt(x)
 x
 ```
  
@@ -588,15 +584,14 @@ In statistics, many calculations relate to probabilities which are
 always in the range 0 to 1.  On this scale, `1.22e-16` is very
 close to zero. 
 
+\index{C}{infinity!INF on computer}
+\index{C}{NAN}
+\index{C}{numbers!INF and NaN}
 
 There are two "special" numbers.  `Inf` stands for $\infty$, as in 
 ```{r }
 1/0
 ```
- 
-\index{C}{infinity!INF on computer}
-\index{C}{NAN}
-\index{C}{numbers!INF and NaN}
 `NaN` stands for "not a number," and is the result when a numerical
 operation isn't defined, for instance
 ```{r }
@@ -682,7 +677,7 @@ the object of that name.  For instance, the following command
 directs the computer to look up the value contained in an object named
 `swimmers.csv` and insert that value into the object `filename`. 
 ```{r error = TRUE}
-filename = swimmers.csv
+filename <- swimmers.csv
 ```
  
 As it happens, there was no object named `swimmers.csv` because

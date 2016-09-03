@@ -1,4 +1,4 @@
-# Computational Technique
+# Groupwise models
 
 ```{r include = FALSE}
 library(mosaic)

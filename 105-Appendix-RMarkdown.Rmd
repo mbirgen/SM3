@@ -31,7 +31,7 @@ knitr::include_graphics("Images/MyFirstDocument-HTML.png")
 
 \index{write/compile cycle}\index{reader-friendly document}
 
-After you edit an `.Rmd` file, you \vocabDefinition{compile}{The process of a computer translating a file from one format to another.} the report into a reader-friendly document format such as `.pdf`, `.docx`, or `.html` that can easily be printed or displayed on the report-reader's computer.  You never edit the reader-friendly document; it's created automatically from your `.Rmd` instructions. When you want to update or modify or correct the end report, you edit the `.Rmd` file.
+After you edit an `.Rmd` file, you vocabDefinition{compile}{The process of a computer translating a file from one format to another.} the report into a reader-friendly document format such as `.pdf`, `.docx`, or `.html` that can easily be printed or displayed on the report-reader's computer.  You never edit the reader-friendly document; it's created automatically from your `.Rmd` instructions. When you want to update or modify or correct the end report, you edit the `.Rmd` file.
 
 It's a good strategy to compile your `.Rmd` frequently.  Start with a small, simple document.  Then add a bit more to it: one paragraph or one "chunk" (see below).  Compile again. If something goes wrong, you will have a good idea of where the problem lies. Go back and fix things.  Make small changes, compile, see if it worked. Repeat. Figure \@ref(fig:edit-cycle) shows several steps in such an editing cycle.  
 
@@ -53,10 +53,10 @@ Each of these delimiters goes on its own line.^[Both the opening and closing del
 `r tufte::newthought('Most .Rmd files will draw on a library')` that needs to be loaded into the R session.  When you compile `.Rmd` $\rightarrow$ `.html`, R starts a brand new session that is, initially, empty and with no libraries loaded.  When the compilation is complete, that session evaporates, leaving as its only residue the `.html` result.
 
 \index{argument!chunk in Rmd}\index{chunk!argument}\index{Rmd!chunk}
-Often, the first chunk in your document will be an instruction to load one or more libraries.  Since this will be in just about every `.Rmd` document, it can be called the \vocabDefinition{boilerplate}{A standardized piece of text intended for re-use in many documents.} chunk. It looks like this:
+Often, the first chunk in your document will be an instruction to load one or more libraries.  Since this will be in just about every `.Rmd` document, it can be called the vocabDefinition{boilerplate}{A standardized piece of text intended for re-use in many documents.} chunk. It looks like this:
 A boilerplate chunk goes at the start of the document. It loads the libraries that the following commands will use.
 ```{r echo = FALSE, comment = ''}
-# cat(ISMmd::verbatim_input("Images/chunk-example-2.txt"))
+# cat(detex::verbatim_input("Images/chunk-example-2.txt"))
 ```
 
 The `include=FALSE` chunk argument helps to prettify the document: it is an instruction not to show the contents of the chunk in the output file. \index{include@\texttt{include=FALSE} argument in Rmd}
@@ -64,7 +64,7 @@ The `include=FALSE` chunk argument helps to prettify the document: it is an inst
 
 Start with a short and simple document, like this:
 ```{r echo = FALSE, comment = ""}
-cat(ISMmd::verbatim_input("Images/salt-peter-1.Rmd"))
+cat(detex::verbatim_input("Images/salt-peter-1.Rmd"))
 ```
 
 OR IN ANOTHER FORMAT
@@ -90,20 +90,20 @@ First pass | Second pass | Third pass
 \parbox[t]{1.75in}{\raggedright {\bf Step 1}. Start with a short and simple document.} & 
 \parbox[t]{1.75in}{\raggedright {\bf Step 2}. Add the boilerplace chunk and a chunk to your start your wrangling. Test that it works. If not, go back and fix it.\rule[-2pt]{0pt}{5pt}} & 
 \parbox[t]{1.75in}{\raggedright {\bf Step 3}. Add more to the wrangling chunk. Test that it works.}\\\hline
-\parbox[t]{2in}{\VerbatimInput{Images/salt-peter-1.Rmd}} & \parbox[t]{2in}{\VerbatimInput{Images/salt-peter-2.Rmd}} & \parbox[t]{2in}{\VerbatimInput{Images/salt-peter-3.Rmd}}\\
+\parbox[t]{2in}{VerbatimInput{Images/salt-peter-1.Rmd}} & \parbox[t]{2in}{VerbatimInput{Images/salt-peter-2.Rmd}} & \parbox[t]{2in}{VerbatimInput{Images/salt-peter-3.Rmd}}\\
 Compile to HTML & Compile to HTML & Compile to HTML\\
 \includegraphics[width=1.75in]{Images/salt-peter-html-1.png} &
 \includegraphics[width=1.75in]{Images/salt-peter-html-2.png} &
 \includegraphics[width=1.75in]{Images/salt-peter-html-3.png} \\
 \end{tabular}
 
-\captionof{figure}{\label{fig:edit-cycle} Three steps in the write/compile cycle. At each step, the \texttt{.Rmd} file (shown in \texttt{monospace font}) is compiled into the \texttt{.html} format shown underneath.}
+captionof{figure}{\label{fig:edit-cycle} Three steps in the write/compile cycle. At each step, the \texttt{.Rmd} file (shown in \texttt{monospace font}) is compiled into the \texttt{.html} format shown underneath.}
 
 
 `r tufte::newthought("Distributing the .Rmd file is helpful")` when communicating with a technically savvy audience.  A nice strategy for getting the benefits of both the easily-readable `.html` format and the original `.Rmd` file is to include the `.Rmd` file *inside* the `.html`, much as you might attach a file to an email message. The `DataComputing` package provides a way to do this easily`r tufte::margin_note("The document template 'Data Computing simple' includes the source document by default.")` by including the following chunk in the `.Rmd` file. \index{HTML!include Rmd file}\index{Rmd!include in HTML file}\index{compiler!Rmd to HTML}\index{includeSourceDocument@\texttt{includeSourceDocuments}}
 
 ```{r echo = FALSE, comment = ''}
-cat(ISMmd::verbatim_input("Images/includeSourceDocuments.Rmd"))
+cat(detex ::verbatim_input("Images/includeSourceDocuments.Rmd"))
 ```
 
 
