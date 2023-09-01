@@ -9,7 +9,7 @@ detex_index_entry <- function(...) {NULL}
 ## Preliminaries
 
 Many of the R functions used in this text are written especially for
-the text to enhance convienence and clarity of purpose.  To access these
+the text to enhance convenience and clarity of purpose.  To access these
 functions, you will need to load the **`mosaic`** package at the beginning of your session.  Loading a package is simple:
 
 ```{r, message = FALSE}

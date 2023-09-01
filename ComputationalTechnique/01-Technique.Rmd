@@ -1,8 +1,9 @@
 
 ```{r}
+install.packages("remotes")
+remotes::install_github("dtkaplan/detex")
 library(detex)
 ```
-
 
 Modern statistics is done on the computer.  There was a time, 60 years
 ago and before, when computation could only be done by hand or using
@@ -31,7 +32,7 @@ available.
 `r detex::index_entry('C', 'computation!foundations')`
 Each chapter of this book includes a section on computational
 technique.  Many readers will be completely new to the use of
-computers for scientific and statistial work, so the first chapters
+computers for scientific and statistical work, so the first chapters
 cover the foundations, techniques that are useful for many different
 aspects of computation.  Working through the early chapters is essential
 for developing the skills that will be used later in actual
@@ -509,7 +510,7 @@ form more complicated computations.  For instance,
 To a human reader, the command `8+4/2` might seem ambiguous.
 Is it intended to be `(8+4)/2` or `8+(4/2)`?  The
 computer uses unambiguous rules to interpret the expression, but it's
-a good idea for you to use parethesis so that you can make sure that
+a good idea for you to use parenthesis so that you can make sure that
 what you intend is what the computer carries out:
 ```{r }
 (8+4)/2
@@ -555,7 +556,7 @@ Numbers can be written in `r new_word('scientific notation')`.  For example, the
 `r detex::index_entry('C', 'gravity')` 
 attraction between masses is $6.67428 TEX COMMAND NOT FOUND times  10^{-11}$ (with units
 meters-cubed per kilogram per second squared).  In the computer
-notation, this would be written `G=6.67428e-11`. The Avogradro constant, which gives the number of atoms in a mole, is $6.02214179
+notation, this would be written `G=6.67428e-11`. The Avogadro constant, which gives the number of atoms in a mole, is $6.02214179
 \times  10^{23}$ per mole, or `6.02214178e23`.
 `r detex::index_entry('C', 'Avogadro constant')` 
 
@@ -627,7 +628,6 @@ $\sqrt{-9}$, use \code{sqrt(-9+0i)}.
 ### Types of Objects
 
 Most of the examples used so far have dealt with numbers.  But
-computers work with other kinds of information as well: text,
 photographs, sounds, sets of data, and so on.  The word
 `r new_word('type')` `r detex::index_entry("C", "type of object")` is used to refer to the kind of information.  
 `r detex::index_entry('C', 'object!basic types in R')` 
@@ -702,5 +702,3 @@ text data; you just need to remember to include text, such as file
 names, in quotation marks, `"like this"`. 
 
 <!-- end description -->
-
-

@@ -194,6 +194,10 @@ mathematical and scientific operations.  To use this power, you need
 to learn a little bit about the syntax and meaning of R commands.
 Once you have learned this, operations become simple to perform.
 
+## R Studio (Birgen)
+
+Welcome to 2023. If you are a total CS nerd, you may want to stick with command-line R. However, the rest of us prefer to use something more turn-of-the-century. You want to install RStudio over R so that you get something that is more friendly and more intuitive for you.
+
 ## Invoking an Operation
 
 People often think of computers as *doing* things: sending email,
@@ -353,8 +357,8 @@ simple assignment:
 x <- 16
 ```
 This command has stored the value 16 under the name `x`.
-The syntax is always the same: an equal sign (`=`) with a name
-on the left and a value on the right.
+<!-- The syntax is always the same: an equal sign (`=`) with a name on the left and a value on the right. -->
+The syntax is always the same: an arrow sign (`<-`) with a name on the left and a value on the right.
 
 Such stored values are called `r new_word('objects')` `r detex_index_entry("C", "objects, in R")`.  Making an assignment
 to an object defines the object.  Once an object has been
